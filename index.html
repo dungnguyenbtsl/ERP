@@ -9,7 +9,7 @@
     body { background-color: #f1f5f9; padding: 12px; color: #1e293b; }
     
     /* 螢幕操作控制區 */
-    .control-card { background: white; padding: 15px; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-bottom: 15px; }
+    .control-card { background: white; padding: 15px; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-bottom: 15px; max-width: 210mm; margin-left: auto; margin-right: auto; }
     .control-title { font-size: 1.1rem; font-weight: bold; color: #0f172a; margin-bottom: 10px; }
     
     input[type="text"], select { width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.95rem; margin-bottom: 10px; outline: none; }
@@ -18,44 +18,47 @@
     .btn-blue { background: #2563eb; color: white; }
     .btn-green { background: #16a34a; color: white; }
 
-    /* A4 列印預覽外框 */
-    .a4-preview { background: white; width: 100%; max-width: 210mm; min-height: 297mm; margin: 0 auto; padding: 15mm; box-shadow: 0 4px 10px rgba(0,0,0,0.15); border-radius: 4px; position: relative; }
+    /* A4 列印預覽外框：chuẩn form A4, căn chỉnh tỉ mỉ */
+    .a4-preview { background: white; width: 100%; max-width: 210mm; min-height: 297mm; margin: 0 auto; padding: 12mm 15mm; box-shadow: 0 4px 10px rgba(0,0,0,0.15); border-radius: 4px; position: relative; display: flex; flex-direction: column; justify-content: space-between; }
     
-    /* 標頭排版：Logo 絕對定位 + 文字置中 */
-    .sheet-header { position: relative; border-bottom: 2px solid #000; padding-bottom: 12px; margin-bottom: 15px; text-align: center; }
-    .logo-box { position: absolute; left: 0; top: 2px; width: 65px; height: 45px; display: flex; align-items: center; justify-content: center; }
+    /* 標頭排版 */
+    .sheet-header { position: relative; border-bottom: 2px solid #1e293b; padding-bottom: 10px; margin-bottom: 12px; text-align: center; }
+    .logo-box { position: absolute; left: 0; top: 4px; width: 60px; height: 42px; display: flex; align-items: center; justify-content: center; }
     .logo-box img { max-width: 100%; max-height: 100%; object-fit: contain; }
-    .logo-placeholder { font-size: 0.7rem; color: #64748b; border: 1px dashed #cbd5e1; padding: 5px; text-align: center; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; }
+    .logo-placeholder { font-size: 0.65rem; color: #64748b; border: 1px dashed #cbd5e1; padding: 4px; text-align: center; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; }
 
-    .header-content { padding: 0 75px; } 
-    .header-content h1 { font-size: 1rem; font-weight: bold; color: #475569; margin-bottom: 3px; letter-spacing: 0.5px; }
-    .header-content h2 { font-size: 1.45rem; font-weight: bold; text-transform: uppercase; margin-bottom: 3px; color: #0f172a; letter-spacing: 0.5px; }
-    .header-content p { font-size: 0.85rem; color: #64748b; }
+    .header-content { padding: 0 70px; } 
+    .header-content h1 { font-size: 0.95rem; font-weight: bold; color: #475569; margin-bottom: 2px; letter-spacing: 0.5px; }
+    .header-content h2 { font-size: 1.35rem; font-weight: bold; text-transform: uppercase; margin-bottom: 2px; color: #0f172a; letter-spacing: 0.5px; }
+    .header-content p { font-size: 0.8rem; color: #64748b; }
 
-    /* Thông tin đơn hàng cân đối */
-    .order-info { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; margin-bottom: 15px; font-size: 0.9rem; background: #f8fafc; padding: 10px 12px; border: 1px solid #e2e8f0; border-radius: 4px; }
+    /* Thông tin đơn hàng: bố trí cân đối, đều đặn 3 cột rõ ràng */
+    .order-info { display: grid; grid-template-columns: 1fr 1.3fr 1fr; gap: 8px; margin-bottom: 12px; font-size: 0.88rem; background: #f8fafc; padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 4px; align-items: center; }
+    .order-info div { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     
-    /* 材料表格 - Tối ưu kích thước, padding thoáng hơn */
-    table { width: 100%; border-collapse: collapse; margin-bottom: 25px; }
-    th, td { border: 1px solid #333; padding: 9px 10px; font-size: 0.88rem; text-align: left; vertical-align: middle; }
-    th { background-color: #e2e8f0; font-weight: bold; text-align: center; }
+    /* 材料表格: tối ưu hóa khoảng cách và độ rộng cột */
+    table { width: 100%; border-collapse: collapse; margin-bottom: 15px; }
+    th, td { border: 1px solid #333; padding: 8px 8px; font-size: 0.85rem; text-align: left; vertical-align: middle; }
+    th { background-color: #e2e8f0; font-weight: bold; text-align: center; color: #0f172a; }
     td.center { text-align: center; }
     td.right { text-align: right; }
 
-    .sign-section { display: flex; justify-content: space-between; margin-top: 35px; text-align: center; font-size: 0.9rem; }
-    .sign-box { width: 40%; }
-    .sign-space { height: 55px; }
+    /* Phần chữ ký gọn gàng, cân đối ở chân trang */
+    .sign-section { display: flex; justify-content: space-between; margin-top: 20px; margin-bottom: 10px; text-align: center; font-size: 0.9rem; }
+    .sign-box { width: 35%; }
+    .sign-space { height: 45px; }
 
     /* 列印時自動隱藏控制選單 */
     @media print {
       body { background: white; padding: 0; }
       .control-card { display: none; }
-      .a4-preview { box-shadow: none; padding: 0; margin: 0; max-width: 100%; width: 100%; }
+      .a4-preview { box-shadow: none; padding: 10mm; margin: 0; max-width: 100%; width: 100%; min-height: auto; }
     }
   </style>
 </head>
 <body>
 
+  <!-- 控制面板 (列印時會隱藏) -->
   <div class="control-card">
     <div class="control-title">🖨️ 選擇列印訂單 (A4 匯總)</div>
     <input type="text" id="scriptUrl" placeholder="請貼上 Google Sheets 網頁應用程式網址 (Web App URL)..." style="margin-bottom: 8px;">
@@ -72,41 +75,44 @@
     <button class="btn btn-green" onclick="window.print()" style="margin-top: 15px;">🖨️ 列印此 A4 匯總單</button>
   </div>
 
+  <!-- A4 列印頁面內容 -->
   <div class="a4-preview" id="a4Content">
-    <div class="sheet-header">
-      <div class="logo-box" id="logoContainer">
-        <img src="https://dungnguyenbtsl.github.io/FULIAO-LABEL/logo.jpeg" alt="富裕鞋業 Logo" onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\'logo-placeholder\'>Logo Error</div>';">
+    <div>
+      <div class="sheet-header">
+        <div class="logo-box" id="logoContainer">
+          <img src="https://dungnguyenbtsl.github.io/FULIAO-LABEL/logo.jpeg" alt="富裕鞋業 Logo" onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\'logo-placeholder\'>Logo Error</div>';">
+        </div>
+        <div class="header-content">
+          <h1>富裕鞋業有限公司</h1>
+          <h2>SAUCONY 生產材料總匯表</h2>
+          <p><b>材料倉庫備料清單</b></p>
+        </div>
       </div>
-      <div class="header-content">
-        <h1>富裕鞋業有限公司</h1>
-        <h2>SAUCONY 生產材料總匯表</h2>
-        <p><b>材料倉庫備料清單</b></p>
+
+      <div class="order-info" id="orderMetaInfo">
+        <div><b>指令表:</b> ---</div>
+        <div><b>廠型-SKU:</b> ---</div>
+        <div><b>客戶交期:</b> ---</div>
       </div>
-    </div>
 
-    <div class="order-info" id="orderMetaInfo">
-      <div><b>指令表:</b> ---</div>
-      <div><b>廠型-SKU:</b> ---</div>
-      <div><b>客戶交期:</b> ---</div>
+      <table>
+        <thead>
+          <tr>
+            <th style="width: 6%;">序號</th>
+            <th style="width: 44%;">材料名稱 / 品名 (摘要)</th>
+            <th style="width: 18%;">顏色</th>
+            <th style="width: 12%;">數量</th>
+            <th style="width: 10%;">單位</th>
+            <th style="width: 10%;">點檢</th>
+          </tr>
+        </thead>
+        <tbody id="materialTableBody">
+          <tr>
+            <td colspan="6" style="text-align: center; color: #64748b; padding: 25px;">請先載入資料並選擇上方指令表。</td>
+          </tr>
+        </tbody>
+      </table>
     </div>
-
-    <table>
-      <thead>
-        <tr>
-          <th style="width: 6%;">序號</th>
-          <th style="width: 44%;">材料名稱 / 品名 (摘要)</th>
-          <th style="width: 16%;">顏色</th>
-          <th style="width: 14%;">數量</th>
-          <th style="width: 10%;">單位</th>
-          <th style="width: 10%;">點檢</th>
-        </tr>
-      </thead>
-      <tbody id="materialTableBody">
-        <tr>
-          <td colspan="6" style="text-align: center; color: #64748b; padding: 25px;">請先載入資料並選擇上方指令表。</td>
-        </tr>
-      </tbody>
-    </table>
 
     <div class="sign-section">
       <div class="sign-box">
@@ -212,9 +218,9 @@
       }
 
       metaInfo.innerHTML = `
-        <div><b>指令表:</b> <span style="color:#2563eb; font-size:0.95rem;">${selectedOrder}</span></div>
-        <div><b>廠型-SKU:</b> <span style="color:#0f172a; font-size:0.95rem; font-weight:bold;">${factorySku}</span></div>
-        <div><b>客戶交期:</b> <span style="color:#b45309; font-size:0.95rem; font-weight:bold;">${deliveryDate}</span></div>
+        <div title="${selectedOrder}"><b>指令表:</b> <span style="color:#2563eb;">${selectedOrder}</span></div>
+        <div title="${factorySku}"><b>廠型-SKU:</b> <span style="color:#0f172a; font-weight:bold;">${factorySku}</span></div>
+        <div title="${deliveryDate}"><b>客戶交期:</b> <span style="color:#b45309; font-weight:bold;">${deliveryDate}</span></div>
       `;
 
       let html = '';
@@ -229,7 +235,7 @@
             <td class="center">${index + 1}</td>
             <td><b>${name}</b></td>
             <td class="center">${color}</td>
-            <td class="right" style="font-weight: bold; font-size: 0.95rem; color: #1d4ed8;">${qty}</td>
+            <td class="right" style="font-weight: bold; color: #1d4ed8;">${qty}</td>
             <td class="center">${unit}</td>
             <td class="center">☐</td>
           </tr>
