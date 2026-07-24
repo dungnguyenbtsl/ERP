@@ -25,7 +25,7 @@
     .sheet-header h2 { font-size: 1.4rem; font-weight: bold; text-transform: uppercase; margin-bottom: 5px; }
     .sheet-header p { font-size: 0.95rem; color: #333; }
 
-    .order-info { display: flex; justify-content: space-between; margin-bottom: 15px; font-size: 0.95rem; background: #f8fafc; padding: 10px; border: 1px solid #e2e8f0; }
+    .order-info { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; margin-bottom: 15px; font-size: 0.95rem; background: #f8fafc; padding: 10px; border: 1px solid #e2e8f0; }
     
     /* 材料表格 */
     table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
@@ -73,6 +73,7 @@
 
     <div class="order-info" id="orderMetaInfo">
       <div><b>指令表:</b> ---</div>
+      <div><b>廠型-SKU:</b> ---</div>
       <div><b>客戶交期:</b> ---</div>
     </div>
 
@@ -171,7 +172,7 @@
 
       if (!selectedOrder) {
         tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: #64748b; padding: 20px;">尚未選擇指令表。</td></tr>';
-        metaInfo.innerHTML = '<div><b>指令表:</b> ---</div><div><b>客戶交期:</b> ---</div>';
+        metaInfo.innerHTML = '<div><b>指令表:</b> ---</div><div><b>廠型-SKU:</b> ---</div><div><b>客戶交期:</b> ---</div>';
         return;
       }
 
@@ -185,7 +186,8 @@
         return;
       }
 
-      // Lấy trực tiếp từ cột 客戶交期 (và dự phòng thêm các từ khóa liên quan nếu cần)
+      // Lấy 廠型-SKU và 客戶交期
+      let factorySku = getColValue(matchedRows[0], ['廠型-SKU', '廠型', 'sku', 'hình thể'], '-');
       let deliveryDate = getColValue(matchedRows[0], ['客戶交期', '出貨日期', 'ngày xuất', 'xuất hàng'], '-');
       
       if (deliveryDate && deliveryDate !== '-') {
@@ -199,6 +201,7 @@
 
       metaInfo.innerHTML = `
         <div><b>指令表:</b> <span style="color:#2563eb; font-size:1.05rem;">${selectedOrder}</span></div>
+        <div><b>廠型-SKU:</b> <span style="color:#0f172a; font-size:1.05rem; font-weight:bold;">${factorySku}</span></div>
         <div><b>客戶交期:</b> <span style="color:#b45309; font-size:1.05rem; font-weight:bold;">${deliveryDate}</span></div>
       `;
 
