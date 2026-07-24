@@ -6,46 +6,44 @@
   <title>富裕鞋業有限公司 - 批量生產訂單材料匯總表 (橫向)</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: Arial, sans-serif; }
-    body { background-color: #f1f5f9; padding: 10px; color: #1e293b; }
+    body { background-color: #f1f5f9; padding: 15px; color: #1e293b; }
     
-    .control-card { background: white; padding: 12px; border-radius: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-bottom: 12px; max-width: 297mm; margin-left: auto; margin-right: auto; }
-    .control-title { font-size: 1.05rem; font-weight: bold; color: #0f172a; margin-bottom: 8px; }
+    .control-card { background: white; padding: 15px; border-radius: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-bottom: 20px; max-width: 297mm; margin-left: auto; margin-right: auto; }
+    .control-title { font-size: 1.1rem; font-weight: bold; color: #0f172a; margin-bottom: 10px; }
     
-    input[type="text"], select { width: 100%; padding: 8px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.9rem; margin-bottom: 8px; outline: none; }
+    input[type="text"], select { width: 100%; padding: 8px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.95rem; margin-bottom: 8px; outline: none; }
     
-    .btn { width: 100%; padding: 10px; border: none; border-radius: 6px; font-weight: bold; font-size: 0.95rem; cursor: pointer; margin-top: 4px; }
+    .btn { width: 100%; padding: 10px; border: none; border-radius: 6px; font-weight: bold; font-size: 1rem; cursor: pointer; margin-top: 4px; }
     .btn-blue { background: #2563eb; color: white; }
     .btn-green { background: #16a34a; color: white; }
 
-    .filter-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 6px; margin-bottom: 8px; }
+    .filter-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 8px; margin-bottom: 8px; }
     .filter-group { display: flex; flex-direction: column; }
-    .filter-group label { font-size: 0.75rem; font-weight: bold; color: #475569; margin-bottom: 2px; }
-    .filter-input { width: 100%; padding: 6px 8px; font-size: 0.85rem; border: 1px solid #cbd5e1; border-radius: 6px; outline: none; background: #fff; }
+    .filter-group label { font-size: 0.8rem; font-weight: bold; color: #475569; margin-bottom: 3px; }
+    .filter-input { width: 100%; padding: 7px 10px; font-size: 0.9rem; border: 1px solid #cbd5e1; border-radius: 6px; outline: none; background: #fff; }
 
-    .order-checklist { max-height: 130px; overflow-y: auto; border: 1px solid #cbd5e1; border-radius: 6px; padding: 6px; background: #fff; margin-bottom: 8px; }
-    .order-checklist label { display: flex; align-items: center; gap: 6px; padding: 3px 4px; font-size: 0.85rem; cursor: pointer; }
+    .order-checklist { max-height: 150px; overflow-y: auto; border: 1px solid #cbd5e1; border-radius: 6px; padding: 8px; background: #fff; margin-bottom: 10px; }
+    .order-checklist label { display: flex; align-items: center; gap: 8px; padding: 4px 6px; font-size: 0.9rem; cursor: pointer; }
     .order-checklist label:hover { background: #f1f5f9; border-radius: 4px; }
 
-    .a4-preview-container { display: flex; flex-direction: column; gap: 15px; align-items: center; }
+    .a4-preview-container { display: flex; flex-direction: column; gap: 20px; align-items: center; }
     
-    /* Cấu hình chuẩn A4 ngang tuyệt đối cho trang in */
+    /* Cấu hình chuẩn tuyệt đối cho trang in A4 Ngang (Landscape) */
     @page {
       size: A4 landscape;
-      margin: 0;
+      margin: 10mm;
     }
 
-    /* Ép mỗi tờ A4 nằm gọn trọn vẹn, không bị nhảy dòng, mất mép hay rớt trang */
     .a4-sheet { 
       background: white; 
       width: 297mm; 
-      height: 198mm; 
-      max-height: 198mm;
+      min-height: 190mm;
+      max-height: 200mm;
       margin: 0 auto; 
-      padding: 6mm 10mm; 
-      box-shadow: 0 4px 10px rgba(0,0,0,0.15); 
-      border-radius: 4px; 
+      padding: 10mm 15mm; 
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1); 
+      border-radius: 6px; 
       position: relative;
-      overflow: hidden;
       page-break-after: always;
       break-after: page;
       page-break-inside: avoid;
@@ -55,29 +53,29 @@
       justify-content: space-between;
     }
     
-    .sheet-header { border-bottom: 1.5px solid #1e293b; padding-bottom: 3px; margin-bottom: 5px; text-align: center; position: relative; }
-    .logo-box { position: absolute; left: 0; top: 2px; width: 32px; height: 20px; display: flex; align-items: center; justify-content: center; }
+    .sheet-header { border-bottom: 2px solid #1e293b; padding-bottom: 6px; margin-bottom: 10px; text-align: center; position: relative; }
+    .logo-box { position: absolute; left: 0; top: 2px; width: 45px; height: 28px; display: flex; align-items: center; justify-content: center; }
     .logo-box img { max-width: 100%; max-height: 100%; object-fit: contain; }
-    .logo-placeholder { font-size: 0.35rem; color: #64748b; border: 1px dashed #cbd5e1; padding: 1px; text-align: center; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; }
+    .logo-placeholder { font-size: 0.5rem; color: #64748b; border: 1px dashed #cbd5e1; padding: 2px; text-align: center; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; }
 
-    .header-content { padding: 0 35px; } 
-    .header-content h1 { font-size: 0.55rem; font-weight: bold; color: #475569; margin-bottom: 1px; }
-    .header-content h2 { font-size: 0.85rem; font-weight: bold; text-transform: uppercase; margin-bottom: 1px; color: #0f172a; }
-    .header-content p { font-size: 0.4rem; color: #64748b; }
+    .header-content { padding: 0 50px; } 
+    .header-content h1 { font-size: 0.75rem; font-weight: bold; color: #475569; margin-bottom: 2px; }
+    .header-content h2 { font-size: 1.15rem; font-weight: bold; text-transform: uppercase; margin-bottom: 2px; color: #0f172a; }
+    .header-content p { font-size: 0.55rem; color: #64748b; }
 
-    .order-info { display: grid; grid-template-columns: 1fr 1.2fr 1fr 1fr; gap: 6px; margin-bottom: 6px; font-size: 0.65rem; background: #f8fafc; padding: 4px 8px; border: 1px solid #cbd5e1; border-radius: 4px; }
+    .order-info { display: grid; grid-template-columns: 1fr 1.3fr 1fr 1fr; gap: 10px; margin-bottom: 10px; font-size: 0.85rem; background: #f8fafc; padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 6px; }
     
-    table { width: 100%; border-collapse: collapse; margin-bottom: 6px; }
-    th, td { border: 1px solid #333; padding: 2.5px 5px; font-size: 0.65rem; text-align: left; vertical-align: middle; }
+    table { width: 100%; border-collapse: collapse; margin-bottom: 10px; }
+    th, td { border: 1px solid #333; padding: 6px 8px; font-size: 0.85rem; text-align: left; vertical-align: middle; }
     th { background-color: #e2e8f0; font-weight: bold; text-align: center; color: #0f172a; }
     
     td.center { text-align: center; }
     td.right { text-align: right; }
 
-    /* Phần chữ ký bám sát ngay dưới bảng dữ liệu, cân đối gọn gàng */
-    .sign-section { display: flex; justify-content: space-between; margin-top: auto; padding-bottom: 4px; text-align: center; font-size: 0.65rem; }
+    /* Bố cục chữ ký cân đối, chuyên nghiệp ở cuối trang */
+    .sign-section { display: flex; justify-content: space-between; margin-top: auto; padding-top: 10px; text-align: center; font-size: 0.9rem; }
     .sign-box { width: 30%; }
-    .sign-space { height: 22px; }
+    .sign-space { height: 45px; }
 
     @media print {
       body { background: white; padding: 0; }
@@ -86,8 +84,8 @@
         box-shadow: none !important; 
         margin: 0 !important; 
         width: 297mm !important; 
-        height: 198mm !important;
-        max-height: 198mm !important;
+        height: 190mm !important;
+        max-height: 200mm !important;
         page-break-after: always !important;
         break-after: page !important;
         page-break-inside: avoid !important;
@@ -100,16 +98,16 @@
 
   <div class="control-card">
     <div class="control-title">🖨️ 批量選擇與列印訂單 (A4 橫向匯總)</div>
-    <input type="text" id="scriptUrl" placeholder="請貼上網址..." style="margin-bottom: 6px;">
+    <input type="text" id="scriptUrl" placeholder="請貼上網址..." style="margin-bottom: 8px;">
     
     <button class="btn btn-blue" onclick="loadData()">🔄 從庫存載入資料</button>
 
-    <div style="margin-top: 10px;">
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-        <label style="font-size: 0.8rem; font-weight: bold;">多欄位篩選與指令表過濾：</label>
+    <div style="margin-top: 12px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+        <label style="font-size: 0.9rem; font-weight: bold;">多欄位篩選與指令表過濾：</label>
         <div>
-          <button onclick="toggleSelectAll(true)" style="font-size: 0.75rem; background: none; border: none; color: #2563eb; cursor: pointer; text-decoration: underline; margin-right: 6px;">全選</button>
-          <button onclick="toggleSelectAll(false)" style="font-size: 0.75rem; background: none; border: none; color: #64748b; cursor: pointer; text-decoration: underline;">取消全選</button>
+          <button onclick="toggleSelectAll(true)" style="font-size: 0.85rem; background: none; border: none; color: #2563eb; cursor: pointer; text-decoration: underline; margin-right: 8px;">全選</button>
+          <button onclick="toggleSelectAll(false)" style="font-size: 0.85rem; background: none; border: none; color: #64748b; cursor: pointer; text-decoration: underline;">取消全選</button>
         </div>
       </div>
       
@@ -129,16 +127,16 @@
       </div>
 
       <div id="orderChecklist" class="order-checklist">
-        <span style="color: #64748b; font-size: 0.8rem;">請先載入資料...</span>
+        <span style="color: #64748b; font-size: 0.9rem;">請先載入資料...</span>
       </div>
     </div>
 
-    <button class="btn btn-green" onclick="window.print()" style="margin-top: 10px;">🖨️ 批量列印所選的 A4 橫向匯總單</button>
+    <button class="btn btn-green" onclick="window.print()" style="margin-top: 12px;">🖨️ 批量列印所選的 A4 橫向匯總單</button>
   </div>
 
   <div class="a4-preview-container" id="a4Container">
     <div class="a4-sheet">
-      <div style="text-align: center; color: #64748b; padding: 40px 0; width: 100%;">
+      <div style="text-align: center; color: #64748b; padding: 60px 0; width: 100%;">
         <h2>請先載入資料並在上方勾選要列印的指令表。</h2>
       </div>
     </div>
@@ -250,7 +248,7 @@
       checklistDiv.innerHTML = '';
 
       if (recordsArray.length === 0) {
-        checklistDiv.innerHTML = '<span style="color: red; font-size: 0.8rem;">找不到符合篩選條件的指令表！</span>';
+        checklistDiv.innerHTML = '<span style="color: red; font-size: 0.9rem;">找不到符合篩選條件的指令表！</span>';
         renderA4SheetsBatch();
         return;
       }
@@ -284,9 +282,9 @@
       if (checkboxes.length === 0) {
         container.innerHTML = `
           <div class="a4-sheet">
-            <div style="text-align: center; color: #64748b; padding: 40px 20px; width: 100%;">
+            <div style="text-align: center; color: #64748b; padding: 60px 20px; width: 100%;">
               <h2>尚未選擇任何指令表</h2>
-              <p style="margin-top: 6px; font-size: 0.8rem;">請在上方控制面板勾選您想要預覽或列印的訂單。</p>
+              <p style="margin-top: 8px; font-size: 0.9rem;">請在上方控制面板勾選您想要預覽或列印的訂單。</p>
             </div>
           </div>
         `;
@@ -324,7 +322,7 @@
 
         let tableRowsHtml = '';
         if (matchedRows.length === 0) {
-          tableRowsHtml = '<tr><td colspan="6" style="text-align: center; color: red; padding: 10px;">找不到該指令表的材料資料。</td></tr>';
+          tableRowsHtml = '<tr><td colspan="6" style="text-align: center; color: red; padding: 12px;">找不到該指令表的材料資料。</td></tr>';
         } else {
           matchedRows.forEach((row, index) => {
             const name = getColValue(row, ['摘要', '品名', '材料名稱', 'tên vật tư'], '-');
