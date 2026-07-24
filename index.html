@@ -28,17 +28,16 @@
 
     .a4-preview-container { display: flex; flex-direction: column; gap: 15px; align-items: center; }
     
-    /* Cấu hình chuẩn tuyệt đối cho trang in A4 Ngang (297 x 210mm) */
     @page {
       size: A4 landscape;
-      margin: 4mm;
+      margin: 5mm;
     }
 
     .a4-sheet { 
       background: white; 
-      width: 289mm; 
-      height: 202mm;
-      max-height: 202mm;
+      width: 287mm; 
+      height: 198mm;
+      max-height: 198mm;
       margin: 0 auto; 
       padding: 4mm 8mm; 
       box-shadow: 0 4px 15px rgba(0,0,0,0.1); 
@@ -78,8 +77,8 @@
         box-shadow: none !important; 
         margin: 0 !important; 
         width: 100% !important; 
-        height: 202mm !important;
-        max-height: 202mm !important;
+        height: 198mm !important;
+        max-height: 198mm !important;
         page-break-after: always !important;
         break-after: page !important;
         page-break-inside: avoid !important;
