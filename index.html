@@ -28,12 +28,14 @@
 
     .a4-preview-container { display: flex; flex-direction: column; gap: 15px; align-items: center; }
     
+    /* 嚴格鎖死單頁高度 210mm，內邊距與間距極度緊湊，防止內容撐開導致分頁符強制跳頁 */
     .a4-sheet { 
       background: white; 
       width: 297mm; 
       height: 210mm; 
+      max-height: 210mm;
       margin: 0 auto; 
-      padding: 5mm 10mm; 
+      padding: 4mm 10mm; 
       box-shadow: 0 4px 10px rgba(0,0,0,0.15); 
       border-radius: 4px; 
       display: flex; 
@@ -44,29 +46,29 @@
       overflow: hidden;
     }
     
-    .sheet-header { position: relative; border-bottom: 2px solid #1e293b; padding-bottom: 3px; margin-bottom: 4px; text-align: center; }
-    .logo-box { position: absolute; left: 0; top: 1px; width: 45px; height: 30px; display: flex; align-items: center; justify-content: center; }
+    .sheet-header { position: relative; border-bottom: 2px solid #1e293b; padding-bottom: 2px; margin-bottom: 3px; text-align: center; }
+    .logo-box { position: absolute; left: 0; top: 1px; width: 42px; height: 28px; display: flex; align-items: center; justify-content: center; }
     .logo-box img { max-width: 100%; max-height: 100%; object-fit: contain; }
     .logo-placeholder { font-size: 0.5rem; color: #64748b; border: 1px dashed #cbd5e1; padding: 2px; text-align: center; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; }
 
-    .header-content { padding: 0 45px; } 
-    .header-content h1 { font-size: 0.8rem; font-weight: bold; color: #475569; margin-bottom: 0px; letter-spacing: 0.5px; }
-    .header-content h2 { font-size: 1.1rem; font-weight: bold; text-transform: uppercase; margin-bottom: 0px; color: #0f172a; letter-spacing: 0.5px; }
-    .header-content p { font-size: 0.65rem; color: #64748b; }
+    .header-content { padding: 0 42px; } 
+    .header-content h1 { font-size: 0.75rem; font-weight: bold; color: #475569; margin-bottom: 0px; letter-spacing: 0.5px; }
+    .header-content h2 { font-size: 1.05rem; font-weight: bold; text-transform: uppercase; margin-bottom: 0px; color: #0f172a; letter-spacing: 0.5px; }
+    .header-content p { font-size: 0.6rem; color: #64748b; }
 
-    .order-info { display: grid; grid-template-columns: 1fr 1.2fr 1fr 1fr; gap: 6px; margin-bottom: 4px; font-size: 0.75rem; background: #f8fafc; padding: 4px 8px; border: 1px solid #cbd5e1; border-radius: 4px; align-items: center; }
+    .order-info { display: grid; grid-template-columns: 1fr 1.2fr 1fr 1fr; gap: 6px; margin-bottom: 3px; font-size: 0.75rem; background: #f8fafc; padding: 3px 8px; border: 1px solid #cbd5e1; border-radius: 4px; align-items: center; }
     .order-info div { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     
     table { width: 100%; border-collapse: collapse; margin-bottom: 2px; }
-    th, td { border: 1px solid #333; padding: 3px 6px; font-size: 0.75rem; text-align: left; vertical-align: middle; }
+    th, td { border: 1px solid #333; padding: 2px 5px; font-size: 0.75rem; text-align: left; vertical-align: middle; }
     th { background-color: #e2e8f0; font-weight: bold; text-align: center; color: #0f172a; }
     
     td.center { text-align: center; }
     td.right { text-align: right; }
 
-    .sign-section { display: flex; justify-content: space-between; margin-top: 4px; margin-bottom: 2px; text-align: center; font-size: 0.8rem; }
+    .sign-section { display: flex; justify-content: space-between; margin-top: 2px; margin-bottom: 1px; text-align: center; font-size: 0.75rem; }
     .sign-box { width: 30%; }
-    .sign-space { height: 22px; }
+    .sign-space { height: 18px; }
 
     @media print {
       @page {
@@ -77,10 +79,11 @@
       .control-card { display: none; }
       .a4-sheet { 
         box-shadow: none; 
-        padding: 5mm 10mm; 
+        padding: 4mm 10mm; 
         margin: 0; 
         width: 297mm; 
         height: 210mm; 
+        max-height: 210mm;
         page-break-after: always;
         break-after: page;
       }
@@ -91,7 +94,7 @@
 
   <div class="control-card">
     <div class="control-title">🖨️ 批量選擇與列印訂單 (A4 橫向匯總)</div>
-    <input type="text" id="scriptUrl" placeholder="請貼上 Google Sheets 網頁應用程式網址..." style="margin-bottom: 6px;">
+    <input type="text" id="scriptUrl" placeholder="請貼上網址..." style="margin-bottom: 6px;">
     
     <button class="btn btn-blue" onclick="loadData()">🔄 從庫存載入資料</button>
 
@@ -129,7 +132,7 @@
 
   <div class="a4-preview-container" id="a4Container">
     <div class="a4-sheet">
-      <div style="text-align: center; color: #64748b; padding: 70px 0;">
+      <div style="text-align: center; color: #64748b; padding: 60px 0;">
         <h2>請先載入資料並在上方勾選要列印的指令表。</h2>
       </div>
     </div>
@@ -275,9 +278,9 @@
       if (checkboxes.length === 0) {
         container.innerHTML = `
           <div class="a4-sheet">
-            <div style="text-align: center; color: #64748b; padding: 60px 20px;">
+            <div style="text-align: center; color: #64748b; padding: 50px 20px;">
               <h2>尚未選擇任何指令表</h2>
-              <p style="margin-top: 8px; font-size: 0.85rem;">請在上方控制面板勾選您想要預覽或列印的訂單。</p>
+              <p style="margin-top: 6px; font-size: 0.8rem;">請在上方控制面板勾選您想要預覽或列印的訂單。</p>
             </div>
           </div>
         `;
@@ -315,7 +318,7 @@
 
         let tableRowsHtml = '';
         if (matchedRows.length === 0) {
-          tableRowsHtml = '<tr><td colspan="6" style="text-align: center; color: red; padding: 15px;">找不到該指令表的材料資料。</td></tr>';
+          tableRowsHtml = '<tr><td colspan="6" style="text-align: center; color: red; padding: 10px;">找不到該指令表的材料資料。</td></tr>';
         } else {
           matchedRows.forEach((row, index) => {
             const name = getColValue(row, ['摘要', '品名', '材料名稱', 'tên vật tư'], '-');
