@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Quản Lý Xuất Kho SAUCONY</title>
+  <title>Quản Lý NHẬP - XUẤT KHO SAUCONY</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
     body { background-color: #f1f5f9; padding: 12px; color: #1e293b; padding-bottom: 30px; }
@@ -16,16 +16,18 @@
 
     .filter-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px; }
 
-    .btn { width: 100%; padding: 10px; border: none; border-radius: 8px; font-weight: bold; font-size: 0.9rem; cursor: pointer; margin-top: 6px; }
+    .btn { width: 100%; padding: 10px; border: none; border-radius: 8px; font-weight: bold; font-size: 0.85rem; cursor: pointer; }
     .btn-blue { background: #2563eb; color: white; }
     .btn-green { background: #16a34a; color: white; }
+    .btn-orange { background: #ea580c; color: white; }
     .btn-red { background: #dc3545; color: white; }
     .btn:disabled { opacity: 0.5; cursor: not-allowed; }
     
     .card-list { display: flex; flex-direction: column; gap: 10px; }
     .item-card { background: white; padding: 14px; border-radius: 12px; box-shadow: 0 1px 4px rgba(0,0,0,0.06); border-left: 5px solid #cbd5e1; position: relative; }
     
-    .item-card.ok { border-left-color: #16a34a; }
+    .item-card.in { border-left-color: #2563eb; }
+    .item-card.out { border-left-color: #16a34a; }
     .item-card.error { border-left-color: #dc3545; }
 
     .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
@@ -35,14 +37,15 @@
     .item-title { font-size: 0.95rem; font-weight: bold; color: #0f172a; margin: 4px 0; line-height: 1.3; }
     .item-detail { font-size: 0.85rem; color: #64748b; margin-bottom: 4px; }
 
-    .qty-box { font-size: 1.1rem; font-weight: bold; color: #2563eb; margin: 6px 0; }
+    .qty-box { font-size: 1.05rem; font-weight: bold; color: #0284c7; margin: 6px 0; }
     
     .status-badge { display: inline-block; font-size: 0.75rem; font-weight: bold; padding: 3px 8px; border-radius: 6px; margin-bottom: 8px; }
-    .status-badge.ok { background: #dcfce7; color: #166534; }
     .status-badge.pending { background: #fef9c3; color: #854d0e; }
+    .status-badge.in { background: #dbeafe; color: #1e40af; }
+    .status-badge.out { background: #dcfce7; color: #166534; }
     .status-badge.error { background: #fee2e2; color: #991b1b; }
 
-    .action-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px; }
+    .action-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px; }
     .receiver-box { margin-top: 8px; background: #f8fafc; padding: 8px; border-radius: 8px; border: 1px dashed #cbd5e1; }
     .receiver-box label { font-size: 0.75rem; font-weight: bold; color: #475569; display: block; margin-bottom: 3px; }
     .receiver-input { padding: 8px; font-size: 0.85rem; border: 1px solid #cbd5e1; border-radius: 6px; width: 100%; }
@@ -53,24 +56,25 @@
   <!-- CẤU HÌNH API -->
   <div class="header-card">
     <div class="header-title">
-      <span>📤 XUẤT KHO SAUCONY</span>
+      <span>📦 NHẬP - XUẤT KHO SAUCONY</span>
       <span id="totalCount" style="font-size: 0.8rem; color: #64748b;">0 mục</span>
     </div>
     <input type="text" id="scriptUrl" placeholder="Dán Web App URL vào đây..." style="margin-bottom: 8px;">
-    <button class="btn btn-blue" onclick="loadData()">🔄 Tải Dữ Liệu Dòng Hàng</button>
+    <button class="btn btn-blue" onclick="loadData()">🔄 Tải Dữ Liệu Kho</button>
   </div>
 
-  <!-- BỘ LỌC TÌM KIẾM THÔNG MINH -->
+  <!-- BỘ LỌC THÔNG MINH -->
   <div class="header-card">
-    <input type="text" id="searchInput" onkeyup="applyFilters()" placeholder="🔍 Tìm PO, Tên vật tư, Đơn SX, Người nhận xuất...">
+    <input type="text" id="searchInput" onkeyup="applyFilters()" placeholder="🔍 Tìm PO, Tên vật tư, Đơn SX, Người nhận...">
     
     <div class="filter-grid">
       <div>
         <select id="statusFilter" onchange="applyFilters()">
           <option value="ALL">⚡ Tất cả trạng thái</option>
-          <option value="PENDING">⏳ Chờ xuất kho</option>
-          <option value="OK">✅ Đã duyệt xuất OK</option>
-          <option value="ERROR">⚠️ Báo Lỗi / Hoãn xuất</option>
+          <option value="PENDING">⏳ Chờ nhập kho</option>
+          <option value="IN">📥 Đã nhập kho</option>
+          <option value="OUT">📤 Đã xuất kho</option>
+          <option value="ERROR">⚠️ Báo lỗi (PD)</option>
         </select>
       </div>
 
@@ -82,9 +86,9 @@
     </div>
   </div>
 
-  <!-- DANH SÁCH THẺ (CARDS) -->
+  <!-- DANH SÁCH THẺ VẬT TƯ -->
   <div id="cardContainer" class="card-list">
-    <div style="text-align:center; color:#64748b; padding: 20px;">Vui lòng bấm <b>Tải Dữ Liệu Dòng Hàng</b> để bắt đầu.</div>
+    <div style="text-align:center; color:#64748b; padding: 20px;">Vui lòng bấm <b>Tải Dữ Liệu Kho</b> để bắt đầu.</div>
   </div>
 
   <script>
@@ -159,9 +163,10 @@
         const matchSearch = rowString.includes(searchText);
 
         let matchStatus = true;
-        if (selectedStatus === 'OK') matchStatus = status.includes('ok') || status.includes('穫準');
+        if (selectedStatus === 'IN') matchStatus = status.includes('đã nhập') || status.includes('入庫') || status.includes('nhập kho');
+        else if (selectedStatus === 'OUT') matchStatus = status.includes('ok') || status.includes('穫準') || status.includes('đã xuất') || status.includes('出庫');
         else if (selectedStatus === 'ERROR') matchStatus = status.includes('pd') || status.includes('lỗi') || status.includes('有问题');
-        else if (selectedStatus === 'PENDING') matchStatus = !status.includes('ok') && !status.includes('穫準') && !status.includes('pd') && !status.includes('lỗi') && !status.includes('有问题');
+        else if (selectedStatus === 'PENDING') matchStatus = !status.includes('ok') && !status.includes('穫準') && !status.includes('pd') && !status.includes('lỗi') && !status.includes('đã nhập') && !status.includes('đã xuất');
 
         let matchOrder = (selectedOrder === 'ALL') || (orderNo === selectedOrder);
 
@@ -190,14 +195,18 @@
         const color = getColValue(row, ['顏色', 'màu sắc'], '-');
         const qty = getColValue(row, ['數量', 'số lượng'], '0');
         const unit = getColValue(row, ['單位', 'đơn vị'], 'PCS');
-        const status = getColValue(row, ['货物状态', '貨物狀態', 'trạng thái'], 'Chờ xuất kho');
+        const status = getColValue(row, ['货物状态', '貨物狀態', 'trạng thái'], 'Chờ nhập kho');
         const receiver = getColValue(row, ['接收人員', 'người nhận'], '');
 
         let cardClass = '';
         let badgeClass = 'pending';
-        if (String(status).includes('OK') || String(status).includes('穫準')) {
-          cardClass = 'ok'; badgeClass = 'ok';
-        } else if (String(status).includes('PD') || String(status).includes('Lỗi') || String(status).includes('有问题')) {
+        
+        const statusLower = String(status).toLowerCase();
+        if (statusLower.includes('ok') || statusLower.includes('穫準') || statusLower.includes('đã xuất')) {
+          cardClass = 'out'; badgeClass = 'out';
+        } else if (statusLower.includes('đã nhập') || statusLower.includes('入庫')) {
+          cardClass = 'in'; badgeClass = 'in';
+        } else if (statusLower.includes('pd') || statusLower.includes('lỗi') || statusLower.includes('有问题')) {
           cardClass = 'error'; badgeClass = 'error';
         }
 
@@ -210,43 +219,43 @@
           </div>
           
           <div class="item-title">${name}</div>
-          <div class="item-detail">📌 Đơn SX (Chỉ lệnh): <b>${orderNo}</b> | Màu: <b>${color}</b></div>
+          <div class="item-detail">📌 Đơn SX: <b>${orderNo}</b> | Màu: <b>${color}</b></div>
           
-          <div class="qty-box">📦 SL xuất: ${qty} ${unit}</div>
+          <div class="qty-box">📦 SL: ${qty} ${unit}</div>
           
           <div><span class="status-badge ${badgeClass}">${status}</span></div>
 
-          <!-- MỤC NGƯỜI NHẬN XUẤT KHO -->
           <div class="receiver-box">
-            <label>👤 TÊN NGƯỜI NHẬN HÀNG XUẤT KHO:</label>
-            <input type="text" class="receiver-input" id="rec_${rIndex}" value="${receiver}" placeholder="VD: Nga, Chị Nhi, Xưởng Chuyền 1...">
+            <label>👤 TÊN NGƯỜI NHẬN XUẤT KHO (Nếu xuất):</label>
+            <input type="text" class="receiver-input" id="rec_${rIndex}" value="${receiver}" placeholder="Ghi tên: Nga, Chị Nhi, Xưởng...">
           </div>
 
-          <div class="action-row">
-            <button class="btn btn-green" onclick="updateRow(this, ${rIndex}, '穫準使用的材料(OK)')">✅ Duyệt Xuất (OK)</button>
-            <button class="btn btn-red" onclick="updateRow(this, ${rIndex}, '有问题的材料(PD)')">⚠️ Báo Lỗi / Dừng</button>
+          <div class="action-grid" style="margin-top: 10px;">
+            <button class="btn btn-blue" onclick="updateRow(this, ${rIndex}, 'Đã Nhập Kho (入庫)')">📥 1. Nhập Kho</button>
+            <button class="btn btn-green" onclick="updateRow(this, ${rIndex}, '穫準使用的材料(OK)', true)">📤 2. Xuất Kho</button>
           </div>
+          <button class="btn btn-red" style="margin-top: 6px;" onclick="updateRow(this, ${rIndex}, '有问题的材料(PD)')">⚠️ Báo Lỗi / Trả Hàng</button>
         `;
         container.appendChild(card);
       });
     }
 
-    async function updateRow(btnElement, rowIndex, newStatus) {
+    async function updateRow(btnElement, rowIndex, newStatus, isExport = false) {
       const url = document.getElementById('scriptUrl').value.trim();
       const receiverInput = document.getElementById(`rec_${rowIndex}`);
       const receiverVal = receiverInput ? receiverInput.value.trim() : '';
 
       if (!url) return alert("Thiếu Web App URL!");
 
-      if (newStatus.includes('OK') && !receiverVal) {
-        if (!confirm("Chưa điền Tên người nhận xuất kho. Bạn vẫn muốn duyệt xuất?")) {
+      if (isExport && !receiverVal) {
+        if (!confirm("Chưa ghi Tên người nhận xuất kho. Bạn vẫn muốn duyệt XUẤT KHO?")) {
           return;
         }
       }
 
       btnElement.disabled = true;
       const originalText = btnElement.innerText;
-      btnElement.innerText = "⏳ Đang cập nhật...";
+      btnElement.innerText = "⏳ Đang lưu...";
 
       const payload = {
         rowIndex: rowIndex,
@@ -264,7 +273,7 @@
           body: JSON.stringify(payload)
         });
 
-        alert(`✅ Đã cập nhật dòng #${rowIndex} thành công!`);
+        alert(`✅ Đã cập nhật dòng #${rowIndex} thành thành công!`);
         loadData();
       } catch (err) {
         alert("❌ Lỗi khi gửi dữ liệu: " + err.message);
