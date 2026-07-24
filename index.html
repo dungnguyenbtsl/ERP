@@ -176,14 +176,31 @@
       }
     }
 
+    // Hàm lấy giá trị cột với cơ chế ưu tiên tuyệt đối chính xác tên cột
     function getColValue(row, possibleNames, defaultValue = '-') {
       const keys = Object.keys(row);
+      
+      // Bước 1: Ưu tiên tìm khớp tuyệt đối (Exact match không phân biệt hoa thường, bỏ khoảng trắng)
+      for (let name of possibleNames) {
+        const cleanTarget = name.toLowerCase().replace(/\s+/g, '');
+        for (let key of keys) {
+          const cleanKey = key.toLowerCase().replace(/\s+/g, '');
+          if (cleanKey === cleanTarget) {
+            if (row[key] !== "" && row[key] !== null && row[key] !== undefined) {
+              return row[key];
+            }
+          }
+        }
+      }
+
+      // Bước 2: Tìm chuỗi chứa từ khóa nếu không khớp tuyệt đối
       for (let name of possibleNames) {
         const foundKey = keys.find(k => k.toLowerCase().replace(/\s+/g, '').includes(name.toLowerCase().replace(/\s+/g, '')));
         if (foundKey && row[foundKey] !== "" && row[foundKey] !== null && row[foundKey] !== undefined) {
           return row[foundKey];
         }
       }
+      
       return defaultValue;
     }
 
@@ -315,7 +332,8 @@
           matchedRows.forEach((row, index) => {
             const name = getColValue(row, ['摘要', '品名', '材料名稱', 'tên vật tư'], '-');
             const color = getColValue(row, ['顏色', 'màu sắc'], '-');
-            // Đảm bảo lấy chính xác cột số lượng là 數量 hoặc các dạng tương đương
+            
+            // Ép buộc ưu tiên tuyệt đối cột 數量
             const qty = getColValue(row, ['數量', 'số lượng', 'sl'], '0');
             const unit = getColValue(row, ['單位', 'đơn vị'], 'PCS');
 
