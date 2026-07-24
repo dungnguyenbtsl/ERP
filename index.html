@@ -5,12 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Quản Lý Kho 副料 SAUCONY</title>
   <style>
-    /* 1. RESET TOÀN BỘ SYSTEM FONT & SIZING - ÉP CỨNG NGUYÊN BẢN */
+    /* RESET TOÀN BỘ SYSTEM FONT & SIZING */
     html, body, table, th, td, input, button, select, span, div {
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Microsoft JhengHei", "PingFang TC", Arial, sans-serif !important;
       font-size: 12px !important;
       line-height: 1.2 !important;
-      -webkit-text-size-adjust: 100%;
       box-sizing: border-box;
     }
 
@@ -38,13 +37,9 @@
       border-bottom: 2px solid #e2e8f0;
     }
 
-    .input-group {
-      display: flex;
-      gap: 8px;
-      align-items: center;
-    }
+    .input-group { display: flex; gap: 8px; align-items: center; }
 
-    input[type="text"] {
+    input[type="text"], select {
       height: 30px;
       padding: 0 8px;
       border: 1px solid #cbd5e1;
@@ -65,9 +60,7 @@
 
     .btn-blue { background: #2563eb; color: #ffffff; }
     .btn-green { background: #16a34a; color: #ffffff; }
-    .btn-red { background: #dc2626; color: #ffffff; }
 
-    /* 2. ÉP BẢNG CHUẨN CỨNG 100% - KHÔNG TRÔI CỠ CHỮ */
     .table-container {
       overflow-x: auto;
       max-height: 75vh;
@@ -77,22 +70,14 @@
       margin-top: 8px;
     }
 
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      table-layout: auto;
-      white-space: nowrap;
-    }
+    table { width: 100%; border-collapse: collapse; white-space: nowrap; }
 
     th, td {
       border: 1px solid #e2e8f0;
       padding: 0 8px !important;
-      height: 34px !important; /* Cố định chiều cao tất cả các hàng */
+      height: 36px !important;
       vertical-align: middle;
       text-align: left;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      max-width: 250px;
     }
 
     th {
@@ -108,7 +93,6 @@
     tr:nth-child(even) { background-color: #f8fafc; }
     tr:hover { background-color: #f1f5f9; }
 
-    /* 3. ĐỒNG BỘ BADGE VÀ BUTTON TRONG BẢNG */
     .badge {
       display: inline-block;
       padding: 2px 6px;
@@ -116,34 +100,39 @@
       font-weight: 600 !important;
       font-size: 11px !important;
     }
-
     .badge-po { background: #fef3c7; color: #92400e; }
     .badge-order { background: #e0f2fe; color: #075985; }
     .badge-sku { background: #f3e8ff; color: #6b21a8; }
 
-    .status-ok { background-color: #dcfce7; color: #166534; padding: 2px 6px; border-radius: 3px; font-weight: 600 !important; }
-    .status-pending { background-color: #fef9c3; color: #854d0e; padding: 2px 6px; border-radius: 3px; font-weight: 600 !important; }
-    .status-error { background-color: #fee2e2; color: #991b1b; padding: 2px 6px; border-radius: 3px; font-weight: 600 !important; }
-
+    /* NHÃN Ô NHẬP LIỆU CHO PHÉP SỬA TRONG BẢNG */
     .table-input {
-      height: 24px !important;
-      width: 90px;
+      height: 26px !important;
+      padding: 0 6px !important;
+      border: 1px solid #cbd5e1;
+      border-radius: 3px;
+      background: #fff;
+    }
+    .table-input:focus {
+      border-color: #2563eb;
+      background: #eff6ff;
+    }
+
+    .table-select {
+      height: 26px !important;
       padding: 0 4px !important;
       border: 1px solid #cbd5e1;
       border-radius: 3px;
     }
 
     .table-btn {
-      height: 24px !important;
-      padding: 0 6px !important;
+      height: 26px !important;
+      padding: 0 8px !important;
       font-size: 11px !important;
-      margin-right: 2px;
     }
   </style>
 </head>
 <body>
 
-  <!-- CẤU HÌNH API -->
   <div class="card">
     <h2>🔗 Kết Nối Dữ Liệu Saucony</h2>
     <div class="input-group">
@@ -152,11 +141,10 @@
     </div>
   </div>
 
-  <!-- BẢNG DỮ LIỆU CHUẨN FONT CHỮ -->
   <div class="card">
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-wrap: wrap; gap: 8px;">
-      <h2>📦 Danh Sách Chi Tiết Kho 副料 SAUCONY</h2>
-      <input type="text" id="searchInput" onkeyup="filterTable()" placeholder="🔍 Tìm kiếm tự do theo PO, Chỉ lệnh, SKU, Tên VT..." style="width: 280px;">
+      <h2>📦 Danh Sách Chi Tiết Kho 副料 SAUCONY (Sửa Linh Hoạt)</h2>
+      <input type="text" id="searchInput" onkeyup="filterTable()" placeholder="🔍 Tìm kiếm tự do..." style="width: 280px;">
     </div>
     
     <div class="table-container">
@@ -167,18 +155,18 @@
             <th>*訂購單號 (PO)</th>
             <th>指令表 (Đơn SX)</th>
             <th>廠型-SKU</th>
-            <th>部件 (Bộ Phận)</th>
+            <th>部件</th>
             <th>顏色 (Màu)</th>
             <th>摘要 (Mô Tả Vật Tư)</th>
-            <th>單價 (Mã Cột)</th>
-            <th>供應商 (NCC)</th>
-            <th>鞋數量 (SL Giày)</th>
+            <th>單價</th>
+            <th>供應商</th>
+            <th>鞋數量</th>
             <th>數量 (SL VT)</th>
-            <th>單位 (ĐVT)</th>
-            <th>货物状态 (Trạng Thái)</th>
-            <th>庫存地點 (Vị Trí)</th>
+            <th>單位</th>
+            <th>货物状态 (Trạng Thái - Cho phép chọn)</th>
+            <th>庫存地點 (Vị Trí Kho)</th>
             <th>接收人員 (Người Nhận)</th>
-            <th>Thao Tác Ghi Đổi</th>
+            <th>Thao Tác</th>
           </tr>
         </thead>
         <tbody id="tableBody">
@@ -216,7 +204,6 @@
       }
     }
 
-    // Hàm chuẩn hóa chuỗi dữ liệu (Loại bỏ khoảng trắng thừa và ký tự xuống dòng gây lệch bảng)
     function cleanText(val) {
       if (val === null || val === undefined) return '-';
       let str = String(val).replace(/[\r\n]+/g, ' ').trim();
@@ -258,12 +245,8 @@
         const itemQty  = getColValue(row, ['數量', 'số lượng', 'qty', 'sl'], '0');
         const unit     = getColValue(row, ['單位', 'đơn vị', 'unit'], 'PCS');
         const status   = getColValue(row, ['货物状态', '貨物狀態', 'trạng thái', 'status'], '材料还没收到');
-        const location = getColValue(row, ['庫存地點', 'vị trí', 'kho', 'location'], '-');
+        const location = getColValue(row, ['庫存地點', 'vị trí', 'kho', 'location'], '');
         const receiver = getColValue(row, ['接收人員', 'người nhận', 'receiver'], '');
-
-        let statusClass = 'status-pending';
-        if (status.includes('OK') || status.includes('穫準')) statusClass = 'status-ok';
-        else if (status.includes('PD') || status.includes('有问题') || status.includes('Lỗi')) statusClass = 'status-error';
 
         const tr = document.createElement('tr');
         tr.innerHTML = `
@@ -277,32 +260,49 @@
           <td>${priceCode}</td>
           <td>${supplier}</td>
           <td>${shoeQty}</td>
-          <td><b style="color: #2563eb;">${itemQty}</b></td>
+          <td><input type="text" id="qty_${rIndex}" class="table-input" style="width: 60px;" value="${itemQty === '-' ? '0' : itemQty}"></td>
           <td>${unit}</td>
-          <td><span class="${statusClass}">${status}</span></td>
-          <td><b>${location}</b></td>
-          <td><input type="text" id="rec_${rIndex}" class="table-input" value="${receiver === '-' ? '' : receiver}"></td>
           <td>
-            <button class="btn-green table-btn" onclick="updateRow(${rIndex}, '穫準使用的材料(OK)')">✅ OK</button>
-            <button class="btn-red table-btn" onclick="updateRow(${rIndex}, '有问题的材料(PD)')">⚠️ Lỗi</button>
+            <!-- DẠNG DROPDOWN CHO PHÉP CHỌN TRẠNG THÁI -->
+            <select id="status_${rIndex}" class="table-select">
+              <option value="材料还没收到" ${status.includes('还没收到') ? 'selected' : ''}>⏳ 材料还没收到 (Chưa nhận)</option>
+              <option value="穫準使用的材料(OK)" ${status.includes('穫準') || status.includes('OK') ? 'selected' : ''}>✅ 穫準使用的材料(OK)</option>
+              <option value="有问题的材料(PD)" ${status.includes('有问题') || status.includes('PD') ? 'selected' : ''}>⚠️ 有问题的材料(PD)</option>
+            </select>
+          </td>
+          <td><input type="text" id="loc_${rIndex}" class="table-input" style="width: 90px;" value="${location === '-' ? '' : location}" placeholder="Nhập vị trí..."></td>
+          <td><input type="text" id="rec_${rIndex}" class="table-input" style="width: 100px;" value="${receiver === '-' ? '' : receiver}" placeholder="Nhập tên..."></td>
+          <td>
+            <button class="btn-green table-btn" onclick="saveRow(${rIndex})">💾 Lưu Dòng này</button>
           </td>
         `;
         body.appendChild(tr);
       });
     }
 
-    async function updateRow(rowIndex, newStatus) {
+    // HÀM LƯU ĐỒNG THỜI NHIỀU CỘT VỀ GOOGLE SHEET
+    async function saveRow(rowIndex) {
       const url = document.getElementById('scriptUrl').value.trim();
-      const receiverInput = document.getElementById(`rec_${rowIndex}`);
-      const receiverVal = receiverInput ? receiverInput.value : '';
+      
+      const qtyVal = document.getElementById(`qty_${rowIndex}`).value;
+      const statusVal = document.getElementById(`status_${rowIndex}`).value;
+      const locVal = document.getElementById(`loc_${rowIndex}`).value;
+      const recVal = document.getElementById(`rec_${rowIndex}`).value;
 
       if (!url) return alert("Thiếu URL kết nối!");
 
+      // Tương ứng cột trên Google Sheet:
+      // Col 11: 數量 (Số lượng)
+      // Col 20: 货物状态 (Trạng thái)
+      // Col 21: 庫存地點 (Vị trí kho)
+      // Col 22: 接收人員 (Người nhận)
       const payload = {
         rowIndex: rowIndex,
         updates: [
-          { col: 20, val: newStatus },
-          { col: 22, val: receiverVal }
+          { col: 11, val: qtyVal },
+          { col: 20, val: statusVal },
+          { col: 21, val: locVal },
+          { col: 22, val: recVal }
         ]
       };
 
@@ -314,7 +314,7 @@
           body: JSON.stringify(payload)
         });
 
-        alert(`✅ Đã cập nhật dòng #${rowIndex}!`);
+        alert(`✅ Đã lưu cập nhật cho Dòng #${rowIndex}!`);
         loadData();
       } catch (err) {
         alert("❌ Lỗi khi lưu: " + err.message);
