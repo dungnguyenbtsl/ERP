@@ -9,11 +9,14 @@
     body { background-color: #f1f5f9; padding: 12px; color: #1e293b; padding-bottom: 30px; }
     
     /* Header & Config */
-    .header-card { background: white; padding: 12px; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-bottom: 12px; }
+    .header-card { background: white; padding: 12px; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-bottom: 10px; }
     .header-title { font-size: 1rem; font-weight: bold; color: #0f172a; margin-bottom: 8px; display: flex; align-items: center; justify-content: space-between; }
     
-    input[type="text"] { width: 100%; padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.95rem; outline: none; }
-    input[type="text"]:focus { border-color: #2563eb; }
+    input[type="text"], select { width: 100%; padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.9rem; outline: none; background: white; }
+    input[type="text"]:focus, select:focus { border-color: #2563eb; }
+
+    /* Khung Lọc Nhanh */
+    .filter-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px; }
 
     .btn { width: 100%; padding: 10px; border: none; border-radius: 8px; font-weight: bold; font-size: 0.9rem; cursor: pointer; margin-top: 6px; }
     .btn-blue { background: #2563eb; color: white; }
@@ -41,30 +44,49 @@
     .status-badge.pending { background: #fef9c3; color: #854d0e; }
     .status-badge.error { background: #fee2e2; color: #991b1b; }
 
-    /* Input & Actions */
     .action-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px; }
     .receiver-input { padding: 6px 8px; font-size: 0.85rem; margin-top: 4px; }
   </style>
 </head>
 <body>
 
-  <!-- CẤU HÌNH & TÌM KIẾM -->
+  <!-- CẤU HÌNH API -->
   <div class="header-card">
     <div class="header-title">
       <span>📦 SAUCONY Mobile</span>
       <span id="totalCount" style="font-size: 0.8rem; color: #64748b;">0 mục</span>
     </div>
     <input type="text" id="scriptUrl" placeholder="Dán Web App URL vào đây..." style="margin-bottom: 8px;">
-    <button class="btn btn-blue" onclick="loadData()">🔄 Tải Dữ Liệu</button>
+    <button class="btn btn-blue" onclick="loadData()">🔄 Tải Dữ Liệu Saucony</button>
   </div>
 
-  <div class="header-card" style="padding: 8px 12px;">
-    <input type="text" id="searchInput" onkeyup="filterData()" placeholder="🔍 Tìm PO, Tên vật tư, Chỉ lệnh...">
+  <!-- BỘ LỌC TÌM KIẾM THÔNG MINH -->
+  <div class="header-card">
+    <input type="text" id="searchInput" onkeyup="applyFilters()" placeholder="🔍 Tìm PO, Tên vật tư, Chỉ lệnh, Màu sắc...">
+    
+    <div class="filter-grid">
+      <!-- Lọc theo Trạng Thái -->
+      <div>
+        <select id="statusFilter" onchange="applyFilters()">
+          <option value="ALL">⚡ Tất cả trạng thái</option>
+          <option value="PENDING">⏳ Chờ tiếp nhận</option>
+          <option value="OK">✅ Đã duyệt OK</option>
+          <option value="ERROR">⚠️ Báo Lỗi (PD)</option>
+        </select>
+      </div>
+
+      <!-- Lọc theo Đơn Sản Xuất -->
+      <div>
+        <select id="orderFilter" onchange="applyFilters()">
+          <option value="ALL">📋 Tất cả Đơn SX</option>
+        </select>
+      </div>
+    </div>
   </div>
 
   <!-- DANH SÁCH THẺ (CARDS) -->
   <div id="cardContainer" class="card-list">
-    <div style="text-align:center; color:#64748b; padding: 20px;">Vui lòng bấm <b>Tải Dữ Liệu</b> để bắt đầu.</div>
+    <div style="text-align:center; color:#64748b; padding: 20px;">Vui lòng bấm <b>Tải Dữ Liệu Saucony</b> để bắt đầu.</div>
   </div>
 
   <script>
@@ -89,7 +111,9 @@
       try {
         const res = await fetch(url);
         sheetData = await res.json();
-        renderCards(sheetData);
+        
+        populateOrderDropdown(sheetData); // Tự động tạo danh sách Đơn SX vào menu lọc
+        applyFilters(); // Hiển thị dữ liệu
       } catch (err) {
         container.innerHTML = '<div style="text-align:center; color:red; padding:20px;">❌ Lỗi tải dữ liệu. Kiểm tra lại URL!</div>';
       }
@@ -106,13 +130,61 @@
       return defaultValue;
     }
 
+    // Tự động gom các Mã Đơn SX vào Menu Lọc thả xuống
+    function populateOrderDropdown(data) {
+      const orderSelect = document.getElementById('orderFilter');
+      orderSelect.innerHTML = '<option value="ALL">📋 Tất cả Đơn SX</option>';
+      
+      const orders = new Set();
+      data.forEach(row => {
+        const orderNo = getColValue(row, ['指令表', 'đơn sản xuất', 'po sx'], '');
+        if (orderNo && orderNo !== '-') orders.add(orderNo);
+      });
+
+      orders.forEach(ord => {
+        const opt = document.createElement('option');
+        opt.value = ord;
+        opt.textContent = `Chỉ lệnh: ${ord}`;
+        orderSelect.appendChild(opt);
+      });
+    }
+
+    // HÀM XỬ LÝ LỌC KẾT HỢP (TÌM KIẾM + TRẠNG THÁI + ĐƠN SX)
+    function applyFilters() {
+      const searchText = document.getElementById('searchInput').value.toLowerCase();
+      const selectedStatus = document.getElementById('statusFilter').value;
+      const selectedOrder = document.getElementById('orderFilter').value;
+
+      const filtered = sheetData.filter(row => {
+        const status = String(getColValue(row, ['货物状态', '貨物狀態', 'trạng thái'], '')).toLowerCase();
+        const orderNo = String(getColValue(row, ['指令表', 'đơn sản xuất', 'po sx'], ''));
+        const rowString = JSON.stringify(row).toLowerCase();
+
+        // 1. Kiểm tra Từ khóa
+        const matchSearch = rowString.includes(searchText);
+
+        // 2. Kiểm tra Trạng thái
+        let matchStatus = true;
+        if (selectedStatus === 'OK') matchStatus = status.includes('ok') || status.includes('穫準');
+        else if (selectedStatus === 'ERROR') matchStatus = status.includes('pd') || status.includes('lỗi') || status.includes('有问题');
+        else if (selectedStatus === 'PENDING') matchStatus = !status.includes('ok') && !status.includes('穫準') && !status.includes('pd') && !status.includes('lỗi');
+
+        // 3. Kiểm tra Đơn SX
+        let matchOrder = (selectedOrder === 'ALL') || (orderNo === selectedOrder);
+
+        return matchSearch && matchStatus && matchOrder;
+      });
+
+      renderCards(filtered);
+    }
+
     function renderCards(data) {
       const container = document.getElementById('cardContainer');
       container.innerHTML = '';
       document.getElementById('totalCount').innerText = `${data.length} mục`;
 
       if (!data || data.length === 0) {
-        container.innerHTML = '<div style="text-align:center; padding:20px;">Không tìm thấy dữ liệu.</div>';
+        container.innerHTML = '<div style="text-align:center; padding:20px; color:#64748b;">Không có vật tư nào phù hợp với bộ lọc.</div>';
         return;
       }
 
@@ -132,7 +204,7 @@
         let badgeClass = 'pending';
         if (String(status).includes('OK') || String(status).includes('穫準')) {
           cardClass = 'ok'; badgeClass = 'ok';
-        } else if (String(status).includes('PD') || String(status).includes('Lỗi')) {
+        } else if (String(status).includes('PD') || String(status).includes('Lỗi') || String(status).includes('有问题')) {
           cardClass = 'error'; badgeClass = 'error';
         }
 
@@ -140,7 +212,7 @@
         card.className = `item-card ${cardClass}`;
         card.innerHTML = `
           <div class="card-header">
-            <span class="badge-row">#${rIndex}</span>
+            <span class="badge-row">Dòng #${rIndex}</span>
             <span class="badge-po">PO: ${po}</span>
           </div>
           
@@ -152,12 +224,12 @@
           <div><span class="status-badge ${badgeClass}">${status}</span></div>
 
           <div style="margin-top:6px;">
-            <input type="text" class="receiver-input" id="rec_${rIndex}" value="${receiver}" placeholder="Nhập tên người nhận...">
+            <input type="text" class="receiver-input" id="rec_${rIndex}" value="${receiver}" placeholder="Nhập tên người nhận (Nga / Chị Nhi...)">
           </div>
 
           <div class="action-row">
             <button class="btn btn-green" style="margin:0;" onclick="updateRow(${rIndex}, '穫準使用的材料(OK)')">✅ Duyệt OK</button>
-            <button class="btn btn-red" style="margin:0;" onclick="updateRow(${rIndex}, '有文件的材料(PD)')">⚠️ Báo Lỗi</button>
+            <button class="btn btn-red" style="margin:0;" onclick="updateRow(${rIndex}, '有问题的材料(PD)')">⚠️ Báo Lỗi</button>
           </div>
         `;
         container.appendChild(card);
@@ -191,12 +263,6 @@
       } catch (err) {
         alert("❌ Lỗi khi gửi dữ liệu!");
       }
-    }
-
-    function filterData() {
-      const val = document.getElementById('searchInput').value.toLowerCase();
-      const filtered = sheetData.filter(r => JSON.stringify(r).toLowerCase().includes(val));
-      renderCards(filtered);
     }
   </script>
 </body>
