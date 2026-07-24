@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>富裕鞋業有限公司 - 生產訂單材料匯總表</title>
+  <title>富裕鞋業有限公司 - 批量生產訂單材料匯總表</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: Arial, sans-serif; }
     body { background-color: #f1f5f9; padding: 12px; color: #1e293b; }
@@ -13,14 +13,19 @@
     .control-title { font-size: 1.1rem; font-weight: bold; color: #0f172a; margin-bottom: 10px; }
     
     input[type="text"], select { width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.95rem; margin-bottom: 10px; outline: none; }
-    .filter-row { display: grid; grid-template-columns: 2fr 1fr; gap: 10px; margin-bottom: 5px; }
     
     .btn { width: 100%; padding: 12px; border: none; border-radius: 8px; font-weight: bold; font-size: 1rem; cursor: pointer; margin-top: 5px; }
     .btn-blue { background: #2563eb; color: white; }
     .btn-green { background: #16a34a; color: white; }
 
+    /* Danh sách chọn nhiều đơn */
+    .order-checklist { max-height: 150px; overflow-y: auto; border: 1px solid #cbd5e1; border-radius: 8px; padding: 8px; background: #fff; margin-bottom: 10px; }
+    .order-checklist label { display: flex; align-items: center; gap: 8px; padding: 4px 6px; font-size: 0.9rem; cursor: pointer; }
+    .order-checklist label:hover { background: #f1f5f9; border-radius: 4px; }
+
     /* A4 列印預覽外框 */
-    .a4-preview { background: white; width: 100%; max-width: 210mm; min-height: 297mm; margin: 0 auto; padding: 12mm 15mm; box-shadow: 0 4px 10px rgba(0,0,0,0.15); border-radius: 4px; position: relative; display: flex; flex-direction: column; justify-content: space-between; }
+    .a4-preview-container { display: flex; flex-direction: column; gap: 20px; }
+    .a4-sheet { background: white; width: 100%; max-width: 210mm; min-height: 297mm; margin: 0 auto; padding: 12mm 15mm; box-shadow: 0 4px 10px rgba(0,0,0,0.15); border-radius: 4px; position: relative; display: flex; flex-direction: column; justify-content: space-between; page-break-after: always; }
     
     /* 標頭排版 */
     .sheet-header { position: relative; border-bottom: 2px solid #1e293b; padding-bottom: 10px; margin-bottom: 12px; text-align: center; }
@@ -37,10 +42,14 @@
     .order-info { display: grid; grid-template-columns: 1fr 1.3fr 1fr; gap: 8px; margin-bottom: 12px; font-size: 0.88rem; background: #f8fafc; padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 4px; align-items: center; }
     .order-info div { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     
-    /* 材料表格 */
+    /* 材料表格 & Google Sheets style filter headers */
     table { width: 100%; border-collapse: collapse; margin-bottom: 15px; }
     th, td { border: 1px solid #333; padding: 8px 8px; font-size: 0.85rem; text-align: left; vertical-align: middle; }
     th { background-color: #e2e8f0; font-weight: bold; text-align: center; color: #0f172a; }
+    th .th-title { margin-bottom: 4px; display: block; }
+    
+    .sheet-filter { width: 100%; padding: 4px 6px; font-size: 0.75rem; border: 1px solid #94a3b8; border-radius: 4px; background-color: #fff; outline: none; color: #334155; }
+
     td.center { text-align: center; }
     td.right { text-align: right; }
 
@@ -53,91 +62,37 @@
     @media print {
       body { background: white; padding: 0; }
       .control-card { display: none; }
-      .a4-preview { box-shadow: none; padding: 10mm; margin: 0; max-width: 100%; width: 100%; min-height: auto; }
+      .sheet-filter { display: none; }
+      .a4-sheet { box-shadow: none; padding: 10mm; margin: 0; max-width: 100%; width: 100%; min-height: 297mm; page-break-after: always; }
     }
   </style>
 </head>
 <body>
 
-  <!-- 控制面板 (列印時會隱藏) -->
   <div class="control-card">
-    <div class="control-title">🖨️ 選擇與篩選訂單資料 (A4 匯總)</div>
+    <div class="control-title">🖨️ 批量選擇與列印訂單 (A4 匯總)</div>
     <input type="text" id="scriptUrl" placeholder="請貼上 Google Sheets 網頁應用程式網址 (Web App URL)..." style="margin-bottom: 8px;">
     
     <button class="btn btn-blue" onclick="loadData()">🔄 從庫存載入資料</button>
 
     <div style="margin-top: 12px;">
-      <label style="font-size: 0.85rem; font-weight: bold; display: block; margin-bottom: 4px;">選擇指令表 (訂單號):</label>
-      <select id="orderSelect" onchange="renderA4Sheet()">
-        <option value="">-- 請選擇要列印的指令表 --</option>
-      </select>
-    </div>
-
-    <!-- Ô Lọc nhanh & Lọc trạng thái -->
-    <div style="margin-top: 10px;">
-      <label style="font-size: 0.85rem; font-weight: bold; display: block; margin-bottom: 4px;">🔍 篩選表格內容:</label>
-      <div class="filter-row">
-        <input type="text" id="searchInput" placeholder="輸入關鍵字篩選品名、顏色..." oninput="renderA4Sheet()" style="margin-bottom: 0;">
-        <select id="statusFilter" onchange="renderA4Sheet()" style="margin-bottom: 0;">
-          <option value="all">全部狀態</option>
-          <option value="checked">已點檢</option>
-          <option value="unchecked">未點檢</option>
-        </select>
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+        <label style="font-size: 0.85rem; font-weight: bold;">選擇指令表 (可多選進行批量列印):</label>
+        <button onclick="toggleSelectAll(true)" style="font-size: 0.75rem; background: none; border: none; color: #2563eb; cursor: pointer; text-decoration: underline;">全選</button>
+        <button onclick="toggleSelectAll(false)" style="font-size: 0.75rem; background: none; border: none; color: #64748b; cursor: pointer; text-decoration: underline;">取消全選</button>
+      </div>
+      <div id="orderChecklist" class="order-checklist">
+        <span style="color: #64748b; font-size: 0.85rem;">請先載入資料...</span>
       </div>
     </div>
 
-    <button class="btn btn-green" onclick="window.print()" style="margin-top: 15px;">🖨️ 列印此 A4 匯總單</button>
+    <button class="btn btn-green" onclick="window.print()" style="margin-top: 15px;">🖨️ 批量列印所選的 A4 匯總單</button>
   </div>
 
-  <!-- A4 列印頁面內容 -->
-  <div class="a4-preview" id="a4Content">
-    <div>
-      <div class="sheet-header">
-        <div class="logo-box" id="logoContainer">
-          <img src="https://dungnguyenbtsl.github.io/FULIAO-LABEL/logo.jpeg" alt="富裕鞋業 Logo" onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\'logo-placeholder\'>Logo Error</div>';">
-        </div>
-        <div class="header-content">
-          <h1>富裕鞋業有限公司</h1>
-          <h2>SAUCONY 生產材料總匯表</h2>
-          <p><b>材料倉庫備料清單</b></p>
-        </div>
-      </div>
-
-      <div class="order-info" id="orderMetaInfo">
-        <div><b>指令表:</b> ---</div>
-        <div><b>廠型-SKU:</b> ---</div>
-        <div><b>客戶交期:</b> ---</div>
-      </div>
-
-      <table>
-        <thead>
-          <tr>
-            <th style="width: 6%;">序號</th>
-            <th style="width: 44%;">材料名稱 / 品名 (摘要)</th>
-            <th style="width: 18%;">顏色</th>
-            <th style="width: 12%;">數量</th>
-            <th style="width: 10%;">單位</th>
-            <th style="width: 10%;">點檢</th>
-          </tr>
-        </thead>
-        <tbody id="materialTableBody">
-          <tr>
-            <td colspan="6" style="text-align: center; color: #64748b; padding: 25px;">請先載入資料並選擇上方指令表。</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-
-    <div class="sign-section">
-      <div class="sign-box">
-        <p><b>製表人 / 倉管</b></p>
-        <div class="sign-space"></div>
-        <p>(簽名)</p>
-      </div>
-      <div class="sign-box">
-        <p><b>領料人 / 車間代表</b></p>
-        <div class="sign-space"></div>
-        <p>(簽名)</p>
+  <div class="a4-preview-container" id="a4Container">
+    <div class="a4-sheet">
+      <div style="text-align: center; color: #64748b; padding: 50px 0;">
+        <h2>請先載入資料並在上方勾選要列印的指令表。</h2>
       </div>
     </div>
   </div>
@@ -162,8 +117,8 @@
         const res = await fetch(url);
         sheetData = await res.json();
         
-        populateOrderSelect(sheetData);
-        alert("✅ 資料載入成功！請在下方下拉選單選擇指令表。");
+        populateOrderChecklist(sheetData);
+        alert("✅ 資料載入成功！請在上方勾選您要列印的指令表。");
       } catch (err) {
         alert("❌ 載入失敗，請檢查網址是否正確！");
       }
@@ -180,9 +135,9 @@
       return defaultValue;
     }
 
-    function populateOrderSelect(data) {
-      const select = document.getElementById('orderSelect');
-      select.innerHTML = '<option value="">-- 請選擇要列印的指令表 --</option>';
+    function populateOrderChecklist(data) {
+      const checklistDiv = document.getElementById('orderChecklist');
+      checklistDiv.innerHTML = '';
       
       const orders = new Set();
       data.forEach(row => {
@@ -190,93 +145,147 @@
         if (orderNo && orderNo !== '-') orders.add(orderNo);
       });
 
+      if (orders.size === 0) {
+        checklistDiv.innerHTML = '<span style="color: red; font-size: 0.85rem;">找不到任何指令表資料！</span>';
+        return;
+      }
+
       orders.forEach(ord => {
-        const opt = document.createElement('option');
-        opt.value = ord;
-        opt.textContent = `指令表: ${ord}`;
-        select.appendChild(opt);
+        const label = document.createElement('label');
+        label.innerHTML = `<input type="checkbox" value="${ord}" onchange="renderA4SheetsBatch()"> 指令表: ${ord}`;
+        checklistDiv.appendChild(label);
       });
+
+      renderA4SheetsBatch();
     }
 
-    function renderA4Sheet() {
-      const selectedOrder = document.getElementById('orderSelect').value;
-      const searchKeyword = document.getElementById('searchInput').value.trim().toLowerCase();
-      const statusFilter = document.getElementById('statusFilter').value;
-      
-      const tbody = document.getElementById('materialTableBody');
-      const metaInfo = document.getElementById('orderMetaInfo');
+    function toggleSelectAll(select) {
+      const checkboxes = document.querySelectorAll('#orderChecklist input[type="checkbox"]');
+      checkboxes.forEach(cb => cb.checked = select);
+      renderA4SheetsBatch();
+    }
 
-      if (!selectedOrder) {
-        tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: #64748b; padding: 25px;">尚未選擇指令表。</td></tr>';
-        metaInfo.innerHTML = '<div><b>指令表:</b> ---</div><div><b>廠型-SKU:</b> ---</div><div><b>客戶交期:</b> ---</div>';
+    function renderA4SheetsBatch() {
+      const container = document.getElementById('a4Container');
+      const checkboxes = document.querySelectorAll('#orderChecklist input[type="checkbox"]:checked');
+      
+      if (checkboxes.length === 0) {
+        container.innerHTML = `
+          <div class="a4-sheet">
+            <div style="text-align: center; color: #64748b; padding: 80px 20px;">
+              <h2>尚未選擇任何指令表</h2>
+              <p style="margin-top: 10px; font-size: 0.9rem;">請在上方控制面板勾選您想要預覽或列印的訂單。</p>
+            </div>
+          </div>
+        `;
         return;
       }
 
-      // Lọc theo lệnh sản xuất được chọn
-      let matchedRows = sheetData.filter(row => {
-        const orderNo = String(getColValue(row, ['指令表', 'đơn sản xuất', 'po sx'], ''));
-        return orderNo === selectedOrder;
-      });
+      let allPagesHtml = '';
 
-      if (matchedRows.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: red; padding: 25px;">找不到該指令表的材料資料。</td></tr>';
-        return;
-      }
+      checkboxes.forEach(cb => {
+        const selectedOrder = cb.value;
 
-      let factorySku = getColValue(matchedRows[0], ['廠型-SKU', '廠型', 'sku', 'hình thể'], '-');
-      let deliveryDate = getColValue(matchedRows[0], ['客戶交期', '出貨日期', 'ngày xuất', 'xuất hàng'], '-');
-      
-      if (deliveryDate && deliveryDate !== '-') {
-        try {
-          const d = new Date(deliveryDate);
-          if (!isNaN(d.getTime())) {
-            deliveryDate = d.toLocaleDateString('zh-TW');
+        const matchedRows = sheetData.filter(row => {
+          const orderNo = String(getColValue(row, ['指令表', 'đơn sản xuất', 'po sx'], ''));
+          return orderNo === selectedOrder;
+        });
+
+        let factorySku = '-';
+        let deliveryDate = '-';
+
+        if (matchedRows.length > 0) {
+          factorySku = getColValue(matchedRows[0], ['廠型-SKU', '廠型', 'sku', 'hình thể'], '-');
+          deliveryDate = getColValue(matchedRows[0], ['客戶交期', '出貨日期', 'ngày xuất', 'xuất hàng'], '-');
+          
+          if (deliveryDate && deliveryDate !== '-') {
+            try {
+              const d = new Date(deliveryDate);
+              if (!isNaN(d.getTime())) {
+                deliveryDate = d.toLocaleDateString('zh-TW');
+              }
+            } catch (e) {}
           }
-        } catch (e) {}
-      }
+        }
 
-      metaInfo.innerHTML = `
-        <div title="${selectedOrder}"><b>指令表:</b> <span style="color:#2563eb;">${selectedOrder}</span></div>
-        <div title="${factorySku}"><b>廠型-SKU:</b> <span style="color:#0f172a; font-weight:bold;">${factorySku}</span></div>
-        <div title="${deliveryDate}"><b>客戶交期:</b> <span style="color:#b45309; font-weight:bold;">${deliveryDate}</span></div>
-      `;
+        let tableRowsHtml = '';
+        if (matchedRows.length === 0) {
+          tableRowsHtml = '<tr><td colspan="6" style="text-align: center; color: red; padding: 25px;">找不到該指令表的材料資料。</td></tr>';
+        } else {
+          matchedRows.forEach((row, index) => {
+            const name = getColValue(row, ['摘要', '品名', '材料名稱', 'tên vật tư'], '-');
+            const color = getColValue(row, ['顏色', 'màu sắc'], '-');
+            const qty = getColValue(row, ['數量', 'số lượng'], '0');
+            const unit = getColValue(row, ['單位', 'đơn vị'], 'PCS');
 
-      // Áp dụng thêm bộ lọc tìm kiếm và trạng thái trên giao diện
-      let filteredRows = matchedRows.filter(row => {
-        const name = String(getColValue(row, ['摘要', '品名', '材料名稱', 'tên vật tư'], '')).toLowerCase();
-        const color = String(getColValue(row, ['顏色', 'màu sắc'], '')).toLowerCase();
-        
-        // Lọc theo từ khóa tìm kiếm
-        const matchesSearch = !searchKeyword || name.includes(searchKeyword) || color.includes(searchKeyword);
-        
-        return matchesSearch;
-      });
+            tableRowsHtml += `
+              <tr>
+                <td class="center">${index + 1}</td>
+                <td><b>${name}</b></td>
+                <td class="center">${color}</td>
+                <td class="right" style="font-weight: bold; color: #1d4ed8;">${qty}</td>
+                <td class="center">${unit}</td>
+                <td class="center">☐</td>
+              </tr>
+            `;
+          });
+        }
 
-      if (filteredRows.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: #64748b; padding: 25px;">沒有符合篩選條件的材料。</td></tr>';
-        return;
-      }
+        // Tạo khung HTML chuẩn cho từng trang A4 của đơn hàng
+        allPagesHtml += `
+          <div class="a4-sheet">
+            <div>
+              <div class="sheet-header">
+                <div class="logo-box">
+                  <img src="https://dungnguyenbtsl.github.io/FULIAO-LABEL/logo.jpeg" alt="富裕鞋業 Logo" onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\'logo-placeholder\'>Logo Error</div>';">
+                </div>
+                <div class="header-content">
+                  <h1>富裕鞋業有限公司</h1>
+                  <h2>SAUCONY 生產材料總匯表</h2>
+                  <p><b>材料倉庫備料清單</b></p>
+                </div>
+              </div>
 
-      let html = '';
-      filteredRows.forEach((row, index) => {
-        const name = getColValue(row, ['摘要', '品名', '材料名稱', 'tên vật tư'], '-');
-        const color = getColValue(row, ['顏色', 'màu sắc'], '-');
-        const qty = getColValue(row, ['數量', 'số lượng'], '0');
-        const unit = getColValue(row, ['單位', 'đơn vị'], 'PCS');
+              <div class="order-info">
+                <div title="${selectedOrder}"><b>指令表:</b> <span style="color:#2563eb;">${selectedOrder}</span></div>
+                <div title="${factorySku}"><b>廠型-SKU:</b> <span style="color:#0f172a; font-weight:bold;">${factorySku}</span></div>
+                <div title="${deliveryDate}"><b>客戶交期:</b> <span style="color:#b45309; font-weight:bold;">${deliveryDate}</span></div>
+              </div>
 
-        html += `
-          <tr>
-            <td class="center">${index + 1}</td>
-            <td><b>${name}</b></td>
-            <td class="center">${color}</td>
-            <td class="right" style="font-weight: bold; color: #1d4ed8;">${qty}</td>
-            <td class="center">${unit}</td>
-            <td class="center">☐</td>
-          </tr>
+              <table>
+                <thead>
+                  <tr>
+                    <th style="width: 6%;">序號</th>
+                    <th style="width: 44%;">材料名稱 / 品名 (摘要)</th>
+                    <th style="width: 18%;">顏色</th>
+                    <th style="width: 12%;">數量</th>
+                    <th style="width: 10%;">單位</th>
+                    <th style="width: 10%;">點檢</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${tableRowsHtml}
+                </tbody>
+              </table>
+            </div>
+
+            <div class="sign-section">
+              <div class="sign-box">
+                <p><b>製表人 / 倉管</b></p>
+                <div class="sign-space"></div>
+                <p>(簽名)</p>
+              </div>
+              <div class="sign-box">
+                <p><b>領料人 / 車間代表</b></p>
+                <div class="sign-space"></div>
+                <p>(簽名)</p>
+              </div>
+            </div>
+          </div>
         `;
       });
 
-      tbody.innerHTML = html;
+      container.innerHTML = allPagesHtml;
     }
   </script>
 </body>
