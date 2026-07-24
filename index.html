@@ -21,29 +21,30 @@
     /* A4 列印預覽外框 */
     .a4-preview { background: white; width: 100%; max-width: 210mm; min-height: 297mm; margin: 0 auto; padding: 15mm; box-shadow: 0 4px 10px rgba(0,0,0,0.15); border-radius: 4px; position: relative; }
     
-    /* 標頭排版優化：絕對定位 Logo 保持置中完美對齊 */
+    /* 標頭排版：Logo 絕對定位 + 文字置中 */
     .sheet-header { position: relative; border-bottom: 2px solid #000; padding-bottom: 12px; margin-bottom: 15px; text-align: center; }
-    .logo-box { position: absolute; left: 0; top: 0; width: 70px; height: 50px; display: flex; align-items: center; justify-content: center; }
+    .logo-box { position: absolute; left: 0; top: 2px; width: 65px; height: 45px; display: flex; align-items: center; justify-content: center; }
     .logo-box img { max-width: 100%; max-height: 100%; object-fit: contain; }
-    .logo-placeholder { font-size: 0.75rem; color: #64748b; border: 1px dashed #cbd5e1; padding: 5px; text-align: center; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; }
+    .logo-placeholder { font-size: 0.7rem; color: #64748b; border: 1px dashed #cbd5e1; padding: 5px; text-align: center; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; }
 
-    .header-content { padding: 0 80px; } /* Tránh chữ bị đè vào vị trí của logo ở góc trái */
-    .header-content h1 { font-size: 1.1rem; font-weight: bold; color: #334155; margin-bottom: 4px; letter-spacing: 0.5px; }
-    .header-content h2 { font-size: 1.35rem; font-weight: bold; text-transform: uppercase; margin-bottom: 4px; color: #0f172a; }
-    .header-content p { font-size: 0.9rem; color: #475569; }
+    .header-content { padding: 0 75px; } 
+    .header-content h1 { font-size: 1rem; font-weight: bold; color: #475569; margin-bottom: 3px; letter-spacing: 0.5px; }
+    .header-content h2 { font-size: 1.45rem; font-weight: bold; text-transform: uppercase; margin-bottom: 3px; color: #0f172a; letter-spacing: 0.5px; }
+    .header-content p { font-size: 0.85rem; color: #64748b; }
 
-    .order-info { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; margin-bottom: 15px; font-size: 0.95rem; background: #f8fafc; padding: 10px; border: 1px solid #e2e8f0; }
+    /* Thông tin đơn hàng cân đối */
+    .order-info { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; margin-bottom: 15px; font-size: 0.9rem; background: #f8fafc; padding: 10px 12px; border: 1px solid #e2e8f0; border-radius: 4px; }
     
-    /* 材料表格 */
-    table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
-    th, td { border: 1px solid #333; padding: 8px 10px; font-size: 0.9rem; text-align: left; }
+    /* 材料表格 - Tối ưu kích thước, padding thoáng hơn */
+    table { width: 100%; border-collapse: collapse; margin-bottom: 25px; }
+    th, td { border: 1px solid #333; padding: 9px 10px; font-size: 0.88rem; text-align: left; vertical-align: middle; }
     th { background-color: #e2e8f0; font-weight: bold; text-align: center; }
     td.center { text-align: center; }
     td.right { text-align: right; }
 
-    .sign-section { display: flex; justify-content: space-between; margin-top: 30px; text-align: center; font-size: 0.95rem; }
-    .sign-box { width: 45%; }
-    .sign-space { height: 60px; }
+    .sign-section { display: flex; justify-content: space-between; margin-top: 35px; text-align: center; font-size: 0.9rem; }
+    .sign-box { width: 40%; }
+    .sign-space { height: 55px; }
 
     /* 列印時自動隱藏控制選單 */
     @media print {
@@ -55,7 +56,6 @@
 </head>
 <body>
 
-  <!-- 控制面板 (列印時會隱藏) -->
   <div class="control-card">
     <div class="control-title">🖨️ 選擇列印訂單 (A4 匯總)</div>
     <input type="text" id="scriptUrl" placeholder="請貼上 Google Sheets 網頁應用程式網址 (Web App URL)..." style="margin-bottom: 8px;">
@@ -72,7 +72,6 @@
     <button class="btn btn-green" onclick="window.print()" style="margin-top: 15px;">🖨️ 列印此 A4 匯總單</button>
   </div>
 
-  <!-- A4 列印頁面內容 -->
   <div class="a4-preview" id="a4Content">
     <div class="sheet-header">
       <div class="logo-box" id="logoContainer">
@@ -94,17 +93,17 @@
     <table>
       <thead>
         <tr>
-          <th style="width: 8%;">序號</th>
-          <th style="width: 42%;">材料名稱 / 品名 (摘要)</th>
-          <th style="width: 15%;">顏色</th>
-          <th style="width: 15%;">數量</th>
+          <th style="width: 6%;">序號</th>
+          <th style="width: 44%;">材料名稱 / 品名 (摘要)</th>
+          <th style="width: 16%;">顏色</th>
+          <th style="width: 14%;">數量</th>
           <th style="width: 10%;">單位</th>
           <th style="width: 10%;">點檢</th>
         </tr>
       </thead>
       <tbody id="materialTableBody">
         <tr>
-          <td colspan="6" style="text-align: center; color: #64748b; padding: 20px;">請先載入資料並選擇上方指令表。</td>
+          <td colspan="6" style="text-align: center; color: #64748b; padding: 25px;">請先載入資料並選擇上方指令表。</td>
         </tr>
       </tbody>
     </table>
@@ -185,7 +184,7 @@
       const metaInfo = document.getElementById('orderMetaInfo');
 
       if (!selectedOrder) {
-        tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: #64748b; padding: 20px;">尚未選擇指令表。</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: #64748b; padding: 25px;">尚未選擇指令表。</td></tr>';
         metaInfo.innerHTML = '<div><b>指令表:</b> ---</div><div><b>廠型-SKU:</b> ---</div><div><b>客戶交期:</b> ---</div>';
         return;
       }
@@ -196,7 +195,7 @@
       });
 
       if (matchedRows.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: red; padding: 20px;">找不到該指令表的材料資料。</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: red; padding: 25px;">找不到該指令表的材料資料。</td></tr>';
         return;
       }
 
@@ -213,9 +212,9 @@
       }
 
       metaInfo.innerHTML = `
-        <div><b>指令表:</b> <span style="color:#2563eb; font-size:1.05rem;">${selectedOrder}</span></div>
-        <div><b>廠型-SKU:</b> <span style="color:#0f172a; font-size:1.05rem; font-weight:bold;">${factorySku}</span></div>
-        <div><b>客戶交期:</b> <span style="color:#b45309; font-size:1.05rem; font-weight:bold;">${deliveryDate}</span></div>
+        <div><b>指令表:</b> <span style="color:#2563eb; font-size:0.95rem;">${selectedOrder}</span></div>
+        <div><b>廠型-SKU:</b> <span style="color:#0f172a; font-size:0.95rem; font-weight:bold;">${factorySku}</span></div>
+        <div><b>客戶交期:</b> <span style="color:#b45309; font-size:0.95rem; font-weight:bold;">${deliveryDate}</span></div>
       `;
 
       let html = '';
@@ -230,7 +229,7 @@
             <td class="center">${index + 1}</td>
             <td><b>${name}</b></td>
             <td class="center">${color}</td>
-            <td class="right" style="font-weight: bold; font-size: 1rem; color: #1d4ed8;">${qty}</td>
+            <td class="right" style="font-weight: bold; font-size: 0.95rem; color: #1d4ed8;">${qty}</td>
             <td class="center">${unit}</td>
             <td class="center">☐</td>
           </tr>
