@@ -28,12 +28,12 @@
 
     .a4-preview-container { display: flex; flex-direction: column; gap: 15px; align-items: center; }
     
-    /* Cố định kích thước A4 ngang tuyệt đối, ngăn tràn trang */
     @page {
       size: A4 landscape;
       margin: 5mm;
     }
 
+    /* Đảm bảo mỗi đơn đúng 1 trang A4 ngang, không bị khoảng trống thừa */
     .a4-sheet { 
       background: white; 
       width: 297mm; 
@@ -51,7 +51,6 @@
       break-inside: avoid;
       display: flex;
       flex-direction: column;
-      justify-content: space-between;
     }
     
     .sheet-header { border-bottom: 1.5px solid #1e293b; padding-bottom: 2px; margin-bottom: 3px; text-align: center; position: relative; }
@@ -66,16 +65,17 @@
 
     .order-info { display: grid; grid-template-columns: 1fr 1.2fr 1fr 1fr; gap: 4px; margin-bottom: 3px; font-size: 0.6rem; background: #f8fafc; padding: 2px 6px; border: 1px solid #cbd5e1; border-radius: 4px; }
     
-    table { width: 100%; border-collapse: collapse; margin-bottom: 3px; }
+    table { width: 100%; border-collapse: collapse; margin-bottom: 4px; }
     th, td { border: 1px solid #333; padding: 1.5px 4px; font-size: 0.6rem; text-align: left; vertical-align: middle; }
     th { background-color: #e2e8f0; font-weight: bold; text-align: center; color: #0f172a; }
     
     td.center { text-align: center; }
     td.right { text-align: right; }
 
-    .sign-section { display: flex; justify-content: space-between; margin-bottom: 2px; text-align: center; font-size: 0.6rem; }
+    /* Đưa phần chữ ký lên gần bảng và gom gọn lại */
+    .sign-section { display: flex; justify-content: space-between; margin-top: 4px; text-align: center; font-size: 0.6rem; }
     .sign-box { width: 30%; }
-    .sign-space { height: 10px; }
+    .sign-space { height: 14px; }
 
     @media print {
       body { background: white; padding: 0; }
