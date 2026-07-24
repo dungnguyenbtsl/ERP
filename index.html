@@ -18,8 +18,11 @@
     .btn-blue { background: #2563eb; color: white; }
     .btn-green { background: #16a34a; color: white; }
 
-    /* Google Sheets style filter cho phần chọn danh sách */
-    .filter-input { width: 100%; padding: 6px 8px; font-size: 0.85rem; border: 1px solid #cbd5e1; border-radius: 6px; margin-bottom: 8px; outline: none; }
+    /* Khu vực bộ lọc đa trường */
+    .filter-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 8px; margin-bottom: 10px; }
+    .filter-group { display: flex; flex-direction: column; }
+    .filter-group label { font-size: 0.8rem; font-weight: bold; color: #475569; margin-bottom: 4px; }
+    .filter-input { width: 100%; padding: 7px 10px; font-size: 0.85rem; border: 1px solid #cbd5e1; border-radius: 6px; outline: none; background: #fff; }
 
     /* Danh sách chọn nhiều đơn */
     .order-checklist { max-height: 150px; overflow-y: auto; border: 1px solid #cbd5e1; border-radius: 8px; padding: 8px; background: #fff; margin-bottom: 10px; }
@@ -104,16 +107,29 @@
     <button class="btn btn-blue" onclick="loadData()">🔄 從庫存載入資料</button>
 
     <div style="margin-top: 12px;">
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-        <label style="font-size: 0.85rem; font-weight: bold;">選擇指令表 (可多選進行批量列印):</label>
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+        <label style="font-size: 0.85rem; font-weight: bold;">多 trường tìm kiếm & Lọc lệnh sản xuất:</label>
         <div>
           <button onclick="toggleSelectAll(true)" style="font-size: 0.75rem; background: none; border: none; color: #2563eb; cursor: pointer; text-decoration: underline; margin-right: 8px;">全選</button>
           <button onclick="toggleSelectAll(false)" style="font-size: 0.75rem; background: none; border: none; color: #64748b; cursor: pointer; text-decoration: underline;">取消全選</button>
         </div>
       </div>
       
-      <!-- Ô nhập Filter tìm kiếm nhanh mã đơn -->
-      <input type="text" id="orderFilterInput" class="filter-input" placeholder="🔍 快速搜尋過濾指令表 (例如: 3778...)" oninput="filterOrderList()">
+      <!-- Giao diện bộ lọc đa trường (Filter Grid) -->
+      <div class="filter-grid">
+        <div class="filter-group">
+          <label>指令表 (Mã đơn):</label>
+          <input type="text" id="filterOrder" class="filter-input" placeholder="Nhập mã đơn..." oninput="applyFilters()">
+        </div>
+        <div class="filter-group">
+          <label>廠型-SKU (Mã SKU):</label>
+          <input type="text" id="filterSku" class="filter-input" placeholder="Nhập SKU..." oninput="applyFilters()">
+        </div>
+        <div class="filter-group">
+          <label>客戶交期 (Ngày giao):</label>
+          <input type="text" id="filterDate" class="filter-input" placeholder="Nhập ngày giao..." oninput="applyFilters()">
+        </div>
+      </div>
 
       <div id="orderChecklist" class="order-checklist">
         <span style="color: #64748b; font-size: 0.85rem;">請先載入資料...</span>
@@ -134,7 +150,7 @@
 
   <script>
     let sheetData = [];
-    let allOrdersList = [];
+    let masterRecords = []; // Lưu trữ dữ liệu cấu trúc từng đơn kèm SKU và Ngày giao
 
     document.addEventListener('DOMContentLoaded', () => {
       const savedUrl = localStorage.getItem('saucony_gas_url');
@@ -153,8 +169,8 @@
         const res = await fetch(url);
         sheetData = await res.json();
         
-        extractOrders(sheetData);
-        alert("✅ 資料載入成功！請在上方勾選您要列印的指令表。");
+        processMasterRecords(sheetData);
+        alert("✅ 資料載入成功！");
       } catch (err) {
         alert("❌ 載入失敗，請檢查網址是否正確！");
       }
@@ -171,55 +187,80 @@
       return defaultValue;
     }
 
-    function extractOrders(data) {
-      const ordersSet = new Set();
+    function processMasterRecords(data) {
+      const map = new Map();
       data.forEach(row => {
-        const orderNo = getColValue(row, ['指令表', 'đơn sản xuất', 'po sx'], '');
-        if (orderNo && orderNo !== '-') ordersSet.add(orderNo);
+        const orderNo = String(getColValue(row, ['指令表', 'đơn sản xuất', 'po sx'], '')).trim();
+        if (!orderNo || orderNo === '-') return;
+
+        if (!map.has(orderNo)) {
+          let factorySku = String(getColValue(row, ['廠型-SKU', '廠型', 'sku', 'hình thể'], '-')).trim();
+          let deliveryDate = String(getColValue(row, ['客戶交期', '出貨日期', 'ngày xuất', 'xuất hàng'], '-')).trim();
+          
+          if (deliveryDate && deliveryDate !== '-') {
+            try {
+              const d = new Date(deliveryDate);
+              if (!isNaN(d.getTime())) {
+                deliveryDate = d.toLocaleDateString('zh-TW');
+              }
+            } catch (e) {}
+          }
+
+          map.set(orderNo, {
+            orderNo: orderNo,
+            sku: factorySku,
+            date: deliveryDate
+          });
+        }
       });
 
-      allOrdersList = Array.from(ordersSet);
-      renderOrderChecklist(allOrdersList);
+      masterRecords = Array.from(map.values());
+      applyFilters();
     }
 
-    function renderOrderChecklist(ordersArray) {
+    function applyFilters() {
+      const qOrder = document.getElementById('filterOrder').value.trim().toLowerCase();
+      const qSku = document.getElementById('filterSku').value.trim().toLowerCase();
+      const qDate = document.getElementById('filterDate').value.trim().toLowerCase();
+
+      const filtered = masterRecords.filter(item => {
+        const matchOrder = item.orderNo.toLowerCase().includes(qOrder);
+        const matchSku = item.sku.toLowerCase().includes(qSku);
+        const matchDate = item.date.toLowerCase().includes(qDate);
+        return matchOrder && matchSku && matchDate;
+      });
+
+      renderOrderChecklist(filtered);
+    }
+
+    function renderOrderChecklist(recordsArray) {
       const checklistDiv = document.getElementById('orderChecklist');
       checklistDiv.innerHTML = '';
 
-      if (ordersArray.length === 0) {
-        checklistDiv.innerHTML = '<span style="color: red; font-size: 0.85rem;">找不到符合條件的指令表！</span>';
+      if (recordsArray.length === 0) {
+        checklistDiv.innerHTML = '<span style="color: red; font-size: 0.85rem;">找不到符合篩選條件的指令表！</span>';
+        renderA4SheetsBatch();
         return;
       }
 
-      // Giữ lại trạng thái check cũ nếu có
+      // Giữ lại các mục đã được check trước đó
       const checkedSet = new Set();
       document.querySelectorAll('#orderChecklist input[type="checkbox"]:checked').forEach(cb => {
         checkedSet.add(cb.value);
       });
 
-      ordersArray.forEach(ord => {
-        const isChecked = checkedSet.has(ord) ? 'checked' : '';
+      recordsArray.forEach(item => {
+        const isChecked = checkedSet.has(item.orderNo) ? 'checked' : '';
         const label = document.createElement('label');
-        label.innerHTML = `<input type="checkbox" value="${ord}" ${isChecked} onchange="renderA4SheetsBatch()"> 指令表: ${ord}`;
+        label.innerHTML = `<input type="checkbox" value="${item.orderNo}" ${isChecked} onchange="renderA4SheetsBatch()"> 
+                           <b>指令表:</b> ${item.orderNo} &nbsp;|&nbsp; <b>SKU:</b> ${item.sku} &nbsp;|&nbsp; <b>交期:</b> ${item.date}`;
         checklistDiv.appendChild(label);
       });
 
       renderA4SheetsBatch();
     }
 
-    function filterOrderList() {
-      const keyword = document.getElementById('orderFilterInput').value.trim().toLowerCase();
-      if (!keyword) {
-        renderOrderChecklist(allOrdersList);
-        return;
-      }
-
-      const filtered = allOrdersList.filter(ord => String(ord).toLowerCase().includes(keyword));
-      renderOrderChecklist(filtered);
-    }
-
     function toggleSelectAll(select) {
-      // Chỉ chọn/bỏ chọn những checkbox đang hiển thị sau khi lọc
       const checkboxes = document.querySelectorAll('#orderChecklist input[type="checkbox"]');
       checkboxes.forEach(cb => cb.checked = select);
       renderA4SheetsBatch();
@@ -247,7 +288,7 @@
         const selectedOrder = cb.value;
 
         const matchedRows = sheetData.filter(row => {
-          const orderNo = String(getColValue(row, ['指令表', 'đơn sản xuất', 'po sx'], ''));
+          const orderNo = String(getColValue(row, ['指令表', 'đơn sản xuất', 'po sx'], '')).trim();
           return orderNo === selectedOrder;
         });
 
