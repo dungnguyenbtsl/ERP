@@ -3,13 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>富裕鞋業有限公司 - 批量生產訂單材料匯總表</title>
+  <title>富裕鞋業有限公司 - 批量生產訂單材料匯總表 (橫向)</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: Arial, sans-serif; }
     body { background-color: #f1f5f9; padding: 12px; color: #1e293b; }
     
     /* 螢幕操作控制區 */
-    .control-card { background: white; padding: 15px; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-bottom: 15px; max-width: 210mm; margin-left: auto; margin-right: auto; }
+    .control-card { background: white; padding: 15px; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-bottom: 15px; max-width: 297mm; margin-left: auto; margin-right: auto; }
     .control-title { font-size: 1.1rem; font-weight: bold; color: #0f172a; margin-bottom: 10px; }
     
     input[type="text"], select { width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.95rem; margin-bottom: 10px; outline: none; }
@@ -23,15 +23,15 @@
     .order-checklist label { display: flex; align-items: center; gap: 8px; padding: 4px 6px; font-size: 0.9rem; cursor: pointer; }
     .order-checklist label:hover { background: #f1f5f9; border-radius: 4px; }
 
-    /* A4 列印預覽外框容器 */
+    /* A4 橫向預覽外框容器 */
     .a4-preview-container { display: flex; flex-direction: column; gap: 20px; }
     
-    /* Trang A4 chuẩn: Cho phép co giãn tự nhiên theo lượng dữ liệu, tự động ngắt trang khi in */
+    /* A4 橫向 (Landscape): Chiều rộng 297mm, chiều cao tối thiểu 210mm */
     .a4-sheet { 
       background: white; 
       width: 100%; 
-      max-width: 210mm; 
-      min-height: 297mm;
+      max-width: 297mm; 
+      min-height: 210mm;
       margin: 0 auto; 
       padding: 12mm 15mm; 
       box-shadow: 0 4px 10px rgba(0,0,0,0.15); 
@@ -51,38 +51,42 @@
     .logo-placeholder { font-size: 0.65rem; color: #64748b; border: 1px dashed #cbd5e1; padding: 4px; text-align: center; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; }
 
     .header-content { padding: 0 70px; } 
-    .header-content h1 { font-size: 0.95rem; font-weight: bold; color: #475569; margin-bottom: 2px; letter-spacing: 0.5px; }
-    .header-content h2 { font-size: 1.3rem; font-weight: bold; text-transform: uppercase; margin-bottom: 2px; color: #0f172a; letter-spacing: 0.5px; }
-    .header-content p { font-size: 0.75rem; color: #64748b; }
+    .header-content h1 { font-size: 1rem; font-weight: bold; color: #475569; margin-bottom: 2px; letter-spacing: 0.5px; }
+    .header-content h2 { font-size: 1.4rem; font-weight: bold; text-transform: uppercase; margin-bottom: 2px; color: #0f172a; letter-spacing: 0.5px; }
+    .header-content p { font-size: 0.8rem; color: #64748b; }
 
-    /* Thông tin đơn hàng */
-    .order-info { display: grid; grid-template-columns: 1fr 1.3fr 1fr; gap: 8px; margin-bottom: 10px; font-size: 0.85rem; background: #f8fafc; padding: 6px 10px; border: 1px solid #cbd5e1; border-radius: 4px; align-items: center; }
+    /* Thông tin đơn hàng (trải rộng hợp lý trên khổ ngang) */
+    .order-info { display: grid; grid-template-columns: 1fr 1.5fr 1fr; gap: 12px; margin-bottom: 10px; font-size: 0.9rem; background: #f8fafc; padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 4px; align-items: center; }
     .order-info div { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     
     /* 材料表格 */
     table { width: 100%; border-collapse: collapse; margin-bottom: 15px; }
-    th, td { border: 1px solid #333; padding: 7px 8px; font-size: 0.85rem; text-align: left; vertical-align: middle; }
+    th, td { border: 1px solid #333; padding: 8px 10px; font-size: 0.9rem; text-align: left; vertical-align: middle; }
     th { background-color: #e2e8f0; font-weight: bold; text-align: center; color: #0f172a; }
     
     td.center { text-align: center; }
     td.right { text-align: right; }
 
     /* Phần chữ ký */
-    .sign-section { display: flex; justify-content: space-between; margin-top: 20px; margin-bottom: 5px; text-align: center; font-size: 0.9rem; }
-    .sign-box { width: 35%; }
+    .sign-section { display: flex; justify-content: space-between; margin-top: 25px; margin-bottom: 5px; text-align: center; font-size: 0.95rem; }
+    .sign-box { width: 30%; }
     .sign-space { height: 45px; }
 
-    /* Định dạng khi máy in kích hoạt */
+    /* Cố định in khổ giấy nằm ngang (Landscape) */
     @media print {
+      @page {
+        size: A4 landscape;
+        margin: 0;
+      }
       body { background: white; padding: 0; }
       .control-card { display: none; }
       .a4-sheet { 
         box-shadow: none; 
-        padding: 10mm; 
+        padding: 10mm 15mm; 
         margin: 0; 
         max-width: 100%; 
         width: 100%; 
-        min-height: 297mm; 
+        min-height: 210mm; 
         page-break-after: always;
         break-after: page;
       }
@@ -91,8 +95,9 @@
 </head>
 <body>
 
+  <!-- 控制面板 (列印時會隱藏) -->
   <div class="control-card">
-    <div class="control-title">🖨️ 批量選擇與列印訂單 (A4 匯總)</div>
+    <div class="control-title">🖨️ 批量選擇與列印訂單 (A4 橫向匯總)</div>
     <input type="text" id="scriptUrl" placeholder="請貼上 Google Sheets 網頁應用程式網址 (Web App URL)..." style="margin-bottom: 8px;">
     
     <button class="btn btn-blue" onclick="loadData()">🔄 從庫存載入資料</button>
@@ -108,12 +113,13 @@
       </div>
     </div>
 
-    <button class="btn btn-green" onclick="window.print()" style="margin-top: 15px;">🖨️ 批量列印所選的 A4 匯總單</button>
+    <button class="btn btn-green" onclick="window.print()" style="margin-top: 15px;">🖨️ 批量列印所選的 A4 橫向匯總單</button>
   </div>
 
+  <!-- A4 橫向列印頁面容器 -->
   <div class="a4-preview-container" id="a4Container">
     <div class="a4-sheet">
-      <div style="text-align: center; color: #64748b; padding: 100px 0;">
+      <div style="text-align: center; color: #64748b; padding: 80px 0;">
         <h2>請先載入資料並在上方勾選要列印的指令表。</h2>
       </div>
     </div>
@@ -194,7 +200,7 @@
       if (checkboxes.length === 0) {
         container.innerHTML = `
           <div class="a4-sheet">
-            <div style="text-align: center; color: #64748b; padding: 120px 20px;">
+            <div style="text-align: center; color: #64748b; padding: 100px 20px;">
               <h2>尚未選擇任何指令表</h2>
               <p style="margin-top: 10px; font-size: 0.9rem;">請在上方控制面板勾選您想要預覽或列印的訂單。</p>
             </div>
