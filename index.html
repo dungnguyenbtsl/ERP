@@ -3,55 +3,131 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Quản Lý Kho 副料 SAUCONY (Toàn Bộ Cột)</title>
+  <title>Quản Lý Kho 副料 SAUCONY</title>
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-    body { font-family: Arial, sans-serif; padding: 12px; background-color: #f4f6f9; color: #333; font-size: 12px; }
-    .card { background: white; padding: 14px; border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.08); margin-bottom: 12px; }
-    h2 { margin-bottom: 10px; color: #0f172a; font-size: 1rem; border-bottom: 2px solid #e2e8f0; padding-bottom: 6px; }
+    /* 1. CHỈNH FONT CHỮ ĐỒNG NHẤT TOÀN BỘ TRANG (BỔ SUNG FONT TIẾNG TRUNG KHO) */
+    * { 
+      box-sizing: border-box; 
+      margin: 0; 
+      padding: 0; 
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Microsoft JhengHei", "PingFang TC", sans-serif;
+    }
+
+    body { 
+      padding: 12px; 
+      background-color: #f1f5f9; 
+      color: #334155; 
+      font-size: 13px; 
+      line-height: 1.4;
+    }
+
+    .card { 
+      background: #ffffff; 
+      padding: 14px; 
+      border-radius: 8px; 
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1); 
+      margin-bottom: 12px; 
+    }
+
+    h2 { 
+      margin-bottom: 10px; 
+      color: #0f172a; 
+      font-size: 15px; 
+      font-weight: 700;
+      border-bottom: 2px solid #e2e8f0; 
+      padding-bottom: 6px; 
+    }
     
     .input-group { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
-    input[type="text"] { padding: 6px 10px; border: 1px solid #cbd5e1; border-radius: 5px; font-size: 0.85rem; flex: 1; min-width: 200px; }
     
-    button { padding: 6px 12px; border: none; border-radius: 5px; font-weight: bold; cursor: pointer; font-size: 0.8rem; transition: opacity 0.2s; white-space: nowrap; }
-    button:hover { opacity: 0.85; }
+    input[type="text"] { 
+      padding: 7px 10px; 
+      border: 1px solid #cbd5e1; 
+      border-radius: 6px; 
+      font-size: 13px; 
+      outline: none;
+    }
+    input[type="text"]:focus { border-color: #2563eb; }
+    
+    button { 
+      padding: 7px 12px; 
+      border: none; 
+      border-radius: 6px; 
+      font-weight: 600; 
+      cursor: pointer; 
+      font-size: 12px; 
+      transition: all 0.2s; 
+      white-space: nowrap; 
+    }
+    button:hover { opacity: 0.9; }
     .btn-blue { background: #2563eb; color: white; }
     .btn-green { background: #16a34a; color: white; }
-    .btn-red { background: #dc3545; color: white; }
+    .btn-red { background: #dc2626; color: white; }
 
-    /* BẢNG RỘNG TỰ ĐỘNG LĂN NẰM NGANG */
-    .table-container { overflow-x: auto; max-height: 75vh; margin-top: 8px; border: 1px solid #cbd5e1; border-radius: 6px; }
-    table { width: 100%; border-collapse: collapse; white-space: nowrap; font-size: 0.8rem; }
-    th, td { border: 1px solid #e2e8f0; padding: 6px 8px; text-align: left; }
-    th { background: #f1f5f9; position: sticky; top: 0; z-index: 10; font-weight: 700; color: #1e293b; }
+    /* 2. CHỈNH KHUNG BẢNG CHUẨN CỐ ĐỊNH FONT */
+    .table-container { 
+      overflow-x: auto; 
+      max-height: 75vh; 
+      margin-top: 8px; 
+      border: 1px solid #cbd5e1; 
+      border-radius: 6px; 
+      background: #fff;
+    }
+
+    table { 
+      width: 100%; 
+      border-collapse: collapse; 
+      white-space: nowrap; 
+      font-size: 13px; /* Ép cố định size chữ toàn bảng */
+    }
+
+    th, td { 
+      border: 1px solid #e2e8f0; 
+      padding: 8px 10px; 
+      text-align: left; 
+      vertical-align: middle;
+      font-size: 13px !important; /* Đảm bảo không ô nào bị nhảy font chữ */
+    }
+
+    th { 
+      background: #f8fafc; 
+      position: sticky; 
+      top: 0; 
+      z-index: 10; 
+      font-weight: 700; 
+      color: #1e293b; 
+      border-bottom: 2px solid #cbd5e1;
+    }
+
     tr:nth-child(even) { background-color: #f8fafc; }
     tr:hover { background-color: #f1f5f9; }
 
-    .badge-po { background: #fef3c7; color: #b45309; padding: 2px 6px; border-radius: 4px; font-weight: bold; }
-    .badge-order { background: #e0f2fe; color: #0369a1; padding: 2px 6px; border-radius: 4px; font-weight: bold; }
-    .badge-sku { background: #f3e8ff; color: #6b21a8; padding: 2px 6px; border-radius: 4px; font-weight: bold; }
+    /* BADGE VÀ TRẠNG THÁI CHUẨN ĐỒNG BỘ FONT */
+    .badge-po { background: #fef3c7; color: #b45309; padding: 2px 6px; border-radius: 4px; font-weight: 600; font-size: 12px; }
+    .badge-order { background: #e0f2fe; color: #0369a1; padding: 2px 6px; border-radius: 4px; font-weight: 600; font-size: 12px; }
+    .badge-sku { background: #f3e8ff; color: #6b21a8; padding: 2px 6px; border-radius: 4px; font-weight: 600; font-size: 12px; }
     
-    .status-ok { background-color: #dcfce7; color: #166534; font-weight: bold; padding: 3px 6px; border-radius: 4px; display: inline-block; }
-    .status-pending { background-color: #fef9c3; color: #854d0e; font-weight: bold; padding: 3px 6px; border-radius: 4px; display: inline-block; }
-    .status-error { background-color: #fee2e2; color: #991b1b; font-weight: bold; padding: 3px 6px; border-radius: 4px; display: inline-block; }
+    .status-ok { background-color: #dcfce7; color: #166534; font-weight: 600; padding: 3px 8px; border-radius: 4px; display: inline-block; font-size: 12px; }
+    .status-pending { background-color: #fef9c3; color: #854d0e; font-weight: 600; padding: 3px 8px; border-radius: 4px; display: inline-block; font-size: 12px; }
+    .status-error { background-color: #fee2e2; color: #991b1b; font-weight: 600; padding: 3px 8px; border-radius: 4px; display: inline-block; font-size: 12px; }
   </style>
 </head>
 <body>
 
   <!-- CẤU HÌNH API -->
   <div class="card">
-    <h2>🔗 Cấu Hình Kết Nối Dữ Liệu</h2>
+    <h2>🔗 Kết Nối Dữ Liệu Saucony (2 Chiều)</h2>
     <div class="input-group">
-      <input type="text" id="scriptUrl" placeholder="Nhập Web App URL (Google Apps Script)...">
-      <button class="btn-blue" onclick="loadData()">🔄 Tải Dữ Liệu Saucony</button>
+      <input type="text" id="scriptUrl" style="flex:1;" placeholder="Nhập Web App URL (Google Apps Script)...">
+      <button class="btn-blue" onclick="loadData()">🔄 Tải Dữ Liệu</button>
     </div>
   </div>
 
-  <!-- BẢNG DỮ LIỆU ĐẦY ĐỦ CÁC CỘT -->
+  <!-- BẢNG DỮ LIỆU CHUẨN FONT CHỮ -->
   <div class="card">
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-wrap: wrap; gap: 8px;">
-      <h2>📦 Danh Sách Chi Tiết Kho 副料 SAUCONY (Hiển Thị Tất Cả Cột)</h2>
-      <input type="text" id="searchInput" onkeyup="filterTable()" placeholder="🔍 Tìm kiếm tự do theo PO, Chỉ lệnh, SKU, Tên VT, Màu sắc..." style="max-width: 350px;">
+      <h2>📦 Danh Sách Chi Tiết Kho 副料 SAUCONY</h2>
+      <input type="text" id="searchInput" onkeyup="filterTable()" placeholder="🔍 Tìm kiếm tự do theo PO, Chỉ lệnh, SKU, Tên VT..." style="width: 320px;">
     </div>
     
     <div class="table-container">
@@ -68,16 +144,16 @@
             <th>單價 (Mã Cột)</th>
             <th>供應商 (NCC)</th>
             <th>鞋數量 (SL Giày)</th>
-            <th>數量 (SL Vật Tư)</th>
+            <th>數量 (SL VT)</th>
             <th>單位 (ĐVT)</th>
             <th>货物状态 (Trạng Thái)</th>
             <th>庫存地點 (Vị Trí)</th>
             <th>接收人員 (Người Nhận)</th>
-            <th>Thao Tác</th>
+            <th>Thao Tác Ghi Đổi</th>
           </tr>
         </thead>
         <tbody id="tableBody">
-          <tr><td colspan="16" style="text-align:center; padding: 20px;">Vui lòng dán URL và nhấn <b>Tải Dữ Liệu Saucony</b>.</td></tr>
+          <tr><td colspan="16" style="text-align:center; padding: 20px;">Vui lòng dán URL và nhấn <b>Tải Dữ Liệu</b>.</td></tr>
         </tbody>
       </table>
     </div>
@@ -111,7 +187,6 @@
       }
     }
 
-    // Hàm quét thông minh tìm giá trị cột tương ứng trong Sheet
     function getColValue(row, possibleNames, defaultValue = '-') {
       const keys = Object.keys(row);
       for (let name of possibleNames) {
@@ -135,7 +210,6 @@
       data.forEach(row => {
         const rIndex = row.rowIndex || row._rowIndex || '?';
 
-        // ĐỌC TOÀN BỘ CÁC CỘT TỪ FILE EXCEL / SHEET SAUCONY
         const poBuy    = getColValue(row, ['*訂購單號', '訂購單號', 'po mua', 'po no'], '-');
         const orderNo  = getColValue(row, ['指令表', 'đơn sản xuất', 'po sx', 'order no'], '-');
         const sku      = getColValue(row, ['廠型-SKU', '廠型', 'sku'], '-');
@@ -167,11 +241,11 @@
           <td><b>${priceCode}</b></td>
           <td>${supplier}</td>
           <td>${shoeQty}</td>
-          <td><b style="color: #2563eb; font-size: 0.9rem;">${itemQty}</b></td>
+          <td><b style="color: #2563eb;">${itemQty}</b></td>
           <td>${unit}</td>
           <td><span class="${statusClass}">${status}</span></td>
           <td><b>${location}</b></td>
-          <td><input type="text" id="rec_${rIndex}" value="${receiver}" style="width:90px; padding:3px; border:1px solid #cbd5e1; border-radius:4px;"></td>
+          <td><input type="text" id="rec_${rIndex}" value="${receiver}" style="width:100px; padding:3px 6px;"></td>
           <td>
             <button class="btn-green" onclick="updateRow(${rIndex}, '穫準使用的材料(OK)')">✅ OK</button>
             <button class="btn-red" onclick="updateRow(${rIndex}, '有问题的材料(PD)')">⚠️ Lỗi</button>
