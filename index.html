@@ -5,143 +5,191 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Quản Lý Vật Tư SAUCONY</title>
   <style>
-    body { font-family: Arial, sans-serif; margin: 20px; background-color: #f4f6f9; }
-    .card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); margin-bottom: 20px; }
-    h2 { margin-top: 0; color: #1a73e8; }
-    input, select, button { padding: 8px 12px; margin: 4px; border: 1px solid #ccc; border-radius: 4px; }
-    button { background: #1a73e8; color: white; border: none; cursor: pointer; }
-    button:hover { background: #1557b0; }
-    table { width: 100%; border-collapse: collapse; margin-top: 15px; background: white; }
-    th, td { border: 1px solid #ddd; padding: 10px; text-align: left; font-size: 13px; }
-    th { background: #f1f3f4; }
-    .status-ok { background-color: #d4edda; color: #155724; font-weight: bold; padding: 3px 8px; border-radius: 4px; }
-    .status-pending { background-color: #fff3cd; color: #856404; font-weight: bold; padding: 3px 8px; border-radius: 4px; }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    body { font-family: Arial, sans-serif; padding: 15px; background-color: #f4f6f9; color: #333; }
+    .card { background: white; padding: 16px; border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.08); margin-bottom: 16px; }
+    h2 { margin-bottom: 12px; color: #1a73e8; font-size: 1.1rem; }
+    
+    .input-group { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+    input[type="text"] { padding: 8px 12px; border: 1px solid #ccc; border-radius: 5px; font-size: 0.9rem; flex: 1; min-width: 200px; }
+    
+    button { padding: 8px 14px; border: none; border-radius: 5px; font-weight: bold; cursor: pointer; font-size: 0.85rem; transition: opacity 0.2s; }
+    button:hover { opacity: 0.85; }
+    .btn-blue { background: #1a73e8; color: white; }
+    .btn-green { background: #28a745; color: white; }
+    .btn-red { background: #dc3545; color: white; }
+
+    .table-container { overflow-x: auto; max-height: 70vh; margin-top: 10px; }
+    table { width: 100%; border-collapse: collapse; white-space: nowrap; font-size: 0.85rem; }
+    th, td { border: 1px solid #e0e0e0; padding: 10px; text-align: left; }
+    th { background: #f1f3f4; position: sticky; top: 0; z-index: 10; font-weight: 700; color: #444; }
+    tr:nth-child(even) { background-color: #f9f9f9; }
+
+    .status-ok { background-color: #d4edda; color: #155724; font-weight: bold; padding: 4px 8px; border-radius: 4px; display: inline-block; }
+    .status-pending { background-color: #fff3cd; color: #856404; font-weight: bold; padding: 4px 8px; border-radius: 4px; display: inline-block; }
+    .status-error { background-color: #f8d7da; color: #721c24; font-weight: bold; padding: 4px 8px; border-radius: 4px; display: inline-block; }
   </style>
 </head>
 <body>
 
+  <!-- CẤU HÌNH API -->
   <div class="card">
     <h2>🔗 Cấu Hình Web App 2 Chiều</h2>
-    <label>Nhập Web App URL (GAS): </label>
-    <input type="text" id="scriptUrl" style="width: 60%;" placeholder="https://script.google.com/macros/s/.../exec">
-    <button onclick="loadData()">🔄 Tải Dữ Liệu</button>
+    <div class="input-group">
+      <input type="text" id="scriptUrl" placeholder="https://script.google.com/macros/s/.../exec">
+      <button class="btn-blue" onclick="loadData()">🔄 Tải Dữ Liệu</button>
+    </div>
   </div>
 
+  <!-- BẢNG DỮ LIỆU -->
   <div class="card">
     <h2>📦 Danh Sách Vật Tư SAUCONY</h2>
-    <input type="text" id="searchInput" onkeyup="filterTable()" placeholder="Tìm theo Mã Đơn / Tên Vật Tư / Chỉ Lệnh...">
+    <div class="input-group" style="margin-bottom: 12px;">
+      <input type="text" id="searchInput" onkeyup="filterTable()" placeholder="🔍 Tìm theo Mã Đơn / Tên Vật Tư / Chỉ Lệnh...">
+    </div>
     
-    <table id="dataTable">
-      <thead>
-        <tr id="tableHeader">
-          <th>Dòng</th>
-          <th>Mã Đơn / 指令表</th>
-          <th>Tên Vật Tư / 材料名稱</th>
-          <th>Số Lượng / 數量</th>
-          <th>Trạng Thái / 狀態</th>
-          <th>Người Nhận</th>
-          <th>Thao Tác Ghi Đổi</th>
-        </tr>
-      </thead>
-      <tbody id="tableBody">
-        <tr><td colspan="7" style="text-align:center;">Chưa có dữ liệu. Vui lòng dán URL và bấm Tải Dữ Liệu.</td></tr>
-      </tbody>
-    </table>
+    <div class="table-container">
+      <table id="dataTable">
+        <thead>
+          <tr>
+            <th>Dòng</th>
+            <th>Mã Đơn / 指令表</th>
+            <th>Tên Vật Tư / 材料名稱</th>
+            <th>Số Lượng / 數量</th>
+            <th>Trạng Thái / 狀態</th>
+            <th>Người Nhận</th>
+            <th>Thao Tác Ghi Đổi</th>
+          </tr>
+        </thead>
+        <tbody id="tableBody">
+          <tr><td colspan="7" style="text-align:center; padding: 20px;">Vui lòng nhập Web App URL và bấm <b>Tải Dữ Liệu</b>.</td></tr>
+        </tbody>
+      </table>
+    </div>
   </div>
 
   <script>
     let sheetData = [];
+
+    // Tự động khôi phục URL đã lưu trong trình duyệt nếu có
+    document.addEventListener('DOMContentLoaded', () => {
+      const savedUrl = localStorage.getItem('saucony_gas_url');
+      if (savedUrl) {
+        document.getElementById('scriptUrl').value = savedUrl;
+        loadData();
+      }
+    });
 
     // 1. TẢI DỮ LIỆU TỪ GOOGLE SHEETS
     async function loadData() {
       const url = document.getElementById('scriptUrl').value.trim();
       if (!url) return alert("Vui lòng nhập Web App URL!");
 
+      localStorage.setItem('saucony_gas_url', url);
       const body = document.getElementById('tableBody');
-      body.innerHTML = '<tr><td colspan="7" style="text-align:center;">⏳ Đang tải dữ liệu từ Google Sheets...</td></tr>';
+      body.innerHTML = '<tr><td colspan="7" style="text-align:center; padding: 20px;">⏳ Đang tải dữ liệu từ Google Sheets...</td></tr>';
 
       try {
         const res = await fetch(url);
         sheetData = await res.json();
         renderTable(sheetData);
       } catch (err) {
-        alert("Lỗi tải dữ liệu: " + err.message);
+        body.innerHTML = '<tr><td colspan="7" style="text-align:center; color:red; padding: 20px;">❌ Lỗi tải dữ liệu. Kiểm tra lại URL và cài đặt Deploy!</td></tr>';
+        console.error(err);
       }
     }
 
-    // 2. HIỂN THỊ BẢNG
+    // HÀM HỖ TRỢ BẮT CỘT THÔNG MINH
+    function getColValue(row, possibleNames, defaultValue = '-') {
+      const keys = Object.keys(row);
+      for (let name of possibleNames) {
+        const foundKey = keys.find(k => k.toLowerCase().replace(/\s+/g, '').includes(name.toLowerCase().replace(/\s+/g, '')));
+        if (foundKey && row[foundKey] !== "" && row[foundKey] !== null && row[foundKey] !== undefined) {
+          return row[foundKey];
+        }
+      }
+      return defaultValue;
+    }
+
+    // 2. HIỂN THỊ BẢNG (ĐÃ SỬA LỖI UNDEFINED & BẮT TIÊU ĐỀ)
     function renderTable(data) {
       const body = document.getElementById('tableBody');
       body.innerHTML = '';
 
-      data.forEach(row => {
-        const tr = document.createElement('tr');
-        
-        // Tìm linh hoạt tên cột tương ứng trong file Excel/Sheets của bạn
-        const po = row['*訂購單號'] || row['指令表'] || row['Mã Đơn'] || '-';
-        const name = row['材料名稱'] || row['Tên Vật Tư'] || '-';
-        const qty = row['數量'] || row['Số Lượng'] || '0';
-        const status = row['货物状态'] || row['Trạng Thái'] || 'Chờ tiếp nhận';
-        const receiver = row['接收人員'] || row['Người Nhận'] || '';
+      if (!data || data.length === 0) {
+        body.innerHTML = '<tr><td colspan="7" style="text-align:center; padding: 20px;">Không có dữ liệu trong Sheet.</td></tr>';
+        return;
+      }
 
+      data.forEach(row => {
+        // Nhận diện dòng chính xác
+        const rIndex = row.rowIndex || row._rowIndex || '?';
+
+        // Tự động quét bắt tiêu đề cột trên file Sheet
+        const po = getColValue(row, ['*訂購單號', '訂購單號', '指令表', 'po', 'order', 'mã đơn'], '-');
+        const name = getColValue(row, ['摘要', '品名', '材料名稱', 'tên vật tư', 'tên hàng', 'desc'], '-');
+        const qty = getColValue(row, ['數量', 'số lượng', 'qty', 'sl'], '0');
+        const status = getColValue(row, ['货物状态', '貨物狀態', 'trạng thái', 'status'], 'Chờ tiếp nhận');
+        const receiver = getColValue(row, ['接收人員', 'người nhận', 'receiver'], '');
+
+        let statusClass = 'status-pending';
+        if (String(status).includes('OK')) statusClass = 'status-ok';
+        else if (String(status).includes('PD') || String(status).includes('Lỗi')) statusClass = 'status-error';
+
+        const tr = document.createElement('tr');
         tr.innerHTML = `
-          <td><b>#${row._rowIndex}</b></td>
-          <td>${po}</td>
-          <td>${name}</td>
-          <td>${qty}</td>
+          <td><b>#${rIndex}</b></td>
+          <td><b>${po}</b></td>
+          <td title="${name}">${name}</td>
+          <td><b>${qty}</b></td>
+          <td><span class="${statusClass}">${status}</span></td>
+          <td><input type="text" id="rec_${rIndex}" value="${receiver}" style="width:110px; padding:4px; border:1px solid #ccc; border-radius:4px;"></td>
           <td>
-            <span class="${status.includes('OK') ? 'status-ok' : 'status-pending'}">
-              ${status}
-            </span>
-          </td>
-          <td><input type="text" id="rec_${row._rowIndex}" value="${receiver}" style="width:100px;"></td>
-          <td>
-            <button onclick="updateRow(${row._rowIndex}, '穫準使用的材料(OK)')">✅ Duyệt OK</button>
-            <button onclick="updateRow(${row._rowIndex}, '有问题的材料(PD)')" style="background:#dc3545;">⚠️ Báo Lỗi</button>
+            <button class="btn-green" onclick="updateRow(${rIndex}, '穫準使用的材料(OK)')">✅ Duyệt OK</button>
+            <button class="btn-red" onclick="updateRow(${rIndex}, '有问题的材料(PD)')">⚠️ Báo Lỗi</button>
           </td>
         `;
         body.appendChild(tr);
       });
     }
 
-    // 3. GHI NGUỢC DỮ LIỆU VỀ GOOGLE SHEETS (POST)
+    // 3. GHI CẬP NHẬT VỀ GOOGLE SHEETS (POST)
     async function updateRow(rowIndex, newStatus) {
       const url = document.getElementById('scriptUrl').value.trim();
-      const receiverVal = document.getElementById(`rec_${rowIndex}`).value;
+      const receiverInput = document.getElementById(`rec_${rowIndex}`);
+      const receiverVal = receiverInput ? receiverInput.value : '';
 
       if (!url) return alert("Thiếu URL Web App!");
 
-      // Xác định vị trí cột cần sửa trong Google Sheets (Ví dụ: Cột 20 là Trạng Thái, Cột 22 là Người Nhận)
-      // *Bạn có thể chỉnh lại vị trí số cột (Col Index) cho chuẩn với file Sheet thực tế của bạn*
+      // Vị trí cột cập nhật trên Google Sheet SAUCONY:
+      // Cột 20: 货物状态 | Cột 22: 接收人員
       const payload = {
         rowIndex: rowIndex,
         updates: [
-          { col: 20, val: newStatus },     // Cột T (Column 20)
-          { col: 22, val: receiverVal }    // Cột V (Column 22)
+          { col: 20, val: newStatus },
+          { col: 22, val: receiverVal }
         ]
       };
 
       try {
         await fetch(url, {
           method: 'POST',
-          mode: 'no-cors', // Bỏ qua CORS restriction từ Google Apps Script
+          mode: 'no-cors',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload)
         });
 
-        alert(`✅ Đã ghi dữ liệu thành công dòng #${rowIndex} lên Google Sheets!`);
-        loadData(); // Tải lại bảng để cập nhật giao diện
+        alert(`✅ Đã ghi cập nhật thành công dòng #${rowIndex}!`);
+        loadData(); // Tải lại để làm mới dữ liệu
       } catch (err) {
-        alert("❌ Lỗi khi ghi dữ liệu: " + err.message);
+        alert("❌ Lỗi khi gửi dữ liệu: " + err.message);
       }
     }
 
-    // 4. LỌC TÌM KIẾM
+    // 4. LỌC TÌM KIẾM DỮ LIỆU
     function filterTable() {
       const val = document.getElementById('searchInput').value.toLowerCase();
-      const filtered = sheetData.filter(r => 
-        JSON.stringify(r).toLowerCase().includes(val)
-      );
+      const filtered = sheetData.filter(r => JSON.stringify(r).toLowerCase().includes(val));
       renderTable(filtered);
     }
   </script>
