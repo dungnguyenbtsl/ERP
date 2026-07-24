@@ -28,69 +28,68 @@
 
     .a4-preview-container { display: flex; flex-direction: column; gap: 15px; align-items: center; }
     
-    /* 終極強力解法：使用 CSS Grid 將頁面強制鎖死在單頁 210mm 內，並強制縮放/隱藏溢出內容，絕對杜絕任何多餘空白頁 */
+    /* 終極絕招 2：直接在 HTML 層級使用 CSS 嚴格限高 + 強制切斷溢出，並在列印時直接將尺寸鎖死為 A4 橫向 */
+    @page {
+      size: A4 landscape;
+      margin: 0;
+    }
+
     .a4-sheet { 
       background: white; 
       width: 297mm; 
-      height: 209mm; 
-      max-height: 209mm;
+      height: 210mm; 
+      max-height: 210mm; 
       margin: 0 auto; 
-      padding: 2mm 8mm; 
+      padding: 3mm 10mm; 
       box-shadow: 0 4px 10px rgba(0,0,0,0.15); 
       border-radius: 4px; 
-      display: grid;
-      grid-template-rows: auto auto 1fr auto;
-      box-sizing: border-box;
+      position: relative;
+      overflow: hidden;
       page-break-after: always;
       break-after: page;
       page-break-inside: avoid;
       break-inside: avoid;
-      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
     }
     
-    .sheet-header { position: relative; border-bottom: 1.5px solid #1e293b; padding-bottom: 1px; margin-bottom: 2px; text-align: center; }
+    .sheet-header { border-bottom: 1.5px solid #1e293b; padding-bottom: 1px; margin-bottom: 2px; text-align: center; position: relative; }
     .logo-box { position: absolute; left: 0; top: 1px; width: 32px; height: 20px; display: flex; align-items: center; justify-content: center; }
     .logo-box img { max-width: 100%; max-height: 100%; object-fit: contain; }
     .logo-placeholder { font-size: 0.4rem; color: #64748b; border: 1px dashed #cbd5e1; padding: 1px; text-align: center; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; }
 
     .header-content { padding: 0 32px; } 
-    .header-content h1 { font-size: 0.6rem; font-weight: bold; color: #475569; margin-bottom: 0px; letter-spacing: 0.5px; }
-    .header-content h2 { font-size: 0.9rem; font-weight: bold; text-transform: uppercase; margin-bottom: 0px; color: #0f172a; letter-spacing: 0.5px; }
+    .header-content h1 { font-size: 0.6rem; font-weight: bold; color: #475569; margin-bottom: 0px; }
+    .header-content h2 { font-size: 0.85rem; font-weight: bold; text-transform: uppercase; margin-bottom: 0px; color: #0f172a; }
     .header-content p { font-size: 0.45rem; color: #64748b; }
 
-    .order-info { display: grid; grid-template-columns: 1fr 1.2fr 1fr 1fr; gap: 6px; margin-bottom: 2px; font-size: 0.65rem; background: #f8fafc; padding: 2px 6px; border: 1px solid #cbd5e1; border-radius: 4px; align-items: center; }
-    .order-info div { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .order-info { display: grid; grid-template-columns: 1fr 1.2fr 1fr 1fr; gap: 6px; margin-bottom: 2px; font-size: 0.65rem; background: #f8fafc; padding: 2px 6px; border: 1px solid #cbd5e1; border-radius: 4px; }
     
-    .table-container { width: 100%; overflow: hidden; max-height: 145mm; }
-    table { width: 100%; border-collapse: collapse; }
-    th, td { border: 1px solid #333; padding: 1.5px 4px; font-size: 0.65rem; text-align: left; vertical-align: middle; }
+    table { width: 100%; border-collapse: collapse; margin-bottom: 2px; }
+    th, td { border: 1px solid #333; padding: 1px 4px; font-size: 0.65rem; text-align: left; vertical-align: middle; }
     th { background-color: #e2e8f0; font-weight: bold; text-align: center; color: #0f172a; }
     
     td.center { text-align: center; }
     td.right { text-align: right; }
 
-    .sign-section { display: flex; justify-content: space-between; margin-top: 2px; text-align: center; font-size: 0.65rem; align-self: end; }
+    .sign-section { display: flex; justify-content: space-between; margin-bottom: 2px; text-align: center; font-size: 0.65rem; }
     .sign-box { width: 30%; }
     .sign-space { height: 10px; }
 
     @media print {
-      @page {
-        size: A4 landscape;
-        margin: 0;
-      }
       body { background: white; padding: 0; }
-      .control-card { display: none; }
+      .control-card { display: none !important; }
       .a4-sheet { 
-        box-shadow: none; 
-        padding: 2mm 8mm; 
-        margin: 0; 
-        width: 297mm; 
-        height: 209mm; 
-        max-height: 209mm;
-        page-break-after: always;
-        break-after: page;
-        page-break-inside: avoid;
-        break-inside: avoid;
+        box-shadow: none !important; 
+        margin: 0 !important; 
+        width: 297mm !important; 
+        height: 210mm !important;
+        max-height: 210mm !important;
+        page-break-after: always !important;
+        break-after: page !important;
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
       }
     }
   </style>
@@ -137,7 +136,7 @@
 
   <div class="a4-preview-container" id="a4Container">
     <div class="a4-sheet">
-      <div style="text-align: center; color: #64748b; padding: 40px 0;">
+      <div style="text-align: center; color: #64748b; padding: 40px 0; width: 100%;">
         <h2>請先載入資料並在上方勾選要列印的指令表。</h2>
       </div>
     </div>
@@ -283,7 +282,7 @@
       if (checkboxes.length === 0) {
         container.innerHTML = `
           <div class="a4-sheet">
-            <div style="text-align: center; color: #64748b; padding: 40px 20px;">
+            <div style="text-align: center; color: #64748b; padding: 40px 20px; width: 100%;">
               <h2>尚未選擇任何指令表</h2>
               <p style="margin-top: 6px; font-size: 0.8rem;">請在上方控制面板勾選您想要預覽或列印的訂單。</p>
             </div>
@@ -346,25 +345,25 @@
 
         allPagesHtml += `
           <div class="a4-sheet">
-            <div class="sheet-header">
-              <div class="logo-box">
-                <img src="https://dungnguyenbtsl.github.io/FULIAO-LABEL/logo.jpeg" alt="富裕鞋業 Logo" onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\'logo-placeholder\'>Logo Error</div>';">
+            <div style="width: 100%;">
+              <div class="sheet-header">
+                <div class="logo-box">
+                  <img src="https://dungnguyenbtsl.github.io/FULIAO-LABEL/logo.jpeg" alt="富裕鞋業 Logo" onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\'logo-placeholder\'>Logo Error</div>';">
+                </div>
+                <div class="header-content">
+                  <h1>富裕鞋業有限公司</h1>
+                  <h2>SAUCONY 生產材料總匯表</h2>
+                  <p><b>材料倉庫備料清單</b></p>
+                </div>
               </div>
-              <div class="header-content">
-                <h1>富裕鞋業有限公司</h1>
-                <h2>SAUCONY 生產材料總匯表</h2>
-                <p><b>材料倉庫備料清單</b></p>
+
+              <div class="order-info">
+                <div title="${selectedOrder}"><b>指令表：</b> <span style="color:#2563eb;">${selectedOrder}</span></div>
+                <div title="${factorySku}"><b>廠型-SKU：</b> <span style="color:#0f172a; font-weight:bold;">${factorySku}</span></div>
+                <div title="${shoeQty}"><b>鞋數量：</b> <span style="color:#059669; font-weight:bold;">${shoeQty} 雙</span></div>
+                <div title="${deliveryDate}"><b>客戶交期：</b> <span style="color:#b45309; font-weight:bold;">${deliveryDate}</span></div>
               </div>
-            </div>
 
-            <div class="order-info">
-              <div title="${selectedOrder}"><b>指令表：</b> <span style="color:#2563eb;">${selectedOrder}</span></div>
-              <div title="${factorySku}"><b>廠型-SKU：</b> <span style="color:#0f172a; font-weight:bold;">${factorySku}</span></div>
-              <div title="${shoeQty}"><b>鞋數量：</b> <span style="color:#059669; font-weight:bold;">${shoeQty} 雙</span></div>
-              <div title="${deliveryDate}"><b>客戶交期：</b> <span style="color:#b45309; font-weight:bold;">${deliveryDate}</span></div>
-            </div>
-
-            <div class="table-container">
               <table>
                 <thead>
                   <tr>
@@ -382,7 +381,7 @@
               </table>
             </div>
 
-            <div class="sign-section">
+            <div class="sign-section" style="width: 100%;">
               <div class="sign-box">
                 <p><b>製表人 / 倉管</b></p>
                 <div class="sign-space"></div>
