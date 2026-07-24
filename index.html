@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SAUCONY 副料入料與庫存管理系統</title>
+  <title>SAUCONY 副料與庫存管理系統</title>
   
   <!-- Thư viện sinh QR Code & Đọc File Excel -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
@@ -15,58 +15,37 @@
     body { background-color: var(--bg); color: #334155; padding: 15px; font-size: 13px; }
     .container { max-width: 1400px; margin: 0 auto; }
 
-    /* HEADER */
     header { background: var(--primary); color: white; padding: 16px 20px; border-radius: 8px; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center; }
     header h1 { font-size: 1.25rem; font-weight: 700; }
-    header p { font-size: 0.85rem; color: #94a3b8; }
 
-    /* CARDS */
     .card { background: white; padding: 16px; border-radius: 8px; border: 1px solid var(--border); margin-bottom: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
     .card h2 { font-size: 1rem; color: var(--primary); margin-bottom: 12px; border-bottom: 2px solid #e2e8f0; padding-bottom: 6px; }
 
-    /* IMPORT GRID */
-    .import-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 16px; margin-bottom: 16px; }
-    .import-box { padding: 16px; border-radius: 8px; border: 1px solid var(--border); }
+    /* KHU VỰC UPLOAD & CHỌN CỘT LINH HOẠT */
+    .upload-box { background: #f0f9ff; border: 1px dashed #0284c7; padding: 16px; border-radius: 8px; margin-bottom: 16px; }
     
-    .box-erp { background: #f0fdf4; border-color: #bbf7d0; }
-    .box-erp h2 { color: #15803d; border-bottom: none; margin-bottom: 4px; }
-    
-    .box-supplier { background: #f0f9ff; border-color: #bae6fd; }
-    .box-supplier h2 { color: #0369a1; border-bottom: none; margin-bottom: 4px; }
+    .mapping-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-top: 12px; background: white; padding: 12px; border-radius: 6px; border: 1px solid var(--border); }
+    label { display: block; font-size: 0.8rem; font-weight: bold; margin-bottom: 4px; color: #1e293b; }
+    select, input[type="text"] { width: 100%; padding: 7px 9px; border: 1px solid var(--border); border-radius: 5px; font-size: 0.85rem; }
 
-    .file-row { display: flex; gap: 8px; align-items: center; margin-top: 10px; flex-wrap: wrap; }
-    input[type="file"] { background: white; padding: 6px 10px; border: 1px solid var(--border); border-radius: 5px; font-size: 0.85rem; }
-    
-    /* MAPPING GRID */
-    .mapping-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px; margin-top: 10px; background: white; padding: 10px; border-radius: 6px; border: 1px solid var(--border); }
-    label { display: block; font-size: 0.78rem; font-weight: 600; margin-bottom: 4px; color: #475569; }
-    select, input[type="text"] { width: 100%; padding: 6px 8px; border: 1px solid var(--border); border-radius: 5px; font-size: 0.85rem; }
-
-    /* BUTTONS */
-    button { padding: 8px 14px; border: none; border-radius: 5px; font-weight: 600; cursor: pointer; font-size: 0.85rem; transition: opacity 0.2s; }
-    button:hover { opacity: 0.9; }
-    .btn-erp { background: #16a34a; color: white; }
-    .btn-supplier { background: #0284c7; color: white; }
+    button { padding: 8px 16px; border: none; border-radius: 5px; font-weight: 600; cursor: pointer; font-size: 0.85rem; }
+    .btn-import { background: #0284c7; color: white; }
+    .btn-import:hover { background: #0369a1; }
     .btn-print { background: #059669; color: white; }
-    .btn-action { background: #64748b; color: white; padding: 4px 8px; font-size: 0.75rem; }
 
     /* TABLE */
     .table-container { overflow-x: auto; max-height: 500px; overflow-y: auto; }
     table { width: 100%; border-collapse: collapse; font-size: 0.82rem; white-space: nowrap; }
     th, td { border: 1px solid #e2e8f0; padding: 8px 10px; text-align: left; }
     th { background: #f1f5f9; position: sticky; top: 0; z-index: 10; font-weight: 700; color: #1e293b; }
-    tr:hover { background-color: #f8fafc; }
-
-    /* BADGES */
+    
     .badge { padding: 3px 8px; border-radius: 10px; font-weight: bold; font-size: 0.72rem; display: inline-block; }
     .bg-green { background: #dcfce7; color: #166534; }
     .bg-red { background: #fee2e2; color: #991b1b; }
-    .bg-yellow { background: #fef9c3; color: #854d0e; }
-    .bg-orange { background: #ffedd5; color: #9a3412; }
     .bg-blue { background: #dbeafe; color: #1e40af; }
 
     /* PRINT LAYOUT */
-    .print-area { display: flex; flex-wrap: wrap; gap: 12px; justify-content: flex-start; margin-top: 15px; }
+    .print-area { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 15px; }
     .label-box { width: 80mm; height: 50mm; border: 2px solid #000; padding: 6px; background: white; box-sizing: border-box; display: flex; flex-direction: column; justify-content: space-between; font-size: 10px; page-break-inside: avoid; }
     .label-header { font-weight: bold; font-size: 11px; text-align: center; border-bottom: 1px solid #000; padding-bottom: 2px; }
     .label-body { display: grid; grid-template-columns: 1fr 58px; gap: 4px; margin-top: 3px; }
@@ -76,7 +55,7 @@
       body * { visibility: hidden; }
       #printArea, #printArea * { visibility: visible; }
       #printArea { position: absolute; left: 0; top: 0; width: 100%; display: flex; flex-wrap: wrap; gap: 8px; }
-      .card, header, .import-grid { display: none !important; }
+      .card, header, .upload-box { display: none !important; }
     }
   </style>
 </head>
@@ -85,74 +64,84 @@
   <div class="container">
     <header>
       <div>
-        <h1>SAUCONY 副料入料與庫存管理系統</h1>
-        <p>Hệ Thống Cập Nhật Dữ Liệu ERP & Đối Soát Giao Hàng Nhà Cung Ứng</p>
+        <h1>SAUCONY 副料管理系統</h1>
+        <p>Tải File & Tự Chọn Cột Dữ Liệu Tương Ứng</p>
       </div>
       <button class="btn-print" onclick="window.print()">🖨️ 列印標籤 (In Tem Đã Chọn)</button>
     </header>
 
-    <!-- KHU VỰC CẬP NHẬT FILE: ERP & NHÀ CUNG ỨNG -->
-    <div class="import-grid">
+    <!-- STEP 1: UPLOAD FILE & CHỌN CỘT -->
+    <div class="upload-box">
+      <h2>📂 1. Tải File Lên & Chọn Cột Dữ Liệu Tương Ứng</h2>
+      <p style="color: #475569; margin-bottom: 10px;">Chọn file Excel/CSV (ERP, File giao hàng, File kho...), hệ thống sẽ hiển thị các cột trong file để bạn tự ghép cột.</p>
       
-      <!-- 1. CẬP NHẬT DỮ LIỆU ERP -->
-      <div class="import-box box-erp">
-        <h2>🔄 更新 ERP 資料 (Cập Nhật Dữ Liệu Từ ERP)</h2>
-        <p style="color: #166534; font-size: 0.8rem;">Tải file đơn hàng xuất từ ERP để thêm PO/vật tư mới hoặc cập nhật lại định mức.</p>
-        <div class="file-row">
-          <input type="file" id="erpFileInput" accept=".xlsx, .xls, .csv">
-          <button class="btn-erp" onclick="processERPImport()">📥 CẬP NHẬT ERP</button>
-        </div>
-      </div>
+      <input type="file" id="excelFileInput" accept=".xlsx, .xls, .csv">
 
-      <!-- 2. ĐỐI SOÁT FILE NHÀ CUNG ỨNG -->
-      <div class="import-box box-supplier">
-        <h2>🚚 匯入廠商交貨單 (Giao Hàng Nhà Cung Ứng)</h2>
-        <p style="color: #0284c7; font-size: 0.8rem;">Tải file giao hàng để tự động đối soát và đổi trạng thái sang "穫準使用的材料(OK)".</p>
-        <div class="file-row">
-          <input type="file" id="supplierFileInput" accept=".xlsx, .xls">
-        </div>
+      <!-- BẢNG GHÉP CỘT (TỰ ĐỘNG HIỆN KHI CÓ FILE) -->
+      <div id="mappingSection" style="display: none; margin-top: 15px;">
+        <p style="font-weight: bold; color: #0284c7;">🔗 Ghép các cột trong file của bạn vào Hệ Thống:</p>
         
-        <!-- Bảng ánh xạ cột tự động -->
-        <div id="supplierMappingArea" style="display: none;">
-          <p style="font-weight: bold; color: #0f172a; margin-top: 10px;">🔗 Chọn cột đối soát tương ứng từ file NCC:</p>
-          <div class="mapping-grid">
-            <div><label>*訂購單號 / PO:</label><select id="mapPoNo"></select></div>
-            <div><label>指令表 / Order:</label><select id="mapOrderNo"></select></div>
-            <div><label>單價 / Mã Cột:</label><select id="mapPriceCode"></select></div>
-            <div><label>數量 / Số giao:</label><select id="mapQty"></select></div>
+        <div class="mapping-grid">
+          <div>
+            <label>*訂購單號 (Mã Đơn ERP / PO):</label>
+            <select id="mapPoNo"></select>
           </div>
-          <button class="btn-supplier" onclick="processSupplierImport()" style="margin-top: 10px;">✅ XÁC NHẬN NHẬP KHO</button>
+          <div>
+            <label>指令表 (Mã PO Sản Xuất):</label>
+            <select id="mapOrderNo"></select>
+          </div>
+          <div>
+            <label>單價 (Mã Vật Tư / SKU):</label>
+            <select id="mapPriceCode"></select>
+          </div>
+          <div>
+            <label>摘要 (Tên / Mô tả Vật Tư):</label>
+            <select id="mapDesc"></select>
+          </div>
+          <div>
+            <label>數量 (Số lượng):</label>
+            <select id="mapQty"></select>
+          </div>
+          <div>
+            <label>單位 (Đơn vị tính):</label>
+            <select id="mapUnit"></select>
+          </div>
+          <div>
+            <label>货物状态 (Trạng thái về):</label>
+            <select id="mapStatus"></select>
+          </div>
+          <div>
+            <label>接收人員/發料日 (Người nhận / Ngày phát):</label>
+            <select id="mapReceiver"></select>
+          </div>
         </div>
-      </div>
 
+        <button class="btn-import" onclick="importMappedData()" style="margin-top: 12px;">✅ XÁC NHẬN NHẬP DỮ LIỆU VÀO HỆ THỐNG</button>
+      </div>
     </div>
 
-    <!-- BẢNG BÁO CÁO NHẬP - XUẤT - TỒN -->
+    <!-- BẢNG DỮ LIỆU KHO REALTIME -->
     <div class="card">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 10px;">
-        <h2>副料入料與庫存列表 (Bảng Dữ Liệu Kho SAUCONY)</h2>
-        <input type="text" id="searchBox" onkeyup="filterData()" placeholder="🔍 Tìm theo Mã PO, Chỉ lệnh (指令表), Mã Cột (單價)..." style="padding: 6px 12px; width: 320px;">
+        <h2>2. Bảng Dữ Liệu Kho SAUCONY</h2>
+        <input type="text" id="searchBox" onkeyup="filterData()" placeholder="🔍 Tìm theo Mã PO, Chỉ lệnh, Mã VT..." style="padding: 6px 12px; width: 300px;">
       </div>
 
       <div class="table-container">
         <table>
           <thead>
             <tr>
-              <th><input type="checkbox" id="selectAllBox" onclick="selectAll(this)"> In</th>
+              <th><input type="checkbox" onclick="selectAll(this)"> In</th>
               <th>訂購單號 (PO)</th>
-              <th>指令表 (PO SX)</th>
-              <th>廠型-SKU</th>
+              <th>指令表</th>
               <th>單價 (Mã VT)</th>
-              <th>部件</th>
-              <th>摘要 (Mô tả)</th>
-              <th>訂購量 (Số đặt)</th>
+              <th>摘要 (Mô Tả)</th>
+              <th>數量</th>
               <th>單位</th>
-              <th>货物状态 (Trạng thái)</th>
-              <th>庫存地點</th>
+              <th>货物状态</th>
               <th>接收人員</th>
-              <th>发料日&出庫日</th>
-              <th>庫存數量 (Tồn Kho)</th>
-              <th>Thao tác</th>
+              <th>TỒN KHO CÒN LẠI</th>
+              <th>Thao Tác</th>
             </tr>
           </thead>
           <tbody id="dataTable"></tbody>
@@ -160,70 +149,28 @@
       </div>
     </div>
 
-    <!-- KHU VỰC XEM TRƯỚC TEM NHÃN -->
+    <!-- KHU VỰC IN TEM NHÃN -->
     <div class="card">
-      <h2>標籤預覽 (Xem Trước Tem Nhãn 80mm x 50mm)</h2>
+      <h2>3. 標籤預覽 (Xem Trước Tem 80mm x 50mm)</h2>
       <div id="printArea" class="print-area"></div>
     </div>
 
   </div>
 
   <script>
-    // DỮ LIỆU KHỞI TẠO MẪU (SỬ DỤNG LOCALSTORAGE ĐỂ LƯU TRỮ)
-    let dataset = JSON.parse(localStorage.getItem('saucony_warehouse_db')) || [
-      {
-        id: 1,
-        poNo: "1106V0P26060001",
-        orderNo: "PS37825",
-        sku: "S102201男-S101843-1002",
-        part: "前口飾扣",
-        desc: "眼扣 鋅質 D型鋅扁環SCN-A33 11.8*5.4*1.6MM",
-        priceCode: "SCN-A33",
-        qty: 732,
-        unit: "PCS",
-        status: "材料还没收到",
-        location: "",
-        receiver: "",
-        issueDate: "",
-        selected: true
-      },
-      {
-        id: 2,
-        poNo: "1106V0P26060001",
-        orderNo: "PS37825",
-        sku: "S102201男-S101843-1002",
-        part: "眼扣",
-        desc: "眼扣 SCN-A34 BS EYELET 9.5*5.5*H:5MM",
-        priceCode: "SCN-A34",
-        qty: 1464,
-        unit: "粒",
-        status: "穫準使用的材料(OK)",
-        location: "KHO-A1",
-        receiver: "Nga",
-        issueDate: "",
-        selected: true
-      }
-    ];
-
-    let rawSupplierData = [];
-    let supplierColumns = [];
+    let rawFileRows = [];
+    let fileColumns = [];
+    let dataset = JSON.parse(localStorage.getItem('custom_mapped_db')) || [];
 
     document.addEventListener('DOMContentLoaded', () => {
       renderAll();
-      document.getElementById('supplierFileInput').addEventListener('change', handleSupplierFileSelect);
+      document.getElementById('excelFileInput').addEventListener('change', handleFileSelect);
     });
 
-    // =========================================================
-    // 1. CHỨC NĂNG: CẬP NHẬT DỮ LIỆU TỪ ERP
-    // =========================================================
-    function processERPImport() {
-      const fileInput = document.getElementById('erpFileInput');
-      const file = fileInput.files[0];
-
-      if (!file) {
-        alert("Vui lòng chọn file Excel xuất từ hệ thống ERP trước!");
-        return;
-      }
+    // 1. ĐỌC FILE VÀ LẤY TIÊU ĐỀ CỘT
+    function handleFileSelect(e) {
+      const file = e.target.files[0];
+      if (!file) return;
 
       const reader = new FileReader();
       reader.onload = function (evt) {
@@ -231,176 +178,104 @@
           const data = new Uint8Array(evt.target.result);
           const workbook = XLSX.read(data, { type: 'array' });
           const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
-          const erpRows = XLSX.utils.sheet_to_json(firstSheet, { defval: "" });
 
-          if (erpRows.length === 0) {
-            alert("File ERP không có dữ liệu!");
+          rawFileRows = XLSX.utils.sheet_to_json(firstSheet, { defval: "" });
+          if (rawFileRows.length === 0) {
+            alert("File không chứa dữ liệu!");
             return;
           }
 
-          let countNew = 0;
-          let countUpdated = 0;
-
-          erpRows.forEach(row => {
-            const poNo = String(row['*訂購單號'] || row['PO'] || row['PO No'] || row['Purchase Order'] || '').trim();
-            const orderNo = String(row['指令表'] || row['Order No'] || row['Mã Chỉ Lệnh'] || '').trim();
-            const priceCode = String(row['單價'] || row['Mã Cột'] || row['Item Code'] || '').trim();
-            const qty = parseFloat(row['數量'] || row['訂購量'] || row['Qty'] || 0);
-            const sku = String(row['廠型-SKU'] || row['SKU'] || '').trim();
-            const desc = String(row['摘要'] || row['Description'] || '').trim();
-            const part = String(row['部件'] || row['Part'] || '').trim();
-            const unit = String(row['單位'] || row['Unit'] || 'PCS').trim();
-
-            if (!poNo && !orderNo) return;
-
-            const existing = dataset.find(item => 
-              (poNo && String(item.poNo).trim() === poNo) && 
-              (orderNo && String(item.orderNo).trim() === orderNo) && 
-              (!priceCode || String(item.priceCode).trim() === priceCode)
-            );
-
-            if (existing) {
-              existing.qty = qty;
-              if (sku) existing.sku = sku;
-              if (desc) existing.desc = desc;
-              if (part) existing.part = part;
-              countUpdated++;
-            } else {
-              dataset.push({
-                id: Date.now() + Math.random(),
-                poNo: poNo,
-                orderNo: orderNo,
-                sku: sku,
-                part: part,
-                desc: desc,
-                priceCode: priceCode,
-                qty: qty,
-                unit: unit,
-                status: "材料还没收到",
-                location: "",
-                receiver: "",
-                issueDate: "",
-                selected: true
-              });
-              countNew++;
-            }
-          });
-
-          alert(`✅ CẬP NHẬT DỮ LIỆU ERP THÀNH CÔNG!\n\n- Số mục thêm mới: ${countNew}\n- Số mục đã cập nhật: ${countUpdated}`);
-          fileInput.value = '';
-          saveAndRender();
+          // Lấy danh sách tên tất cả các cột trong file vừa chọn
+          fileColumns = Object.keys(rawFileRows[0]);
+          populateColumnDropdowns();
+          document.getElementById('mappingSection').style.display = 'block';
 
         } catch (err) {
-          console.error(err);
-          alert("Lỗi khi đọc file ERP. Vui lòng kiểm tra lại cấu trúc file!");
+          alert("Lỗi khi đọc file Excel/CSV!");
         }
       };
       reader.readAsArrayBuffer(file);
     }
 
-    // =========================================================
-    // 2. CHỨC NĂNG: GIAO HÀNG TỪ NHÀ CUNG ỨNG
-    // =========================================================
-    function handleSupplierFileSelect(e) {
-      const file = e.target.files[0];
-      if (!file) return;
+    // 2. TẠO CÁC Ô CHỌN CỘT DỰA TRÊN FILE VỪA UPLOAD
+    function populateColumnDropdowns() {
+      const dropdownIds = ['mapPoNo', 'mapOrderNo', 'mapPriceCode', 'mapDesc', 'mapQty', 'mapUnit', 'mapStatus', 'mapReceiver'];
 
-      const reader = new FileReader();
-      reader.onload = function (evt) {
-        const data = new Uint8Array(evt.target.result);
-        const workbook = XLSX.read(data, { type: 'array' });
-        const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+      dropdownIds.forEach(id => {
+        const select = document.getElementById(id);
+        select.innerHTML = '<option value="">-- (Không sử dụng) --</option>';
 
-        rawSupplierData = XLSX.utils.sheet_to_json(worksheet, { defval: "" });
-        if (rawSupplierData.length === 0) {
-          alert("File Nhà cung ứng không có dữ liệu!");
-          return;
-        }
+        fileColumns.forEach(colName => {
+          const opt = document.createElement('option');
+          opt.value = colName;
+          opt.innerText = colName;
 
-        supplierColumns = Object.keys(rawSupplierData[0]);
-        populateSupplierSelects();
-        document.getElementById('supplierMappingArea').style.display = 'block';
-      };
-      reader.readAsArrayBuffer(file);
-    }
+          // Tự động gợi ý khớp thông minh theo tên cột
+          const lowerCol = colName.toLowerCase();
+          if (id === 'mapPoNo' && (colName.includes('訂購') || lowerCol.includes('po'))) opt.selected = true;
+          if (id === 'mapOrderNo' && (colName.includes('指令') || lowerCol.includes('order'))) opt.selected = true;
+          if (id === 'mapPriceCode' && (colName.includes('單價') || lowerCol.includes('code') || lowerCol.includes('sku'))) opt.selected = true;
+          if (id === 'mapDesc' && (colName.includes('摘要') || colName.includes('部件') || lowerCol.includes('desc'))) opt.selected = true;
+          if (id === 'mapQty' && (colName.includes('數量') || lowerCol.includes('qty'))) opt.selected = true;
+          if (id === 'mapUnit' && (colName.includes('單位') || lowerCol.includes('unit'))) opt.selected = true;
+          if (id === 'mapStatus' && (colName.includes('状态') || colName.includes('狀態') || lowerCol.includes('status'))) opt.selected = true;
+          if (id === 'mapReceiver' && (colName.includes('接收') || colName.includes('人員') || lowerCol.includes('receiver'))) opt.selected = true;
 
-    function populateSupplierSelects() {
-      const selects = ['mapPoNo', 'mapOrderNo', 'mapPriceCode', 'mapQty'];
-      selects.forEach(selectId => {
-        const select = document.getElementById(selectId);
-        select.innerHTML = '<option value="">-- Chọn cột --</option>';
-
-        supplierColumns.forEach(col => {
-          const option = document.createElement('option');
-          option.value = col;
-          option.innerText = col;
-
-          const lower = col.toLowerCase();
-          if (selectId === 'mapPoNo' && (lower.includes('訂購') || lower.includes('po'))) option.selected = true;
-          if (selectId === 'mapOrderNo' && (lower.includes('指令') || lower.includes('order'))) option.selected = true;
-          if (selectId === 'mapPriceCode' && (lower.includes('單價') || lower.includes('mã'))) option.selected = true;
-          if (selectId === 'mapQty' && (lower.includes('數量') || lower.includes('qty'))) option.selected = true;
-
-          select.appendChild(option);
+          select.appendChild(opt);
         });
       });
     }
 
-    function processSupplierImport() {
-      const poKey = document.getElementById('mapPoNo').value;
-      const orderKey = document.getElementById('mapOrderNo').value;
-      const priceCodeKey = document.getElementById('mapPriceCode').value;
-      const qtyKey = document.getElementById('mapQty').value;
+    // 3. ĐỌC DỮ LIỆU THEO ĐÚNG CÁC CỘT BẠN ĐÃ CHỌN
+    function importMappedData() {
+      const poCol = document.getElementById('mapPoNo').value;
+      const orderCol = document.getElementById('mapOrderNo').value;
+      const priceCol = document.getElementById('mapPriceCode').value;
+      const descCol = document.getElementById('mapDesc').value;
+      const qtyCol = document.getElementById('mapQty').value;
+      const unitCol = document.getElementById('mapUnit').value;
+      const statusCol = document.getElementById('mapStatus').value;
+      const receiverCol = document.getElementById('mapReceiver').value;
 
-      if (!poKey && !orderKey) {
-        alert("Vui lòng chọn cột *訂購單號 hoặc 指令表 để đối soát!");
-        return;
-      }
+      let importedCount = 0;
 
-      let updatedCount = 0;
+      rawFileRows.forEach(row => {
+        const poVal = poCol ? String(row[poCol]).trim() : '';
+        const orderVal = orderCol ? String(row[orderCol]).trim() : '';
+        const priceVal = priceCol ? String(row[priceCol]).trim() : '';
+        const descVal = descCol ? String(row[descCol]).trim() : '';
+        const qtyVal = qtyCol ? parseFloat(row[qtyCol]) || 0 : 0;
+        const unitVal = unitCol ? String(row[unitCol]).trim() : 'PCS';
+        const statusVal = statusCol ? String(row[statusCol]).trim() : '材料还没收到';
+        const receiverVal = receiverCol ? String(row[receiverCol]).trim() : '';
 
-      rawSupplierData.forEach(row => {
-        const filePo = String(row[poKey] || '').trim();
-        const fileOrder = String(row[orderKey] || '').trim();
-        const filePriceCode = String(row[priceCodeKey] || '').trim();
-        const fileQty = parseFloat(row[qtyKey]) || 0;
+        if (!poVal && !orderVal && !priceVal) return;
 
-        const target = dataset.find(item => {
-          const matchPo = filePo && String(item.poNo).trim() === filePo;
-          const matchOrder = fileOrder && String(item.orderNo).trim() === fileOrder;
-          const matchPrice = !filePriceCode || String(item.priceCode).trim() === filePriceCode;
-          return (matchPo || matchOrder) && matchPrice;
+        dataset.push({
+          id: Date.now() + Math.random(),
+          poNo: poVal,
+          orderNo: orderVal,
+          priceCode: priceVal,
+          desc: descVal,
+          qty: qtyVal,
+          unit: unitVal,
+          status: statusVal || '材料还没收到',
+          receiver: receiverVal,
+          issueDate: receiverVal ? new Date().toISOString().split('T')[0] : '',
+          selected: true
         });
-
-        if (target) {
-          const poQty = parseFloat(target.qty) || 0;
-
-          if (fileQty === poQty || fileQty === 0) {
-            target.status = "穫準使用的材料(OK)";
-          } else if (fileQty < poQty) {
-            target.status = `⚠️ Thiếu (${fileQty}/${poQty})`;
-            target.qty = fileQty;
-          } else {
-            target.status = `⚡ Thừa (${fileQty}/${poQty})`;
-            target.qty = fileQty;
-          }
-
-          if (!target.location) target.location = "KHO-A1";
-          updatedCount++;
-        }
+        importedCount++;
       });
 
-      alert(`✅ Đã đối soát xong ${updatedCount} mục vật tư!`);
-      document.getElementById('supplierMappingArea').style.display = 'none';
-      document.getElementById('supplierFileInput').value = '';
+      alert(`✅ Đã nhập thành công ${importedCount} dòng dữ liệu theo đúng vị trí cột bạn đã chọn!`);
+      document.getElementById('mappingSection').style.display = 'none';
+      document.getElementById('excelFileInput').value = '';
       saveAndRender();
     }
 
-    // =========================================================
-    // 3. LOGIC HIỂN THỊ VÀ LƯU TRỮ
-    // =========================================================
+    // 4. HIỂN THỊ DỮ LIỆU VÀ TÍNH TỒN KHO
     function saveAndRender() {
-      localStorage.setItem('saucony_warehouse_db', JSON.stringify(dataset));
+      localStorage.setItem('custom_mapped_db', JSON.stringify(dataset));
       renderAll();
     }
 
@@ -414,68 +289,60 @@
       tbody.innerHTML = '';
 
       dataset.forEach(item => {
-        let stockQty = 0;
-        const isArrived = item.status.includes('OK') || item.status.includes('Thiếu') || item.status.includes('Thừa');
+        const isArrived = item.status.includes('OK') || item.status.includes('Đã về') || item.status.includes('穫準');
         const isIssued = item.issueDate && item.issueDate !== '';
-
-        if (isArrived && !isIssued) {
-          stockQty = item.qty;
-        }
-
-        let badgeClass = 'bg-red';
-        if (item.status.includes('OK')) badgeClass = 'bg-green';
-        else if (item.status.includes('Thiếu')) badgeClass = 'bg-yellow';
-        else if (item.status.includes('Thừa')) badgeClass = 'bg-orange';
+        
+        // Tồn kho = Hàng đã về nhưng chưa phát
+        let stockQty = (isArrived && !isIssued) ? item.qty : 0;
 
         const tr = document.createElement('tr');
         tr.innerHTML = `
           <td><input type="checkbox" ${item.selected ? 'checked' : ''} onchange="toggleSelect(${item.id})"></td>
-          <td><b style="color: #d97706;">${item.poNo || '---'}</b></td>
-          <td><b>${item.orderNo}</b></td>
-          <td>${item.sku}</td>
+          <td><b>${item.poNo || '---'}</b></td>
+          <td><b>${item.orderNo || '---'}</b></td>
           <td><span class="badge bg-blue">${item.priceCode || '---'}</span></td>
-          <td>${item.part}</td>
-          <td title="${item.desc}">${item.desc}</td>
+          <td>${item.desc || '---'}</td>
           <td><b>${item.qty}</b></td>
           <td>${item.unit}</td>
-          <td><span class="badge ${badgeClass}">${item.status}</span></td>
-          <td><b>${item.location || '---'}</b></td>
+          <td><span class="badge ${isArrived ? 'bg-green' : 'bg-red'}">${item.status}</span></td>
           <td><b>${item.receiver || '---'}</b></td>
-          <td>${item.issueDate || '未發料'}</td>
           <td><b style="color: ${stockQty > 0 ? '#2563eb' : '#059669'}; font-size: 0.95rem;">${stockQty} ${item.unit}</b></td>
           <td>
-            <button class="btn-action" onclick="issueMaterial(${item.id})">Xuất Hàng</button>
+            <button onclick="toggleItemStatus(${item.id})" style="background: #0284c7; color: white; padding: 3px 6px; font-size: 0.72rem; border:none; border-radius:3px; cursor:pointer;">Đổi Trạng Thái</button>
+            <button onclick="deleteItem(${item.id})" style="background: #ef4444; color: white; padding: 3px 6px; font-size: 0.72rem; border:none; border-radius:3px; cursor:pointer;">Xóa</button>
           </td>
         `;
         tbody.appendChild(tr);
       });
     }
 
-    function issueMaterial(id) {
+    function toggleItemStatus(id) {
       const item = dataset.find(i => i.id === id);
       if (item) {
-        if (item.issueDate) {
-          if (confirm("Vật tư này đã phát. Bạn muốn hủy trạng thái phát hàng?")) {
-            item.issueDate = "";
-            item.receiver = "";
-            saveAndRender();
-          }
+        if (!item.status.includes('OK') && !item.status.includes('Đã về')) {
+          item.status = "穫準使用的材料(OK)";
+        } else if (!item.issueDate) {
+          item.receiver = prompt("Nhập tên người / bộ phận nhận:", "Nga") || "Nga";
+          item.issueDate = new Date().toISOString().split('T')[0];
         } else {
-          const receiver = prompt("Nhập tên người / bộ phận nhận hàng:", "Nga");
-          if (receiver !== null) {
-            const today = new Date().toISOString().split('T')[0];
-            item.receiver = receiver.trim() || "Xưởng sản xuất";
-            item.issueDate = today;
-            saveAndRender();
-          }
+          item.status = "材料还没收到";
+          item.receiver = "";
+          item.issueDate = "";
         }
+        saveAndRender();
+      }
+    }
+
+    function deleteItem(id) {
+      if (confirm("Xóa dòng này?")) {
+        dataset = dataset.filter(i => i.id !== id);
+        saveAndRender();
       }
     }
 
     function renderLabels() {
       const printArea = document.getElementById('printArea');
       printArea.innerHTML = '';
-
       const selectedItems = dataset.filter(i => i.selected);
 
       if (selectedItems.length === 0) {
@@ -496,7 +363,6 @@
               <div class="label-row"><b>指令/SKU:</b> ${item.orderNo} / ${item.priceCode}</div>
               <div class="label-row"><b>品名:</b> ${item.desc}</div>
               <div class="label-row"><b>數量:</b> <b>${item.qty} ${item.unit}</b></div>
-              <div class="label-row"><b>庫位:</b> ${item.location || '---'}</div>
             </div>
             <div id="${qrId}"></div>
           </div>
@@ -504,9 +370,8 @@
 
         printArea.appendChild(labelBox);
 
-        const qrText = `PO:${item.poNo}|ORD:${item.orderNo}|SKU:${item.priceCode}|QTY:${item.qty}${item.unit}|LOC:${item.location}`;
         new QRCode(document.getElementById(qrId), {
-          text: qrText,
+          text: `PO:${item.poNo}|ORD:${item.orderNo}|SKU:${item.priceCode}|QTY:${item.qty}${item.unit}`,
           width: 52,
           height: 52,
           correctLevel: QRCode.CorrectLevel.M
@@ -516,10 +381,7 @@
 
     function toggleSelect(id) {
       const item = dataset.find(i => i.id === id);
-      if (item) {
-        item.selected = !item.selected;
-        saveAndRender();
-      }
+      if (item) { item.selected = !item.selected; saveAndRender(); }
     }
 
     function selectAll(masterCert) {
