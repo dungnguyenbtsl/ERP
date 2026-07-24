@@ -1,400 +1,148 @@
 <!DOCTYPE html>
-<html lang="zh-TW">
+<html lang="vi">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SAUCONY 副料與庫存管理系統</title>
-  
-  <!-- Thư viện sinh QR Code & Đọc File Excel -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-
+  <title>Quản Lý Vật Tư SAUCONY</title>
   <style>
-    :root { --primary: #0f172a; --accent: #2563eb; --bg: #f8fafc; --border: #cbd5e1; }
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-    body { background-color: var(--bg); color: #334155; padding: 15px; font-size: 13px; }
-    .container { max-width: 1400px; margin: 0 auto; }
-
-    header { background: var(--primary); color: white; padding: 16px 20px; border-radius: 8px; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center; }
-    header h1 { font-size: 1.25rem; font-weight: 700; }
-
-    .card { background: white; padding: 16px; border-radius: 8px; border: 1px solid var(--border); margin-bottom: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
-    .card h2 { font-size: 1rem; color: var(--primary); margin-bottom: 12px; border-bottom: 2px solid #e2e8f0; padding-bottom: 6px; }
-
-    /* KHU VỰC UPLOAD & CHỌN CỘT LINH HOẠT */
-    .upload-box { background: #f0f9ff; border: 1px dashed #0284c7; padding: 16px; border-radius: 8px; margin-bottom: 16px; }
-    
-    .mapping-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-top: 12px; background: white; padding: 12px; border-radius: 6px; border: 1px solid var(--border); }
-    label { display: block; font-size: 0.8rem; font-weight: bold; margin-bottom: 4px; color: #1e293b; }
-    select, input[type="text"] { width: 100%; padding: 7px 9px; border: 1px solid var(--border); border-radius: 5px; font-size: 0.85rem; }
-
-    button { padding: 8px 16px; border: none; border-radius: 5px; font-weight: 600; cursor: pointer; font-size: 0.85rem; }
-    .btn-import { background: #0284c7; color: white; }
-    .btn-import:hover { background: #0369a1; }
-    .btn-print { background: #059669; color: white; }
-
-    /* TABLE */
-    .table-container { overflow-x: auto; max-height: 500px; overflow-y: auto; }
-    table { width: 100%; border-collapse: collapse; font-size: 0.82rem; white-space: nowrap; }
-    th, td { border: 1px solid #e2e8f0; padding: 8px 10px; text-align: left; }
-    th { background: #f1f5f9; position: sticky; top: 0; z-index: 10; font-weight: 700; color: #1e293b; }
-    
-    .badge { padding: 3px 8px; border-radius: 10px; font-weight: bold; font-size: 0.72rem; display: inline-block; }
-    .bg-green { background: #dcfce7; color: #166534; }
-    .bg-red { background: #fee2e2; color: #991b1b; }
-    .bg-blue { background: #dbeafe; color: #1e40af; }
-
-    /* PRINT LAYOUT */
-    .print-area { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 15px; }
-    .label-box { width: 80mm; height: 50mm; border: 2px solid #000; padding: 6px; background: white; box-sizing: border-box; display: flex; flex-direction: column; justify-content: space-between; font-size: 10px; page-break-inside: avoid; }
-    .label-header { font-weight: bold; font-size: 11px; text-align: center; border-bottom: 1px solid #000; padding-bottom: 2px; }
-    .label-body { display: grid; grid-template-columns: 1fr 58px; gap: 4px; margin-top: 3px; }
-    .label-row { line-height: 1.25; margin-bottom: 2px; overflow: hidden; text-overflow: ellipsis; }
-
-    @media print {
-      body * { visibility: hidden; }
-      #printArea, #printArea * { visibility: visible; }
-      #printArea { position: absolute; left: 0; top: 0; width: 100%; display: flex; flex-wrap: wrap; gap: 8px; }
-      .card, header, .upload-box { display: none !important; }
-    }
+    body { font-family: Arial, sans-serif; margin: 20px; background-color: #f4f6f9; }
+    .card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); margin-bottom: 20px; }
+    h2 { margin-top: 0; color: #1a73e8; }
+    input, select, button { padding: 8px 12px; margin: 4px; border: 1px solid #ccc; border-radius: 4px; }
+    button { background: #1a73e8; color: white; border: none; cursor: pointer; }
+    button:hover { background: #1557b0; }
+    table { width: 100%; border-collapse: collapse; margin-top: 15px; background: white; }
+    th, td { border: 1px solid #ddd; padding: 10px; text-align: left; font-size: 13px; }
+    th { background: #f1f3f4; }
+    .status-ok { background-color: #d4edda; color: #155724; font-weight: bold; padding: 3px 8px; border-radius: 4px; }
+    .status-pending { background-color: #fff3cd; color: #856404; font-weight: bold; padding: 3px 8px; border-radius: 4px; }
   </style>
 </head>
 <body>
 
-  <div class="container">
-    <header>
-      <div>
-        <h1>SAUCONY 副料管理系統</h1>
-        <p>Tải File & Tự Chọn Cột Dữ Liệu Tương Ứng</p>
-      </div>
-      <button class="btn-print" onclick="window.print()">🖨️ 列印標籤 (In Tem Đã Chọn)</button>
-    </header>
+  <div class="card">
+    <h2>🔗 Cấu Hình Web App 2 Chiều</h2>
+    <label>Nhập Web App URL (GAS): </label>
+    <input type="text" id="scriptUrl" style="width: 60%;" placeholder="https://script.google.com/macros/s/.../exec">
+    <button onclick="loadData()">🔄 Tải Dữ Liệu</button>
+  </div>
 
-    <!-- STEP 1: UPLOAD FILE & CHỌN CỘT -->
-    <div class="upload-box">
-      <h2>📂 1. Tải File Lên & Chọn Cột Dữ Liệu Tương Ứng</h2>
-      <p style="color: #475569; margin-bottom: 10px;">Chọn file Excel/CSV (ERP, File giao hàng, File kho...), hệ thống sẽ hiển thị các cột trong file để bạn tự ghép cột.</p>
-      
-      <input type="file" id="excelFileInput" accept=".xlsx, .xls, .csv">
-
-      <!-- BẢNG GHÉP CỘT (TỰ ĐỘNG HIỆN KHI CÓ FILE) -->
-      <div id="mappingSection" style="display: none; margin-top: 15px;">
-        <p style="font-weight: bold; color: #0284c7;">🔗 Ghép các cột trong file của bạn vào Hệ Thống:</p>
-        
-        <div class="mapping-grid">
-          <div>
-            <label>*訂購單號 (Mã Đơn ERP / PO):</label>
-            <select id="mapPoNo"></select>
-          </div>
-          <div>
-            <label>指令表 (Mã PO Sản Xuất):</label>
-            <select id="mapOrderNo"></select>
-          </div>
-          <div>
-            <label>單價 (Mã Vật Tư / SKU):</label>
-            <select id="mapPriceCode"></select>
-          </div>
-          <div>
-            <label>摘要 (Tên / Mô tả Vật Tư):</label>
-            <select id="mapDesc"></select>
-          </div>
-          <div>
-            <label>數量 (Số lượng):</label>
-            <select id="mapQty"></select>
-          </div>
-          <div>
-            <label>單位 (Đơn vị tính):</label>
-            <select id="mapUnit"></select>
-          </div>
-          <div>
-            <label>货物状态 (Trạng thái về):</label>
-            <select id="mapStatus"></select>
-          </div>
-          <div>
-            <label>接收人員/發料日 (Người nhận / Ngày phát):</label>
-            <select id="mapReceiver"></select>
-          </div>
-        </div>
-
-        <button class="btn-import" onclick="importMappedData()" style="margin-top: 12px;">✅ XÁC NHẬN NHẬP DỮ LIỆU VÀO HỆ THỐNG</button>
-      </div>
-    </div>
-
-    <!-- BẢNG DỮ LIỆU KHO REALTIME -->
-    <div class="card">
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 10px;">
-        <h2>2. Bảng Dữ Liệu Kho SAUCONY</h2>
-        <input type="text" id="searchBox" onkeyup="filterData()" placeholder="🔍 Tìm theo Mã PO, Chỉ lệnh, Mã VT..." style="padding: 6px 12px; width: 300px;">
-      </div>
-
-      <div class="table-container">
-        <table>
-          <thead>
-            <tr>
-              <th><input type="checkbox" onclick="selectAll(this)"> In</th>
-              <th>訂購單號 (PO)</th>
-              <th>指令表</th>
-              <th>單價 (Mã VT)</th>
-              <th>摘要 (Mô Tả)</th>
-              <th>數量</th>
-              <th>單位</th>
-              <th>货物状态</th>
-              <th>接收人員</th>
-              <th>TỒN KHO CÒN LẠI</th>
-              <th>Thao Tác</th>
-            </tr>
-          </thead>
-          <tbody id="dataTable"></tbody>
-        </table>
-      </div>
-    </div>
-
-    <!-- KHU VỰC IN TEM NHÃN -->
-    <div class="card">
-      <h2>3. 標籤預覽 (Xem Trước Tem 80mm x 50mm)</h2>
-      <div id="printArea" class="print-area"></div>
-    </div>
-
+  <div class="card">
+    <h2>📦 Danh Sách Vật Tư SAUCONY</h2>
+    <input type="text" id="searchInput" onkeyup="filterTable()" placeholder="Tìm theo Mã Đơn / Tên Vật Tư / Chỉ Lệnh...">
+    
+    <table id="dataTable">
+      <thead>
+        <tr id="tableHeader">
+          <th>Dòng</th>
+          <th>Mã Đơn / 指令表</th>
+          <th>Tên Vật Tư / 材料名稱</th>
+          <th>Số Lượng / 數量</th>
+          <th>Trạng Thái / 狀態</th>
+          <th>Người Nhận</th>
+          <th>Thao Tác Ghi Đổi</th>
+        </tr>
+      </thead>
+      <tbody id="tableBody">
+        <tr><td colspan="7" style="text-align:center;">Chưa có dữ liệu. Vui lòng dán URL và bấm Tải Dữ Liệu.</td></tr>
+      </tbody>
+    </table>
   </div>
 
   <script>
-    let rawFileRows = [];
-    let fileColumns = [];
-    let dataset = JSON.parse(localStorage.getItem('custom_mapped_db')) || [];
+    let sheetData = [];
 
-    document.addEventListener('DOMContentLoaded', () => {
-      renderAll();
-      document.getElementById('excelFileInput').addEventListener('change', handleFileSelect);
-    });
+    // 1. TẢI DỮ LIỆU TỪ GOOGLE SHEETS
+    async function loadData() {
+      const url = document.getElementById('scriptUrl').value.trim();
+      if (!url) return alert("Vui lòng nhập Web App URL!");
 
-    // 1. ĐỌC FILE VÀ LẤY TIÊU ĐỀ CỘT
-    function handleFileSelect(e) {
-      const file = e.target.files[0];
-      if (!file) return;
+      const body = document.getElementById('tableBody');
+      body.innerHTML = '<tr><td colspan="7" style="text-align:center;">⏳ Đang tải dữ liệu từ Google Sheets...</td></tr>';
 
-      const reader = new FileReader();
-      reader.onload = function (evt) {
-        try {
-          const data = new Uint8Array(evt.target.result);
-          const workbook = XLSX.read(data, { type: 'array' });
-          const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
-
-          rawFileRows = XLSX.utils.sheet_to_json(firstSheet, { defval: "" });
-          if (rawFileRows.length === 0) {
-            alert("File không chứa dữ liệu!");
-            return;
-          }
-
-          // Lấy danh sách tên tất cả các cột trong file vừa chọn
-          fileColumns = Object.keys(rawFileRows[0]);
-          populateColumnDropdowns();
-          document.getElementById('mappingSection').style.display = 'block';
-
-        } catch (err) {
-          alert("Lỗi khi đọc file Excel/CSV!");
-        }
-      };
-      reader.readAsArrayBuffer(file);
+      try {
+        const res = await fetch(url);
+        sheetData = await res.json();
+        renderTable(sheetData);
+      } catch (err) {
+        alert("Lỗi tải dữ liệu: " + err.message);
+      }
     }
 
-    // 2. TẠO CÁC Ô CHỌN CỘT DỰA TRÊN FILE VỪA UPLOAD
-    function populateColumnDropdowns() {
-      const dropdownIds = ['mapPoNo', 'mapOrderNo', 'mapPriceCode', 'mapDesc', 'mapQty', 'mapUnit', 'mapStatus', 'mapReceiver'];
+    // 2. HIỂN THỊ BẢNG
+    function renderTable(data) {
+      const body = document.getElementById('tableBody');
+      body.innerHTML = '';
 
-      dropdownIds.forEach(id => {
-        const select = document.getElementById(id);
-        select.innerHTML = '<option value="">-- (Không sử dụng) --</option>';
-
-        fileColumns.forEach(colName => {
-          const opt = document.createElement('option');
-          opt.value = colName;
-          opt.innerText = colName;
-
-          // Tự động gợi ý khớp thông minh theo tên cột
-          const lowerCol = colName.toLowerCase();
-          if (id === 'mapPoNo' && (colName.includes('訂購') || lowerCol.includes('po'))) opt.selected = true;
-          if (id === 'mapOrderNo' && (colName.includes('指令') || lowerCol.includes('order'))) opt.selected = true;
-          if (id === 'mapPriceCode' && (colName.includes('單價') || lowerCol.includes('code') || lowerCol.includes('sku'))) opt.selected = true;
-          if (id === 'mapDesc' && (colName.includes('摘要') || colName.includes('部件') || lowerCol.includes('desc'))) opt.selected = true;
-          if (id === 'mapQty' && (colName.includes('數量') || lowerCol.includes('qty'))) opt.selected = true;
-          if (id === 'mapUnit' && (colName.includes('單位') || lowerCol.includes('unit'))) opt.selected = true;
-          if (id === 'mapStatus' && (colName.includes('状态') || colName.includes('狀態') || lowerCol.includes('status'))) opt.selected = true;
-          if (id === 'mapReceiver' && (colName.includes('接收') || colName.includes('人員') || lowerCol.includes('receiver'))) opt.selected = true;
-
-          select.appendChild(opt);
-        });
-      });
-    }
-
-    // 3. ĐỌC DỮ LIỆU THEO ĐÚNG CÁC CỘT BẠN ĐÃ CHỌN
-    function importMappedData() {
-      const poCol = document.getElementById('mapPoNo').value;
-      const orderCol = document.getElementById('mapOrderNo').value;
-      const priceCol = document.getElementById('mapPriceCode').value;
-      const descCol = document.getElementById('mapDesc').value;
-      const qtyCol = document.getElementById('mapQty').value;
-      const unitCol = document.getElementById('mapUnit').value;
-      const statusCol = document.getElementById('mapStatus').value;
-      const receiverCol = document.getElementById('mapReceiver').value;
-
-      let importedCount = 0;
-
-      rawFileRows.forEach(row => {
-        const poVal = poCol ? String(row[poCol]).trim() : '';
-        const orderVal = orderCol ? String(row[orderCol]).trim() : '';
-        const priceVal = priceCol ? String(row[priceCol]).trim() : '';
-        const descVal = descCol ? String(row[descCol]).trim() : '';
-        const qtyVal = qtyCol ? parseFloat(row[qtyCol]) || 0 : 0;
-        const unitVal = unitCol ? String(row[unitCol]).trim() : 'PCS';
-        const statusVal = statusCol ? String(row[statusCol]).trim() : '材料还没收到';
-        const receiverVal = receiverCol ? String(row[receiverCol]).trim() : '';
-
-        if (!poVal && !orderVal && !priceVal) return;
-
-        dataset.push({
-          id: Date.now() + Math.random(),
-          poNo: poVal,
-          orderNo: orderVal,
-          priceCode: priceVal,
-          desc: descVal,
-          qty: qtyVal,
-          unit: unitVal,
-          status: statusVal || '材料还没收到',
-          receiver: receiverVal,
-          issueDate: receiverVal ? new Date().toISOString().split('T')[0] : '',
-          selected: true
-        });
-        importedCount++;
-      });
-
-      alert(`✅ Đã nhập thành công ${importedCount} dòng dữ liệu theo đúng vị trí cột bạn đã chọn!`);
-      document.getElementById('mappingSection').style.display = 'none';
-      document.getElementById('excelFileInput').value = '';
-      saveAndRender();
-    }
-
-    // 4. HIỂN THỊ DỮ LIỆU VÀ TÍNH TỒN KHO
-    function saveAndRender() {
-      localStorage.setItem('custom_mapped_db', JSON.stringify(dataset));
-      renderAll();
-    }
-
-    function renderAll() {
-      renderTable();
-      renderLabels();
-    }
-
-    function renderTable() {
-      const tbody = document.getElementById('dataTable');
-      tbody.innerHTML = '';
-
-      dataset.forEach(item => {
-        const isArrived = item.status.includes('OK') || item.status.includes('Đã về') || item.status.includes('穫準');
-        const isIssued = item.issueDate && item.issueDate !== '';
-        
-        // Tồn kho = Hàng đã về nhưng chưa phát
-        let stockQty = (isArrived && !isIssued) ? item.qty : 0;
-
+      data.forEach(row => {
         const tr = document.createElement('tr');
+        
+        // Tìm linh hoạt tên cột tương ứng trong file Excel/Sheets của bạn
+        const po = row['*訂購單號'] || row['指令表'] || row['Mã Đơn'] || '-';
+        const name = row['材料名稱'] || row['Tên Vật Tư'] || '-';
+        const qty = row['數量'] || row['Số Lượng'] || '0';
+        const status = row['货物状态'] || row['Trạng Thái'] || 'Chờ tiếp nhận';
+        const receiver = row['接收人員'] || row['Người Nhận'] || '';
+
         tr.innerHTML = `
-          <td><input type="checkbox" ${item.selected ? 'checked' : ''} onchange="toggleSelect(${item.id})"></td>
-          <td><b>${item.poNo || '---'}</b></td>
-          <td><b>${item.orderNo || '---'}</b></td>
-          <td><span class="badge bg-blue">${item.priceCode || '---'}</span></td>
-          <td>${item.desc || '---'}</td>
-          <td><b>${item.qty}</b></td>
-          <td>${item.unit}</td>
-          <td><span class="badge ${isArrived ? 'bg-green' : 'bg-red'}">${item.status}</span></td>
-          <td><b>${item.receiver || '---'}</b></td>
-          <td><b style="color: ${stockQty > 0 ? '#2563eb' : '#059669'}; font-size: 0.95rem;">${stockQty} ${item.unit}</b></td>
+          <td><b>#${row._rowIndex}</b></td>
+          <td>${po}</td>
+          <td>${name}</td>
+          <td>${qty}</td>
           <td>
-            <button onclick="toggleItemStatus(${item.id})" style="background: #0284c7; color: white; padding: 3px 6px; font-size: 0.72rem; border:none; border-radius:3px; cursor:pointer;">Đổi Trạng Thái</button>
-            <button onclick="deleteItem(${item.id})" style="background: #ef4444; color: white; padding: 3px 6px; font-size: 0.72rem; border:none; border-radius:3px; cursor:pointer;">Xóa</button>
+            <span class="${status.includes('OK') ? 'status-ok' : 'status-pending'}">
+              ${status}
+            </span>
+          </td>
+          <td><input type="text" id="rec_${row._rowIndex}" value="${receiver}" style="width:100px;"></td>
+          <td>
+            <button onclick="updateRow(${row._rowIndex}, '穫準使用的材料(OK)')">✅ Duyệt OK</button>
+            <button onclick="updateRow(${row._rowIndex}, '有问题的材料(PD)')" style="background:#dc3545;">⚠️ Báo Lỗi</button>
           </td>
         `;
-        tbody.appendChild(tr);
+        body.appendChild(tr);
       });
     }
 
-    function toggleItemStatus(id) {
-      const item = dataset.find(i => i.id === id);
-      if (item) {
-        if (!item.status.includes('OK') && !item.status.includes('Đã về')) {
-          item.status = "穫準使用的材料(OK)";
-        } else if (!item.issueDate) {
-          item.receiver = prompt("Nhập tên người / bộ phận nhận:", "Nga") || "Nga";
-          item.issueDate = new Date().toISOString().split('T')[0];
-        } else {
-          item.status = "材料还没收到";
-          item.receiver = "";
-          item.issueDate = "";
-        }
-        saveAndRender();
-      }
-    }
+    // 3. GHI NGUỢC DỮ LIỆU VỀ GOOGLE SHEETS (POST)
+    async function updateRow(rowIndex, newStatus) {
+      const url = document.getElementById('scriptUrl').value.trim();
+      const receiverVal = document.getElementById(`rec_${rowIndex}`).value;
 
-    function deleteItem(id) {
-      if (confirm("Xóa dòng này?")) {
-        dataset = dataset.filter(i => i.id !== id);
-        saveAndRender();
-      }
-    }
+      if (!url) return alert("Thiếu URL Web App!");
 
-    function renderLabels() {
-      const printArea = document.getElementById('printArea');
-      printArea.innerHTML = '';
-      const selectedItems = dataset.filter(i => i.selected);
+      // Xác định vị trí cột cần sửa trong Google Sheets (Ví dụ: Cột 20 là Trạng Thái, Cột 22 là Người Nhận)
+      // *Bạn có thể chỉnh lại vị trí số cột (Col Index) cho chuẩn với file Sheet thực tế của bạn*
+      const payload = {
+        rowIndex: rowIndex,
+        updates: [
+          { col: 20, val: newStatus },     // Cột T (Column 20)
+          { col: 22, val: receiverVal }    // Cột V (Column 22)
+        ]
+      };
 
-      if (selectedItems.length === 0) {
-        printArea.innerHTML = '<p style="color: #94a3b8;">Chưa chọn tem nào để in.</p>';
-        return;
-      }
-
-      selectedItems.forEach(item => {
-        const labelBox = document.createElement('div');
-        labelBox.className = 'label-box';
-        const qrId = `qr-${item.id}`;
-
-        labelBox.innerHTML = `
-          <div class="label-header">SAUCONY 副料標籤</div>
-          <div class="label-body">
-            <div>
-              <div class="label-row"><b>PO:</b> ${item.poNo}</div>
-              <div class="label-row"><b>指令/SKU:</b> ${item.orderNo} / ${item.priceCode}</div>
-              <div class="label-row"><b>品名:</b> ${item.desc}</div>
-              <div class="label-row"><b>數量:</b> <b>${item.qty} ${item.unit}</b></div>
-            </div>
-            <div id="${qrId}"></div>
-          </div>
-        `;
-
-        printArea.appendChild(labelBox);
-
-        new QRCode(document.getElementById(qrId), {
-          text: `PO:${item.poNo}|ORD:${item.orderNo}|SKU:${item.priceCode}|QTY:${item.qty}${item.unit}`,
-          width: 52,
-          height: 52,
-          correctLevel: QRCode.CorrectLevel.M
+      try {
+        await fetch(url, {
+          method: 'POST',
+          mode: 'no-cors', // Bỏ qua CORS restriction từ Google Apps Script
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
         });
-      });
+
+        alert(`✅ Đã ghi dữ liệu thành công dòng #${rowIndex} lên Google Sheets!`);
+        loadData(); // Tải lại bảng để cập nhật giao diện
+      } catch (err) {
+        alert("❌ Lỗi khi ghi dữ liệu: " + err.message);
+      }
     }
 
-    function toggleSelect(id) {
-      const item = dataset.find(i => i.id === id);
-      if (item) { item.selected = !item.selected; saveAndRender(); }
-    }
-
-    function selectAll(masterCert) {
-      dataset.forEach(i => i.selected = masterCert.checked);
-      saveAndRender();
-    }
-
-    function filterData() {
-      const q = document.getElementById('searchBox').value.toLowerCase();
-      const rows = document.querySelectorAll('#dataTable tr');
-      rows.forEach(r => {
-        r.style.display = r.innerText.toLowerCase().includes(q) ? '' : 'none';
-      });
+    // 4. LỌC TÌM KIẾM
+    function filterTable() {
+      const val = document.getElementById('searchInput').value.toLowerCase();
+      const filtered = sheetData.filter(r => 
+        JSON.stringify(r).toLowerCase().includes(val)
+      );
+      renderTable(filtered);
     }
   </script>
 </body>
