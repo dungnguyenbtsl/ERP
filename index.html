@@ -28,22 +28,23 @@
 
     .a4-preview-container { display: flex; flex-direction: column; gap: 20px; align-items: center; }
     
-    /* Cấu hình chuẩn tuyệt đối cho trang in A4 Ngang (Landscape) */
+    /* Cấu hình chuẩn tuyệt đối cho trang in A4 Ngang */
     @page {
       size: A4 landscape;
-      margin: 10mm;
+      margin: 8mm;
     }
 
     .a4-sheet { 
       background: white; 
-      width: 297mm; 
-      min-height: 190mm;
-      max-height: 200mm;
+      width: 281mm; 
+      height: 190mm; 
+      max-height: 190mm;
       margin: 0 auto; 
-      padding: 10mm 15mm; 
+      padding: 8mm 12mm; 
       box-shadow: 0 4px 15px rgba(0,0,0,0.1); 
       border-radius: 6px; 
       position: relative;
+      overflow: hidden;
       page-break-after: always;
       break-after: page;
       page-break-inside: avoid;
@@ -53,29 +54,28 @@
       justify-content: space-between;
     }
     
-    .sheet-header { border-bottom: 2px solid #1e293b; padding-bottom: 6px; margin-bottom: 10px; text-align: center; position: relative; }
-    .logo-box { position: absolute; left: 0; top: 2px; width: 45px; height: 28px; display: flex; align-items: center; justify-content: center; }
+    .sheet-header { border-bottom: 2px solid #1e293b; padding-bottom: 5px; margin-bottom: 8px; text-align: center; position: relative; }
+    .logo-box { position: absolute; left: 0; top: 2px; width: 40px; height: 25px; display: flex; align-items: center; justify-content: center; }
     .logo-box img { max-width: 100%; max-height: 100%; object-fit: contain; }
-    .logo-placeholder { font-size: 0.5rem; color: #64748b; border: 1px dashed #cbd5e1; padding: 2px; text-align: center; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; }
+    .logo-placeholder { font-size: 0.45rem; color: #64748b; border: 1px dashed #cbd5e1; padding: 2px; text-align: center; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; }
 
-    .header-content { padding: 0 50px; } 
-    .header-content h1 { font-size: 0.75rem; font-weight: bold; color: #475569; margin-bottom: 2px; }
-    .header-content h2 { font-size: 1.15rem; font-weight: bold; text-transform: uppercase; margin-bottom: 2px; color: #0f172a; }
-    .header-content p { font-size: 0.55rem; color: #64748b; }
+    .header-content { padding: 0 45px; } 
+    .header-content h1 { font-size: 0.7rem; font-weight: bold; color: #475569; margin-bottom: 1px; }
+    .header-content h2 { font-size: 1.1rem; font-weight: bold; text-transform: uppercase; margin-bottom: 1px; color: #0f172a; }
+    .header-content p { font-size: 0.5rem; color: #64748b; }
 
-    .order-info { display: grid; grid-template-columns: 1fr 1.3fr 1fr 1fr; gap: 10px; margin-bottom: 10px; font-size: 0.85rem; background: #f8fafc; padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 6px; }
+    .order-info { display: grid; grid-template-columns: 1fr 1.3fr 1fr 1fr; gap: 8px; margin-bottom: 8px; font-size: 0.8rem; background: #f8fafc; padding: 6px 10px; border: 1px solid #cbd5e1; border-radius: 6px; }
     
-    table { width: 100%; border-collapse: collapse; margin-bottom: 10px; }
-    th, td { border: 1px solid #333; padding: 6px 8px; font-size: 0.85rem; text-align: left; vertical-align: middle; }
+    table { width: 100%; border-collapse: collapse; margin-bottom: 8px; }
+    th, td { border: 1px solid #333; padding: 5px 7px; font-size: 0.8rem; text-align: left; vertical-align: middle; }
     th { background-color: #e2e8f0; font-weight: bold; text-align: center; color: #0f172a; }
     
     td.center { text-align: center; }
     td.right { text-align: right; }
 
-    /* Bố cục chữ ký cân đối, chuyên nghiệp ở cuối trang */
-    .sign-section { display: flex; justify-content: space-between; margin-top: auto; padding-top: 10px; text-align: center; font-size: 0.9rem; }
+    .sign-section { display: flex; justify-content: space-between; margin-top: auto; padding-bottom: 5px; text-align: center; font-size: 0.85rem; }
     .sign-box { width: 30%; }
-    .sign-space { height: 45px; }
+    .sign-space { height: 35px; }
 
     @media print {
       body { background: white; padding: 0; }
@@ -83,9 +83,9 @@
       .a4-sheet { 
         box-shadow: none !important; 
         margin: 0 !important; 
-        width: 297mm !important; 
+        width: 281mm !important; 
         height: 190mm !important;
-        max-height: 200mm !important;
+        max-height: 190mm !important;
         page-break-after: always !important;
         break-after: page !important;
         page-break-inside: avoid !important;
