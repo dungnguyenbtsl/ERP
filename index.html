@@ -73,7 +73,7 @@
 
     <div class="order-info" id="orderMetaInfo">
       <div><b>指令表:</b> ---</div>
-      <div><b>出貨日期:</b> ---</div>
+      <div><b>客戶交期:</b> ---</div>
     </div>
 
     <table>
@@ -171,7 +171,7 @@
 
       if (!selectedOrder) {
         tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: #64748b; padding: 20px;">尚未選擇指令表。</td></tr>';
-        metaInfo.innerHTML = '<div><b>指令表:</b> ---</div><div><b>出貨日期:</b> ---</div>';
+        metaInfo.innerHTML = '<div><b>指令表:</b> ---</div><div><b>客戶交期:</b> ---</div>';
         return;
       }
 
@@ -185,22 +185,21 @@
         return;
       }
 
-      // Lấy ngày xuất hàng thành phẩm từ cột tương ứng trong sheet (ví dụ: 出貨日期, ngày xuất, xuất hàng...)
-      let shipDate = getColValue(matchedRows[0], ['出貨日期', 'ngày xuất', 'xuất hàng', 'ngày xuất hàng'], '-');
+      // Lấy trực tiếp từ cột 客戶交期 (và dự phòng thêm các từ khóa liên quan nếu cần)
+      let deliveryDate = getColValue(matchedRows[0], ['客戶交期', '出貨日期', 'ngày xuất', 'xuất hàng'], '-');
       
-      // Nếu dữ liệu trả về là dạng ngày tháng của JS, có thể định dạng lại ngắn gọn hơn nếu cần
-      if (shipDate && shipDate !== '-') {
+      if (deliveryDate && deliveryDate !== '-') {
         try {
-          const d = new Date(shipDate);
+          const d = new Date(deliveryDate);
           if (!isNaN(d.getTime())) {
-            shipDate = d.toLocaleDateString('zh-TW');
+            deliveryDate = d.toLocaleDateString('zh-TW');
           }
         } catch (e) {}
       }
 
       metaInfo.innerHTML = `
         <div><b>指令表:</b> <span style="color:#2563eb; font-size:1.05rem;">${selectedOrder}</span></div>
-        <div><b>出貨日期:</b> <span style="color:#b45309; font-size:1.05rem; font-weight:bold;">${shipDate}</span></div>
+        <div><b>客戶交期:</b> <span style="color:#b45309; font-size:1.05rem; font-weight:bold;">${deliveryDate}</span></div>
       `;
 
       let html = '';
