@@ -2,93 +2,111 @@
 <html lang="vi">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Quản Lý NHẬP - XUẤT KHO SAUCONY</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>In Phiếu Tổng Hợp Đơn Hàng A4</title>
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-    body { background-color: #f1f5f9; padding: 12px; color: #1e293b; padding-bottom: 30px; }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: Arial, sans-serif; }
+    body { background-color: #f1f5f9; padding: 12px; color: #1e293b; }
     
-    .header-card { background: white; padding: 12px; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-bottom: 10px; }
-    .header-title { font-size: 1rem; font-weight: bold; color: #0f172a; margin-bottom: 8px; display: flex; align-items: center; justify-content: space-between; }
+    /* Phần điều khiển trên màn hình */
+    .control-card { background: white; padding: 15px; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-bottom: 15px; }
+    .control-title { font-size: 1.1rem; font-weight: bold; color: #0f172a; margin-bottom: 10px; }
     
-    input[type="text"], select { width: 100%; padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.9rem; outline: none; background: white; }
-    input[type="text"]:focus, select:focus { border-color: #2563eb; }
-
-    .filter-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px; }
-
-    .btn { width: 100%; padding: 10px; border: none; border-radius: 8px; font-weight: bold; font-size: 0.85rem; cursor: pointer; }
+    input[type="text"], select { width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.95rem; margin-bottom: 10px; outline: none; }
+    
+    .btn { width: 100%; padding: 12px; border: none; border-radius: 8px; font-weight: bold; font-size: 1rem; cursor: pointer; margin-top: 5px; }
     .btn-blue { background: #2563eb; color: white; }
     .btn-green { background: #16a34a; color: white; }
-    .btn-orange { background: #ea580c; color: white; }
-    .btn-red { background: #dc3545; color: white; }
-    .btn:disabled { opacity: 0.5; cursor: not-allowed; }
-    
-    .card-list { display: flex; flex-direction: column; gap: 10px; }
-    .item-card { background: white; padding: 14px; border-radius: 12px; box-shadow: 0 1px 4px rgba(0,0,0,0.06); border-left: 5px solid #cbd5e1; position: relative; }
-    
-    .item-card.in { border-left-color: #2563eb; }
-    .item-card.out { border-left-color: #16a34a; }
-    .item-card.error { border-left-color: #dc3545; }
 
-    .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
-    .badge-row { background: #e2e8f0; font-size: 0.75rem; font-weight: bold; padding: 2px 6px; border-radius: 4px; }
-    .badge-po { background: #fef3c7; color: #b45309; font-size: 0.8rem; font-weight: bold; padding: 3px 8px; border-radius: 6px; }
+    /* Khung giấy A4 xem trước */
+    .a4-preview { background: white; width: 100%; max-width: 210mm; min-height: 297mm; margin: 0 auto; padding: 15mm; box-shadow: 0 4px 10px rgba(0,0,0,0.15); border-radius: 4px; }
     
-    .item-title { font-size: 0.95rem; font-weight: bold; color: #0f172a; margin: 4px 0; line-height: 1.3; }
-    .item-detail { font-size: 0.85rem; color: #64748b; margin-bottom: 4px; }
+    .sheet-header { text-align: center; border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 15px; }
+    .sheet-header h2 { font-size: 1.4rem; font-weight: bold; text-transform: uppercase; margin-bottom: 5px; }
+    .sheet-header p { font-size: 0.95rem; color: #333; }
 
-    .qty-box { font-size: 1.05rem; font-weight: bold; color: #0284c7; margin: 6px 0; }
+    .order-info { display: flex; justify-content: space-between; margin-bottom: 15px; font-size: 0.95rem; background: #f8fafc; padding: 10px; border: 1px solid #e2e8f0; }
     
-    .status-badge { display: inline-block; font-size: 0.75rem; font-weight: bold; padding: 3px 8px; border-radius: 6px; margin-bottom: 8px; }
-    .status-badge.pending { background: #fef9c3; color: #854d0e; }
-    .status-badge.in { background: #dbeafe; color: #1e40af; }
-    .status-badge.out { background: #dcfce7; color: #166534; }
-    .status-badge.error { background: #fee2e2; color: #991b1b; }
+    /* Bảng danh sách vật tư */
+    table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+    th, td { border: 1px solid #333; padding: 8px 10px; font-size: 0.9rem; text-align: left; }
+    th { background-color: #e2e8f0; font-weight: bold; text-align: center; }
+    td.center { text-align: center; }
+    td.right { text-align: right; }
 
-    .action-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px; }
-    .receiver-box { margin-top: 8px; background: #f8fafc; padding: 8px; border-radius: 8px; border: 1px dashed #cbd5e1; }
-    .receiver-box label { font-size: 0.75rem; font-weight: bold; color: #475569; display: block; margin-bottom: 3px; }
-    .receiver-input { padding: 8px; font-size: 0.85rem; border: 1px solid #cbd5e1; border-radius: 6px; width: 100%; }
+    .sign-section { display: flex; justify-content: space-between; margin-top: 30px; text-align: center; font-size: 0.95rem; }
+    .sign-box { width: 45%; }
+    .sign-space { height: 60px; }
+
+    /* Ẩn phần điều khiển và tối ưu khi bấm In */
+    @media print {
+      body { background: white; padding: 0; }
+      .control-card { display: none; }
+      .a4-preview { box-shadow: none; padding: 0; margin: 0; max-width: 100%; width: 100%; }
+    }
   </style>
 </head>
 <body>
 
-  <!-- CẤU HÌNH API -->
-  <div class="header-card">
-    <div class="header-title">
-      <span>📦 NHẬP - XUẤT KHO SAUCONY</span>
-      <span id="totalCount" style="font-size: 0.8rem; color: #64748b;">0 mục</span>
+  <!-- KHUNG ĐIỀU KHIỂN (Ẩn khi in) -->
+  <div class="control-card">
+    <div class="control-title">🖨️ Chọn Đơn Hàng In Phiếu A4</div>
+    <input type="text" id="scriptUrl" placeholder="Dán Web App URL của Google Sheets..." style="margin-bottom: 8px;">
+    <button class="btn btn-blue" onclick="loadData()">🔄 Tải Dữ Liệu Từ Kho</button>
+
+    <div style="margin-top: 12px;">
+      <label style="font-size: 0.85rem; font-weight: bold; display: block; margin-bottom: 4px;">Chọn Mã Đơn Sản Xuất (指令表):</label>
+      <select id="orderSelect" onchange="renderA4Sheet()">
+        <option value="">-- Chọn đơn hàng cần in --</option>
+      </select>
     </div>
-    <input type="text" id="scriptUrl" placeholder="Dán Web App URL vào đây..." style="margin-bottom: 8px;">
-    <button class="btn btn-blue" onclick="loadData()">🔄 Tải Dữ Liệu Kho</button>
+
+    <button class="btn btn-green" onclick="window.print()" style="margin-top: 15px;">🖨️ In Phiếu A4 Này</button>
   </div>
 
-  <!-- BỘ LỌC THÔNG MINH -->
-  <div class="header-card">
-    <input type="text" id="searchInput" onkeyup="applyFilters()" placeholder="🔍 Tìm PO, Tên vật tư, Đơn SX, Người nhận...">
-    
-    <div class="filter-grid">
-      <div>
-        <select id="statusFilter" onchange="applyFilters()">
-          <option value="ALL">⚡ Tất cả trạng thái</option>
-          <option value="PENDING">⏳ Chờ nhập kho</option>
-          <option value="IN">📥 Đã nhập kho</option>
-          <option value="OUT">📤 Đã xuất kho</option>
-          <option value="ERROR">⚠️ Báo lỗi (PD)</option>
-        </select>
-      </div>
+  <!-- GIAO DIỆN TỜ GIẤY A4 -->
+  <div class="a4-preview" id="a4Content">
+    <div class="sheet-header">
+      <h2>PHIẾU TỔNG HỢP VẬT TƯ SẢN XUẤT</h2>
+      <p><b>SAUCONY MATERIALS WAREHOUSE</b></p>
+    </div>
 
-      <div>
-        <select id="orderFilter" onchange="applyFilters()">
-          <option value="ALL">📋 Tất cả Đơn SX</option>
-        </select>
+    <div class="order-info" id="orderMetaInfo">
+      <div><b>Mã Đơn SX (指令表):</b> ---</div>
+      <div><b>Mã PO Mua:</b> ---</div>
+      <div><b>Ngày in:</b> <span id="printDate">---</span></div>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th style="width: 8%;">STT</th>
+          <th style="width: 42%;">Tên Vật Tư / Chi Tiết (品名)</th>
+          <th style="width: 15%;">Màu Sắc (顏色)</th>
+          <th style="width: 15%;">Số Lượng (數量)</th>
+          <th style="width: 10%;">ĐVT</th>
+          <th style="width: 10%;">Kiểm Kê</th>
+        </tr>
+      </thead>
+      <tbody id="materialTableBody">
+        <tr>
+          <td colspan="6" style="text-align: center; color: #64748b; padding: 20px;">Vui lòng tải dữ liệu và chọn đơn hàng ở trên.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="sign-section">
+      <div class="sign-box">
+        <p><b>Người Lập Phiếu</b></p>
+        <div class="sign-space"></div>
+        <p>(Ký, ghi rõ họ tên)</p>
+      </div>
+      <div class="sign-box">
+        <p><b>Người Nhận / Xưởng Lấy</b></p>
+        <div class="sign-space"></div>
+        <p>(Ký, ghi rõ họ tên)</p>
       </div>
     </div>
-  </div>
-
-  <!-- DANH SÁCH THẺ VẬT TƯ -->
-  <div id="cardContainer" class="card-list">
-    <div style="text-align:center; color:#64748b; padding: 20px;">Vui lòng bấm <b>Tải Dữ Liệu Kho</b> để bắt đầu.</div>
   </div>
 
   <script>
@@ -100,6 +118,7 @@
         document.getElementById('scriptUrl').value = savedUrl;
         loadData();
       }
+      document.getElementById('printDate').innerText = new Date().toLocaleDateString('vi-VN');
     });
 
     async function loadData() {
@@ -107,17 +126,14 @@
       if (!url) return alert("Vui lòng nhập Web App URL!");
 
       localStorage.setItem('saucony_gas_url', url);
-      const container = document.getElementById('cardContainer');
-      container.innerHTML = '<div style="text-align:center; padding:20px;">⏳ Đang tải dữ liệu...</div>';
-
       try {
         const res = await fetch(url);
         sheetData = await res.json();
         
-        populateOrderDropdown(sheetData);
-        applyFilters();
+        populateOrderSelect(sheetData);
+        alert("✅ Tải dữ liệu thành công! Hãy chọn Đơn SX ở ô bên dưới.");
       } catch (err) {
-        container.innerHTML = '<div style="text-align:center; color:red; padding:20px;">❌ Lỗi tải dữ liệu. Kiểm tra lại URL!</div>';
+        alert("❌ Lỗi tải dữ liệu. Kiểm tra lại URL!");
       }
     }
 
@@ -132,9 +148,9 @@
       return defaultValue;
     }
 
-    function populateOrderDropdown(data) {
-      const orderSelect = document.getElementById('orderFilter');
-      orderSelect.innerHTML = '<option value="ALL">📋 Tất cả Đơn SX</option>';
+    function populateOrderSelect(data) {
+      const select = document.getElementById('orderSelect');
+      select.innerHTML = '<option value="">-- Chọn đơn hàng cần in --</option>';
       
       const orders = new Set();
       data.forEach(row => {
@@ -145,141 +161,61 @@
       orders.forEach(ord => {
         const opt = document.createElement('option');
         opt.value = ord;
-        opt.textContent = `Đơn SX: ${ord}`;
-        orderSelect.appendChild(opt);
+        opt.textContent = `Chỉ lệnh / Đơn SX: ${ord}`;
+        select.appendChild(opt);
       });
     }
 
-    function applyFilters() {
-      const searchText = document.getElementById('searchInput').value.toLowerCase();
-      const selectedStatus = document.getElementById('statusFilter').value;
-      const selectedOrder = document.getElementById('orderFilter').value;
+    function renderA4Sheet() {
+      const selectedOrder = document.getElementById('orderSelect').value;
+      const tbody = document.getElementById('materialTableBody');
+      const metaInfo = document.getElementById('orderMetaInfo');
 
-      const filtered = sheetData.filter(row => {
-        const status = String(getColValue(row, ['货物状态', '貨物狀態', 'trạng thái'], '')).toLowerCase();
-        const orderNo = String(getColValue(row, ['指令表', 'đơn sản xuất', 'po sx'], ''));
-        const rowString = JSON.stringify(row).toLowerCase();
-
-        const matchSearch = rowString.includes(searchText);
-
-        let matchStatus = true;
-        if (selectedStatus === 'IN') matchStatus = status.includes('đã nhập') || status.includes('入庫') || status.includes('nhập kho');
-        else if (selectedStatus === 'OUT') matchStatus = status.includes('ok') || status.includes('穫準') || status.includes('đã xuất') || status.includes('出庫');
-        else if (selectedStatus === 'ERROR') matchStatus = status.includes('pd') || status.includes('lỗi') || status.includes('有问题');
-        else if (selectedStatus === 'PENDING') matchStatus = !status.includes('ok') && !status.includes('穫準') && !status.includes('pd') && !status.includes('lỗi') && !status.includes('đã nhập') && !status.includes('đã xuất');
-
-        let matchOrder = (selectedOrder === 'ALL') || (orderNo === selectedOrder);
-
-        return matchSearch && matchStatus && matchOrder;
-      });
-
-      renderCards(filtered);
-    }
-
-    function renderCards(data) {
-      const container = document.getElementById('cardContainer');
-      container.innerHTML = '';
-      document.getElementById('totalCount').innerText = `${data.length} mục`;
-
-      if (!data || data.length === 0) {
-        container.innerHTML = '<div style="text-align:center; padding:20px; color:#64748b;">Không tìm thấy vật tư nào phù hợp.</div>';
+      if (!selectedOrder) {
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: #64748b; padding: 20px;">Chưa chọn đơn hàng.</td></tr>';
+        metaInfo.innerHTML = '<div><b>Mã Đơn SX:</b> ---</div><div><b>Mã PO Mua:</b> ---</div>';
         return;
       }
 
-      data.forEach(row => {
-        const rIndex = row.rowIndex || row._rowIndex || '?';
+      // Lọc tất cả các dòng vật tư thuộc đúng Đơn SX này
+      const matchedRows = sheetData.filter(row => {
+        const orderNo = String(getColValue(row, ['指令表', 'đơn sản xuất', 'po sx'], ''));
+        return orderNo === selectedOrder;
+      });
 
-        const po = getColValue(row, ['*訂購單號', '訂購單號', 'po mua'], '-');
-        const orderNo = getColValue(row, ['指令表', 'đơn sản xuất'], '-');
+      if (matchedRows.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: red; padding: 20px;">Không tìm thấy vật tư cho đơn này.</td></tr>';
+        return;
+      }
+
+      // Lấy PO mua đầu tiên tìm thấy trong nhóm
+      const firstPo = getColValue(matchedRows[0], ['*訂購單號', '訂購單號', 'po mua'], '-');
+      metaInfo.innerHTML = `
+        <div><b>Mã Đơn SX (指令表):</b> <span style="color:#2563eb; font-size:1.05rem;">${selectedOrder}</span></div>
+        <div><b>Mã PO Mua:</b> <span style="color:#b45309; font-size:1.05rem;">${firstPo}</span></div>
+        <div><b>Tổng số dòng vật tư:</b> <b>${matchedRows.length}</b></div>
+      `;
+
+      let html = '';
+      matchedRows.forEach((row, index) => {
         const name = getColValue(row, ['摘要', '品名', '材料名稱', 'tên vật tư'], '-');
         const color = getColValue(row, ['顏色', 'màu sắc'], '-');
         const qty = getColValue(row, ['數量', 'số lượng'], '0');
         const unit = getColValue(row, ['單位', 'đơn vị'], 'PCS');
-        const status = getColValue(row, ['货物状态', '貨物狀態', 'trạng thái'], 'Chờ nhập kho');
-        const receiver = getColValue(row, ['接收人員', 'người nhận'], '');
 
-        let cardClass = '';
-        let badgeClass = 'pending';
-        
-        const statusLower = String(status).toLowerCase();
-        if (statusLower.includes('ok') || statusLower.includes('穫準') || statusLower.includes('đã xuất')) {
-          cardClass = 'out'; badgeClass = 'out';
-        } else if (statusLower.includes('đã nhập') || statusLower.includes('入庫')) {
-          cardClass = 'in'; badgeClass = 'in';
-        } else if (statusLower.includes('pd') || statusLower.includes('lỗi') || statusLower.includes('有问题')) {
-          cardClass = 'error'; badgeClass = 'error';
-        }
-
-        const card = document.createElement('div');
-        card.className = `item-card ${cardClass}`;
-        card.innerHTML = `
-          <div class="card-header">
-            <span class="badge-row">Dòng #${rIndex}</span>
-            <span class="badge-po">PO: ${po}</span>
-          </div>
-          
-          <div class="item-title">${name}</div>
-          <div class="item-detail">📌 Đơn SX: <b>${orderNo}</b> | Màu: <b>${color}</b></div>
-          
-          <div class="qty-box">📦 SL: ${qty} ${unit}</div>
-          
-          <div><span class="status-badge ${badgeClass}">${status}</span></div>
-
-          <div class="receiver-box">
-            <label>👤 TÊN NGƯỜI NHẬN XUẤT KHO (Nếu xuất):</label>
-            <input type="text" class="receiver-input" id="rec_${rIndex}" value="${receiver}" placeholder="Ghi tên: Nga, Chị Nhi, Xưởng...">
-          </div>
-
-          <div class="action-grid" style="margin-top: 10px;">
-            <button class="btn btn-blue" onclick="updateRow(this, ${rIndex}, 'Đã Nhập Kho (入庫)')">📥 1. Nhập Kho</button>
-            <button class="btn btn-green" onclick="updateRow(this, ${rIndex}, '穫準使用的材料(OK)', true)">📤 2. Xuất Kho</button>
-          </div>
-          <button class="btn btn-red" style="margin-top: 6px;" onclick="updateRow(this, ${rIndex}, '有问题的材料(PD)')">⚠️ Báo Lỗi / Trả Hàng</button>
+        html += `
+          <tr>
+            <td class="center">${index + 1}</td>
+            <td><b>${name}</b></td>
+            <td class="center">${color}</td>
+            <td class="right" style="font-weight: bold; font-size: 1rem; color: #1d4ed8;">${qty}</td>
+            <td class="center">${unit}</td>
+            <td class="center">☐ Đủ</td>
+          </tr>
         `;
-        container.appendChild(card);
       });
-    }
 
-    async function updateRow(btnElement, rowIndex, newStatus, isExport = false) {
-      const url = document.getElementById('scriptUrl').value.trim();
-      const receiverInput = document.getElementById(`rec_${rowIndex}`);
-      const receiverVal = receiverInput ? receiverInput.value.trim() : '';
-
-      if (!url) return alert("Thiếu Web App URL!");
-
-      if (isExport && !receiverVal) {
-        if (!confirm("Chưa ghi Tên người nhận xuất kho. Bạn vẫn muốn duyệt XUẤT KHO?")) {
-          return;
-        }
-      }
-
-      btnElement.disabled = true;
-      const originalText = btnElement.innerText;
-      btnElement.innerText = "⏳ Đang lưu...";
-
-      const payload = {
-        rowIndex: rowIndex,
-        updates: [
-          { col: 20, val: newStatus },
-          { col: 22, val: receiverVal }
-        ]
-      };
-
-      try {
-        await fetch(url, {
-          method: 'POST',
-          mode: 'no-cors',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
-        });
-
-        alert(`✅ Đã cập nhật dòng #${rowIndex} thành thành công!`);
-        loadData();
-      } catch (err) {
-        alert("❌ Lỗi khi gửi dữ liệu: " + err.message);
-        btnElement.disabled = false;
-        btnElement.innerText = originalText;
-      }
+      tbody.innerHTML = html;
     }
   </script>
 </body>
