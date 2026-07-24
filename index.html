@@ -28,19 +28,19 @@
 
     .a4-preview-container { display: flex; flex-direction: column; gap: 15px; align-items: center; }
     
-    /* 終極絕招 2：直接在 HTML 層級使用 CSS 嚴格限高 + 強制切斷溢出，並在列印時直接將尺寸鎖死為 A4 橫向 */
+    /* Cố định kích thước A4 ngang tuyệt đối, ngăn tràn trang */
     @page {
       size: A4 landscape;
-      margin: 0;
+      margin: 5mm;
     }
 
     .a4-sheet { 
       background: white; 
       width: 297mm; 
-      height: 210mm; 
-      max-height: 210mm; 
+      height: 198mm; 
+      max-height: 198mm; 
       margin: 0 auto; 
-      padding: 3mm 10mm; 
+      padding: 4mm 8mm; 
       box-shadow: 0 4px 10px rgba(0,0,0,0.15); 
       border-radius: 4px; 
       position: relative;
@@ -54,26 +54,26 @@
       justify-content: space-between;
     }
     
-    .sheet-header { border-bottom: 1.5px solid #1e293b; padding-bottom: 1px; margin-bottom: 2px; text-align: center; position: relative; }
-    .logo-box { position: absolute; left: 0; top: 1px; width: 32px; height: 20px; display: flex; align-items: center; justify-content: center; }
+    .sheet-header { border-bottom: 1.5px solid #1e293b; padding-bottom: 2px; margin-bottom: 3px; text-align: center; position: relative; }
+    .logo-box { position: absolute; left: 0; top: 1px; width: 30px; height: 18px; display: flex; align-items: center; justify-content: center; }
     .logo-box img { max-width: 100%; max-height: 100%; object-fit: contain; }
-    .logo-placeholder { font-size: 0.4rem; color: #64748b; border: 1px dashed #cbd5e1; padding: 1px; text-align: center; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; }
+    .logo-placeholder { font-size: 0.35rem; color: #64748b; border: 1px dashed #cbd5e1; padding: 1px; text-align: center; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; }
 
-    .header-content { padding: 0 32px; } 
-    .header-content h1 { font-size: 0.6rem; font-weight: bold; color: #475569; margin-bottom: 0px; }
-    .header-content h2 { font-size: 0.85rem; font-weight: bold; text-transform: uppercase; margin-bottom: 0px; color: #0f172a; }
-    .header-content p { font-size: 0.45rem; color: #64748b; }
+    .header-content { padding: 0 30px; } 
+    .header-content h1 { font-size: 0.55rem; font-weight: bold; color: #475569; margin-bottom: 0px; }
+    .header-content h2 { font-size: 0.8rem; font-weight: bold; text-transform: uppercase; margin-bottom: 0px; color: #0f172a; }
+    .header-content p { font-size: 0.4rem; color: #64748b; }
 
-    .order-info { display: grid; grid-template-columns: 1fr 1.2fr 1fr 1fr; gap: 6px; margin-bottom: 2px; font-size: 0.65rem; background: #f8fafc; padding: 2px 6px; border: 1px solid #cbd5e1; border-radius: 4px; }
+    .order-info { display: grid; grid-template-columns: 1fr 1.2fr 1fr 1fr; gap: 4px; margin-bottom: 3px; font-size: 0.6rem; background: #f8fafc; padding: 2px 6px; border: 1px solid #cbd5e1; border-radius: 4px; }
     
-    table { width: 100%; border-collapse: collapse; margin-bottom: 2px; }
-    th, td { border: 1px solid #333; padding: 1px 4px; font-size: 0.65rem; text-align: left; vertical-align: middle; }
+    table { width: 100%; border-collapse: collapse; margin-bottom: 3px; }
+    th, td { border: 1px solid #333; padding: 1.5px 4px; font-size: 0.6rem; text-align: left; vertical-align: middle; }
     th { background-color: #e2e8f0; font-weight: bold; text-align: center; color: #0f172a; }
     
     td.center { text-align: center; }
     td.right { text-align: right; }
 
-    .sign-section { display: flex; justify-content: space-between; margin-bottom: 2px; text-align: center; font-size: 0.65rem; }
+    .sign-section { display: flex; justify-content: space-between; margin-bottom: 2px; text-align: center; font-size: 0.6rem; }
     .sign-box { width: 30%; }
     .sign-space { height: 10px; }
 
@@ -84,8 +84,8 @@
         box-shadow: none !important; 
         margin: 0 !important; 
         width: 297mm !important; 
-        height: 210mm !important;
-        max-height: 210mm !important;
+        height: 198mm !important;
+        max-height: 198mm !important;
         page-break-after: always !important;
         break-after: page !important;
         page-break-inside: avoid !important;
