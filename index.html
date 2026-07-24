@@ -60,8 +60,8 @@
     .header-content h2 { font-size: 1.25rem; font-weight: bold; text-transform: uppercase; margin-bottom: 1px; color: #0f172a; letter-spacing: 0.5px; }
     .header-content p { font-size: 0.75rem; color: #64748b; }
 
-    /* Thông tin đơn hàng */
-    .order-info { display: grid; grid-template-columns: 1fr 1.5fr 1fr; gap: 10px; margin-bottom: 8px; font-size: 0.85rem; background: #f8fafc; padding: 6px 10px; border: 1px solid #cbd5e1; border-radius: 4px; align-items: center; }
+    /* Thông tin đơn hàng (Chia thành 4 cột để hiển thị thêm 鞋數量) */
+    .order-info { display: grid; grid-template-columns: 1fr 1.2fr 1fr 1fr; gap: 8px; margin-bottom: 8px; font-size: 0.85rem; background: #f8fafc; padding: 6px 10px; border: 1px solid #cbd5e1; border-radius: 4px; align-items: center; }
     .order-info div { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     
     /* 材料表格 */
@@ -213,6 +213,7 @@
         if (!map.has(orderNo)) {
           let factorySku = String(getColValue(row, ['廠型-SKU', '廠型', 'sku', 'hình thể'], '-')).trim();
           let deliveryDate = String(getColValue(row, ['客戶交期', '出貨日期', 'ngày xuất', 'xuất hàng'], '-')).trim();
+          let shoeQty = String(getColValue(row, ['鞋數量', '鞋k số lượng', 'số lượng giày', 'pairs'], '-')).trim();
           
           if (deliveryDate && deliveryDate !== '-') {
             try {
@@ -226,7 +227,8 @@
           map.set(orderNo, {
             orderNo: orderNo,
             sku: factorySku,
-            date: deliveryDate
+            date: deliveryDate,
+            shoeQty: shoeQty
           });
         }
       });
@@ -269,7 +271,7 @@
         const isChecked = checkedSet.has(item.orderNo) ? 'checked' : '';
         const label = document.createElement('label');
         label.innerHTML = `<input type="checkbox" value="${item.orderNo}" ${isChecked} onchange="renderA4SheetsBatch()"> 
-                           <b>指令表:</b> ${item.orderNo} &nbsp;|&nbsp; <b>SKU:</b> ${item.sku} &nbsp;|&nbsp; <b>交期:</b> ${item.date}`;
+                           <b>指令表:</b> ${item.orderNo} &nbsp;|&nbsp; <b>SKU:</b> ${item.sku} &nbsp;|&nbsp; <b>交期:</b> ${item.date} &nbsp;|&nbsp; <b>鞋數量:</b> ${item.shoeQty}`;
         checklistDiv.appendChild(label);
       });
 
@@ -310,10 +312,12 @@
 
         let factorySku = '-';
         let deliveryDate = '-';
+        let shoeQty = '-';
 
         if (matchedRows.length > 0) {
           factorySku = getColValue(matchedRows[0], ['廠型-SKU', '廠型', 'sku', 'hình thể'], '-');
           deliveryDate = getColValue(matchedRows[0], ['客戶交期', '出貨日期', 'ngày xuất', 'xuất hàng'], '-');
+          shoeQty = getColValue(matchedRows[0], ['鞋數量', '鞋k số lượng', 'số lượng giày', 'pairs'], '-');
           
           if (deliveryDate && deliveryDate !== '-') {
             try {
@@ -364,9 +368,11 @@
                 </div>
               </div>
 
+              <!-- Thêm ô hiển thị 鞋數量 vào phần thông tin chung -->
               <div class="order-info">
                 <div title="${selectedOrder}"><b>指令表:</b> <span style="color:#2563eb;">${selectedOrder}</span></div>
                 <div title="${factorySku}"><b>廠型-SKU:</b> <span style="color:#0f172a; font-weight:bold;">${factorySku}</span></div>
+                <div title="${shoeQty}"><b>鞋數量:</b> <span style="color:#059669; font-weight:bold;">${shoeQty} 雙</span></div>
                 <div title="${deliveryDate}"><b>客戶交期:</b> <span style="color:#b45309; font-weight:bold;">${deliveryDate}</span></div>
               </div>
 
