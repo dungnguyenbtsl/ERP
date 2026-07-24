@@ -28,18 +28,18 @@
 
     .a4-preview-container { display: flex; flex-direction: column; gap: 15px; align-items: center; }
     
+    /* Cấu hình lề trang in cực nhỏ (4mm) để tận dụng toàn bộ chiều ngang A4, tránh mất mép */
     @page {
       size: A4 landscape;
-      margin: 8mm;
+      margin: 4mm;
     }
 
-    /* Bỏ chiều cao cứng, dùng padding và khoảng cách gọn gàng để 1 đơn nằm trọn 1 trang */
     .a4-sheet { 
       background: white; 
       width: 297mm; 
-      min-height: 190mm;
+      min-height: 195mm;
       margin: 0 auto; 
-      padding: 6mm 10mm; 
+      padding: 4mm 6mm; 
       box-shadow: 0 4px 10px rgba(0,0,0,0.15); 
       border-radius: 4px; 
       position: relative;
@@ -52,29 +52,29 @@
       justify-content: flex-start;
     }
     
-    .sheet-header { border-bottom: 1.5px solid #1e293b; padding-bottom: 4px; margin-bottom: 6px; text-align: center; position: relative; }
-    .logo-box { position: absolute; left: 0; top: 2px; width: 35px; height: 22px; display: flex; align-items: center; justify-content: center; }
+    .sheet-header { border-bottom: 1.5px solid #1e293b; padding-bottom: 3px; margin-bottom: 4px; text-align: center; position: relative; }
+    .logo-box { position: absolute; left: 0; top: 1px; width: 32px; height: 20px; display: flex; align-items: center; justify-content: center; }
     .logo-box img { max-width: 100%; max-height: 100%; object-fit: contain; }
-    .logo-placeholder { font-size: 0.4rem; color: #64748b; border: 1px dashed #cbd5e1; padding: 1px; text-align: center; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; }
+    .logo-placeholder { font-size: 0.35rem; color: #64748b; border: 1px dashed #cbd5e1; padding: 1px; text-align: center; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; }
 
-    .header-content { padding: 0 35px; } 
-    .header-content h1 { font-size: 0.6rem; font-weight: bold; color: #475569; margin-bottom: 1px; }
-    .header-content h2 { font-size: 0.9rem; font-weight: bold; text-transform: uppercase; margin-bottom: 1px; color: #0f172a; }
-    .header-content p { font-size: 0.45rem; color: #64748b; }
+    .header-content { padding: 0 32px; } 
+    .header-content h1 { font-size: 0.55rem; font-weight: bold; color: #475569; margin-bottom: 1px; }
+    .header-content h2 { font-size: 0.85rem; font-weight: bold; text-transform: uppercase; margin-bottom: 1px; color: #0f172a; }
+    .header-content p { font-size: 0.4rem; color: #64748b; }
 
-    .order-info { display: grid; grid-template-columns: 1fr 1.2fr 1fr 1fr; gap: 6px; margin-bottom: 6px; font-size: 0.7rem; background: #f8fafc; padding: 4px 8px; border: 1px solid #cbd5e1; border-radius: 4px; }
+    .order-info { display: grid; grid-template-columns: 1fr 1.2fr 1fr 1fr; gap: 4px; margin-bottom: 4px; font-size: 0.65rem; background: #f8fafc; padding: 3px 6px; border: 1px solid #cbd5e1; border-radius: 4px; }
     
-    table { width: 100%; border-collapse: collapse; margin-bottom: 8px; }
-    th, td { border: 1px solid #333; padding: 3px 6px; font-size: 0.7rem; text-align: left; vertical-align: middle; }
+    table { width: 100%; border-collapse: collapse; margin-bottom: 6px; }
+    th, td { border: 1px solid #333; padding: 2px 4px; font-size: 0.65rem; text-align: left; vertical-align: middle; }
     th { background-color: #e2e8f0; font-weight: bold; text-align: center; color: #0f172a; }
     
     td.center { text-align: center; }
     td.right { text-align: right; }
 
-    /* Phần chữ ký nằm ngay sát dưới bảng dữ liệu */
-    .sign-section { display: flex; justify-content: space-between; margin-top: 10px; padding-top: 5px; text-align: center; font-size: 0.7rem; }
+    /* Phần chữ ký bám sát dưới bảng, co giãn vừa vặn trong khổ ngang */
+    .sign-section { display: flex; justify-content: space-between; margin-top: 6px; padding-top: 2px; text-align: center; font-size: 0.65rem; }
     .sign-box { width: 30%; }
-    .sign-space { height: 25px; }
+    .sign-space { height: 18px; }
 
     @media print {
       body { background: white; padding: 0; }
@@ -83,7 +83,7 @@
         box-shadow: none !important; 
         margin: 0 !important; 
         width: 297mm !important; 
-        min-height: 190mm !important;
+        min-height: 195mm !important;
         page-break-after: always !important;
         break-after: page !important;
         page-break-inside: avoid !important;
