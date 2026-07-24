@@ -150,7 +150,7 @@
 
   <script>
     let sheetData = [];
-    let masterRecords = []; // Lưu trữ dữ liệu cấu trúc từng đơn kèm SKU và Ngày giao
+    let masterRecords = [];
 
     document.addEventListener('DOMContentLoaded', () => {
       const savedUrl = localStorage.getItem('saucony_gas_url');
@@ -243,7 +243,6 @@
         return;
       }
 
-      // Giữ lại các mục đã được check trước đó
       const checkedSet = new Set();
       document.querySelectorAll('#orderChecklist input[type="checkbox"]:checked').forEach(cb => {
         checkedSet.add(cb.value);
@@ -316,7 +315,8 @@
           matchedRows.forEach((row, index) => {
             const name = getColValue(row, ['摘要', '品名', '材料名稱', 'tên vật tư'], '-');
             const color = getColValue(row, ['顏色', 'màu sắc'], '-');
-            const qty = getColValue(row, ['數量', 'số lượng'], '0');
+            // Đảm bảo lấy chính xác cột số lượng là 數量 hoặc các dạng tương đương
+            const qty = getColValue(row, ['數量', 'số lượng', 'sl'], '0');
             const unit = getColValue(row, ['單位', 'đơn vị'], 'PCS');
 
             tableRowsHtml += `
