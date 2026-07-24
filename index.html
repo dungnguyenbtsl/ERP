@@ -67,11 +67,12 @@
     .order-info { display: grid; grid-template-columns: 1fr 1.3fr 1fr 1fr; gap: 8px; margin-bottom: 8px; font-size: 0.8rem; background: #f8fafc; padding: 6px 10px; border: 1px solid #cbd5e1; border-radius: 6px; }
     
     table { width: 100%; border-collapse: collapse; margin-bottom: 8px; }
-    th, td { border: 1px solid #333; padding: 4px 6px; font-size: 0.8rem; text-align: left; vertical-align: middle; }
+    th, td { border: 1px solid #333; padding: 3px 4px; font-size: 0.78rem; text-align: left; vertical-align: middle; }
     th { background-color: #e2e8f0; font-weight: bold; text-align: center; color: #0f172a; }
     
     td.center { text-align: center; }
     td.right { text-align: right; }
+    .nowrap { white-space: nowrap; }
 
     .sign-section { display: flex; justify-content: space-between; margin-top: auto; padding-bottom: 5px; text-align: center; font-size: 0.85rem; }
     .sign-box { width: 30%; }
@@ -335,8 +336,8 @@
                 <td class="center">${index + 1}</td>
                 <td><b>${name}</b></td>
                 <td class="center">${color}</td>
-                <td class="right" style="font-weight: bold; color: #1d4ed8;">${qty}</td>
-                <td class="center">${unit}</td>
+                <td class="right nowrap" style="font-weight: bold; color: #1d4ed8;">${qty}</td>
+                <td class="center nowrap">${unit}</td>
                 <td class="center">☐</td>
               </tr>
             `;
@@ -367,11 +368,11 @@
               <table>
                 <thead>
                   <tr>
-                    <th style="width: 6%;">序號</th>
-                    <th style="width: 48%;">材料名稱 / 品名 (摘要)</th>
+                    <th style="width: 5%;">序號</th>
+                    <th style="width: 53%;">材料名稱 / 品名 (摘要)</th>
                     <th style="width: 20%;">顏色</th>
-                    <th style="width: 9%;">數量</th>
-                    <th style="width: 7%;">單位</th>
+                    <th style="width: 7%;" class="nowrap">數量</th>
+                    <th style="width: 5%;" class="nowrap">單位</th>
                     <th style="width: 10%;">點檢</th>
                   </tr>
                 </thead>
