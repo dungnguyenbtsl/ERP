@@ -13,12 +13,13 @@
     .control-title { font-size: 1.1rem; font-weight: bold; color: #0f172a; margin-bottom: 10px; }
     
     input[type="text"], select { width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.95rem; margin-bottom: 10px; outline: none; }
+    .filter-row { display: grid; grid-template-columns: 2fr 1fr; gap: 10px; margin-bottom: 5px; }
     
     .btn { width: 100%; padding: 12px; border: none; border-radius: 8px; font-weight: bold; font-size: 1rem; cursor: pointer; margin-top: 5px; }
     .btn-blue { background: #2563eb; color: white; }
     .btn-green { background: #16a34a; color: white; }
 
-    /* A4 列印預覽外框：chuẩn form A4, căn chỉnh tỉ mỉ */
+    /* A4 列印預覽外框 */
     .a4-preview { background: white; width: 100%; max-width: 210mm; min-height: 297mm; margin: 0 auto; padding: 12mm 15mm; box-shadow: 0 4px 10px rgba(0,0,0,0.15); border-radius: 4px; position: relative; display: flex; flex-direction: column; justify-content: space-between; }
     
     /* 標頭排版 */
@@ -32,18 +33,18 @@
     .header-content h2 { font-size: 1.35rem; font-weight: bold; text-transform: uppercase; margin-bottom: 2px; color: #0f172a; letter-spacing: 0.5px; }
     .header-content p { font-size: 0.8rem; color: #64748b; }
 
-    /* Thông tin đơn hàng: bố trí cân đối, đều đặn 3 cột rõ ràng */
+    /* Thông tin đơn hàng */
     .order-info { display: grid; grid-template-columns: 1fr 1.3fr 1fr; gap: 8px; margin-bottom: 12px; font-size: 0.88rem; background: #f8fafc; padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 4px; align-items: center; }
     .order-info div { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     
-    /* 材料表格: tối ưu hóa khoảng cách và độ rộng cột */
+    /* 材料表格 */
     table { width: 100%; border-collapse: collapse; margin-bottom: 15px; }
     th, td { border: 1px solid #333; padding: 8px 8px; font-size: 0.85rem; text-align: left; vertical-align: middle; }
     th { background-color: #e2e8f0; font-weight: bold; text-align: center; color: #0f172a; }
     td.center { text-align: center; }
     td.right { text-align: right; }
 
-    /* Phần chữ ký gọn gàng, cân đối ở chân trang */
+    /* Phần chữ ký */
     .sign-section { display: flex; justify-content: space-between; margin-top: 20px; margin-bottom: 10px; text-align: center; font-size: 0.9rem; }
     .sign-box { width: 35%; }
     .sign-space { height: 45px; }
@@ -60,7 +61,7 @@
 
   <!-- 控制面板 (列印時會隱藏) -->
   <div class="control-card">
-    <div class="control-title">🖨️ 選擇列印訂單 (A4 匯總)</div>
+    <div class="control-title">🖨️ 選擇與篩選訂單資料 (A4 匯總)</div>
     <input type="text" id="scriptUrl" placeholder="請貼上 Google Sheets 網頁應用程式網址 (Web App URL)..." style="margin-bottom: 8px;">
     
     <button class="btn btn-blue" onclick="loadData()">🔄 從庫存載入資料</button>
@@ -70,6 +71,19 @@
       <select id="orderSelect" onchange="renderA4Sheet()">
         <option value="">-- 請選擇要列印的指令表 --</option>
       </select>
+    </div>
+
+    <!-- Ô Lọc nhanh & Lọc trạng thái -->
+    <div style="margin-top: 10px;">
+      <label style="font-size: 0.85rem; font-weight: bold; display: block; margin-bottom: 4px;">🔍 篩選表格內容:</label>
+      <div class="filter-row">
+        <input type="text" id="searchInput" placeholder="輸入關鍵字篩選品名、顏色..." oninput="renderA4Sheet()" style="margin-bottom: 0;">
+        <select id="statusFilter" onchange="renderA4Sheet()" style="margin-bottom: 0;">
+          <option value="all">全部狀態</option>
+          <option value="checked">已點檢</option>
+          <option value="unchecked">未點檢</option>
+        </select>
+      </div>
     </div>
 
     <button class="btn btn-green" onclick="window.print()" style="margin-top: 15px;">🖨️ 列印此 A4 匯總單</button>
@@ -186,6 +200,9 @@
 
     function renderA4Sheet() {
       const selectedOrder = document.getElementById('orderSelect').value;
+      const searchKeyword = document.getElementById('searchInput').value.trim().toLowerCase();
+      const statusFilter = document.getElementById('statusFilter').value;
+      
       const tbody = document.getElementById('materialTableBody');
       const metaInfo = document.getElementById('orderMetaInfo');
 
@@ -195,7 +212,8 @@
         return;
       }
 
-      const matchedRows = sheetData.filter(row => {
+      // Lọc theo lệnh sản xuất được chọn
+      let matchedRows = sheetData.filter(row => {
         const orderNo = String(getColValue(row, ['指令表', 'đơn sản xuất', 'po sx'], ''));
         return orderNo === selectedOrder;
       });
@@ -223,8 +241,24 @@
         <div title="${deliveryDate}"><b>客戶交期:</b> <span style="color:#b45309; font-weight:bold;">${deliveryDate}</span></div>
       `;
 
+      // Áp dụng thêm bộ lọc tìm kiếm và trạng thái trên giao diện
+      let filteredRows = matchedRows.filter(row => {
+        const name = String(getColValue(row, ['摘要', '品名', '材料名稱', 'tên vật tư'], '')).toLowerCase();
+        const color = String(getColValue(row, ['顏色', 'màu sắc'], '')).toLowerCase();
+        
+        // Lọc theo từ khóa tìm kiếm
+        const matchesSearch = !searchKeyword || name.includes(searchKeyword) || color.includes(searchKeyword);
+        
+        return matchesSearch;
+      });
+
+      if (filteredRows.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: #64748b; padding: 25px;">沒有符合篩選條件的材料。</td></tr>';
+        return;
+      }
+
       let html = '';
-      matchedRows.forEach((row, index) => {
+      filteredRows.forEach((row, index) => {
         const name = getColValue(row, ['摘要', '品名', '材料名稱', 'tên vật tư'], '-');
         const color = getColValue(row, ['顏色', 'màu sắc'], '-');
         const qty = getColValue(row, ['數量', 'số lượng'], '0');
