@@ -1,14 +1,14 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="zh-TW">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>In Phiếu Tổng Hợp Đơn Hàng A4</title>
+  <title>SAUCONY 生產訂單材料匯總表</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: Arial, sans-serif; }
     body { background-color: #f1f5f9; padding: 12px; color: #1e293b; }
     
-    /* Phần điều khiển trên màn hình */
+    /* 螢幕操作控制區 */
     .control-card { background: white; padding: 15px; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-bottom: 15px; }
     .control-title { font-size: 1.1rem; font-weight: bold; color: #0f172a; margin-bottom: 10px; }
     
@@ -18,7 +18,7 @@
     .btn-blue { background: #2563eb; color: white; }
     .btn-green { background: #16a34a; color: white; }
 
-    /* Khung giấy A4 xem trước */
+    /* A4 列印預覽外框 */
     .a4-preview { background: white; width: 100%; max-width: 210mm; min-height: 297mm; margin: 0 auto; padding: 15mm; box-shadow: 0 4px 10px rgba(0,0,0,0.15); border-radius: 4px; }
     
     .sheet-header { text-align: center; border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 15px; }
@@ -27,7 +27,7 @@
 
     .order-info { display: flex; justify-content: space-between; margin-bottom: 15px; font-size: 0.95rem; background: #f8fafc; padding: 10px; border: 1px solid #e2e8f0; }
     
-    /* Bảng danh sách vật tư */
+    /* 材料表格 */
     table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
     th, td { border: 1px solid #333; padding: 8px 10px; font-size: 0.9rem; text-align: left; }
     th { background-color: #e2e8f0; font-weight: bold; text-align: center; }
@@ -38,7 +38,7 @@
     .sign-box { width: 45%; }
     .sign-space { height: 60px; }
 
-    /* Ẩn phần điều khiển và tối ưu khi bấm In */
+    /* 列印時自動隱藏控制選單 */
     @media print {
       body { background: white; padding: 0; }
       .control-card { display: none; }
@@ -48,63 +48,63 @@
 </head>
 <body>
 
-  <!-- KHUNG ĐIỀU KHIỂN (Ẩn khi in) -->
+  <!-- 控制面板 (列印時會隱藏) -->
   <div class="control-card">
-    <div class="control-title">🖨️ Chọn Đơn Hàng In Phiếu A4</div>
-    <input type="text" id="scriptUrl" placeholder="Dán Web App URL của Google Sheets..." style="margin-bottom: 8px;">
-    <button class="btn btn-blue" onclick="loadData()">🔄 Tải Dữ Liệu Từ Kho</button>
+    <div class="control-title">🖨️ 選擇列印訂單 (A4 匯總)</div>
+    <input type="text" id="scriptUrl" placeholder="請貼上 Google Sheets 網頁應用程式網址 (Web App URL)..." style="margin-bottom: 8px;">
+    <button class="btn btn-blue" onclick="loadData()">🔄 從庫存載入資料</button>
 
     <div style="margin-top: 12px;">
-      <label style="font-size: 0.85rem; font-weight: bold; display: block; margin-bottom: 4px;">Chọn Mã Đơn Sản Xuất (指令表):</label>
+      <label style="font-size: 0.85rem; font-weight: bold; display: block; margin-bottom: 4px;">選擇指令表 (訂單號):</label>
       <select id="orderSelect" onchange="renderA4Sheet()">
-        <option value="">-- Chọn đơn hàng cần in --</option>
+        <option value="">-- 請選擇要列印的指令表 --</option>
       </select>
     </div>
 
-    <button class="btn btn-green" onclick="window.print()" style="margin-top: 15px;">🖨️ In Phiếu A4 Này</button>
+    <button class="btn btn-green" onclick="window.print()" style="margin-top: 15px;">🖨️ 列印此 A4 匯總單</button>
   </div>
 
-  <!-- GIAO DIỆN TỜ GIẤY A4 -->
+  <!-- A4 列印頁面內容 -->
   <div class="a4-preview" id="a4Content">
     <div class="sheet-header">
-      <h2>PHIẾU TỔNG HỢP VẬT TƯ SẢN XUẤT</h2>
-      <p><b>SAUCONY MATERIALS WAREHOUSE</b></p>
+      <h2>SAUCONY 生產材料總匯表</h2>
+      <p><b>材料倉庫備料清單</b></p>
     </div>
 
     <div class="order-info" id="orderMetaInfo">
-      <div><b>Mã Đơn SX (指令表):</b> ---</div>
-      <div><b>Mã PO Mua:</b> ---</div>
-      <div><b>Ngày in:</b> <span id="printDate">---</span></div>
+      <div><b>指令表 (訂單號):</b> ---</div>
+      <div><b>採購單號 (PO):</b> ---</div>
+      <div><b>列印日期:</b> <span id="printDate">---</span></div>
     </div>
 
     <table>
       <thead>
         <tr>
-          <th style="width: 8%;">STT</th>
-          <th style="width: 42%;">Tên Vật Tư / Chi Tiết (品名)</th>
-          <th style="width: 15%;">Màu Sắc (顏色)</th>
-          <th style="width: 15%;">Số Lượng (數量)</th>
-          <th style="width: 10%;">ĐVT</th>
-          <th style="width: 10%;">Kiểm Kê</th>
+          <th style="width: 8%;">序號</th>
+          <th style="width: 42%;">材料名稱 / 品名 (摘要)</th>
+          <th style="width: 15%;">顏色</th>
+          <th style="width: 15%;">數量</th>
+          <th style="width: 10%;">單位</th>
+          <th style="width: 10%;">點檢</th>
         </tr>
       </thead>
       <tbody id="materialTableBody">
         <tr>
-          <td colspan="6" style="text-align: center; color: #64748b; padding: 20px;">Vui lòng tải dữ liệu và chọn đơn hàng ở trên.</td>
+          <td colspan="6" style="text-align: center; color: #64748b; padding: 20px;">請先載入資料並選擇上方指令表。</td>
         </tr>
       </tbody>
     </table>
 
     <div class="sign-section">
       <div class="sign-box">
-        <p><b>Người Lập Phiếu</b></p>
+        <p><b>製表人 / 倉管</b></p>
         <div class="sign-space"></div>
-        <p>(Ký, ghi rõ họ tên)</p>
+        <p>(簽名)</p>
       </div>
       <div class="sign-box">
-        <p><b>Người Nhận / Xưởng Lấy</b></p>
+        <p><b>領料人 / 車間代表</b></p>
         <div class="sign-space"></div>
-        <p>(Ký, ghi rõ họ tên)</p>
+        <p>(簽名)</p>
       </div>
     </div>
   </div>
@@ -118,12 +118,12 @@
         document.getElementById('scriptUrl').value = savedUrl;
         loadData();
       }
-      document.getElementById('printDate').innerText = new Date().toLocaleDateString('vi-VN');
+      document.getElementById('printDate').innerText = new Date().toLocaleDateString('zh-TW');
     });
 
     async function loadData() {
       const url = document.getElementById('scriptUrl').value.trim();
-      if (!url) return alert("Vui lòng nhập Web App URL!");
+      if (!url) return alert("請輸入 Web App URL！");
 
       localStorage.setItem('saucony_gas_url', url);
       try {
@@ -131,9 +131,9 @@
         sheetData = await res.json();
         
         populateOrderSelect(sheetData);
-        alert("✅ Tải dữ liệu thành công! Hãy chọn Đơn SX ở ô bên dưới.");
+        alert("✅ 資料載入成功！請在下方下拉選單選擇指令表。");
       } catch (err) {
-        alert("❌ Lỗi tải dữ liệu. Kiểm tra lại URL!");
+        alert("❌ 載入失敗，請檢查網址是否正確！");
       }
     }
 
@@ -150,7 +150,7 @@
 
     function populateOrderSelect(data) {
       const select = document.getElementById('orderSelect');
-      select.innerHTML = '<option value="">-- Chọn đơn hàng cần in --</option>';
+      select.innerHTML = '<option value="">-- 請選擇要列印的指令表 --</option>';
       
       const orders = new Set();
       data.forEach(row => {
@@ -161,7 +161,7 @@
       orders.forEach(ord => {
         const opt = document.createElement('option');
         opt.value = ord;
-        opt.textContent = `Chỉ lệnh / Đơn SX: ${ord}`;
+        opt.textContent = `指令表: ${ord}`;
         select.appendChild(opt);
       });
     }
@@ -172,28 +172,26 @@
       const metaInfo = document.getElementById('orderMetaInfo');
 
       if (!selectedOrder) {
-        tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: #64748b; padding: 20px;">Chưa chọn đơn hàng.</td></tr>';
-        metaInfo.innerHTML = '<div><b>Mã Đơn SX:</b> ---</div><div><b>Mã PO Mua:</b> ---</div>';
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: #64748b; padding: 20px;">尚未選擇指令表。</td></tr>';
+        metaInfo.innerHTML = '<div><b>指令表:</b> ---</div><div><b>採購單號:</b> ---</div>';
         return;
       }
 
-      // Lọc tất cả các dòng vật tư thuộc đúng Đơn SX này
       const matchedRows = sheetData.filter(row => {
         const orderNo = String(getColValue(row, ['指令表', 'đơn sản xuất', 'po sx'], ''));
         return orderNo === selectedOrder;
       });
 
       if (matchedRows.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: red; padding: 20px;">Không tìm thấy vật tư cho đơn này.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: red; padding: 20px;">找不到該指令表的材料資料。</td></tr>';
         return;
       }
 
-      // Lấy PO mua đầu tiên tìm thấy trong nhóm
       const firstPo = getColValue(matchedRows[0], ['*訂購單號', '訂購單號', 'po mua'], '-');
       metaInfo.innerHTML = `
-        <div><b>Mã Đơn SX (指令表):</b> <span style="color:#2563eb; font-size:1.05rem;">${selectedOrder}</span></div>
-        <div><b>Mã PO Mua:</b> <span style="color:#b45309; font-size:1.05rem;">${firstPo}</span></div>
-        <div><b>Tổng số dòng vật tư:</b> <b>${matchedRows.length}</b></div>
+        <div><b>指令表:</b> <span style="color:#2563eb; font-size:1.05rem;">${selectedOrder}</span></div>
+        <div><b>採購單號 (PO):</b> <span style="color:#b45309; font-size:1.05rem;">${firstPo}</span></div>
+        <div><b>材料總項數:</b> <b>${matchedRows.length}</b> 項</div>
       `;
 
       let html = '';
@@ -210,7 +208,7 @@
             <td class="center">${color}</td>
             <td class="right" style="font-weight: bold; font-size: 1rem; color: #1d4ed8;">${qty}</td>
             <td class="center">${unit}</td>
-            <td class="center">☐ Đủ</td>
+            <td class="center">☐</td>
           </tr>
         `;
       });
