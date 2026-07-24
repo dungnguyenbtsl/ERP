@@ -23,47 +23,69 @@
     .order-checklist label { display: flex; align-items: center; gap: 8px; padding: 4px 6px; font-size: 0.9rem; cursor: pointer; }
     .order-checklist label:hover { background: #f1f5f9; border-radius: 4px; }
 
-    /* A4 列印預覽外框 */
+    /* A4 列印預覽外框容器 */
     .a4-preview-container { display: flex; flex-direction: column; gap: 20px; }
-    .a4-sheet { background: white; width: 100%; max-width: 210mm; min-height: 297mm; margin: 0 auto; padding: 12mm 15mm; box-shadow: 0 4px 10px rgba(0,0,0,0.15); border-radius: 4px; position: relative; display: flex; flex-direction: column; justify-content: space-between; page-break-after: always; }
+    
+    /* Trang A4 chuẩn: Cho phép co giãn tự nhiên theo lượng dữ liệu, tự động ngắt trang khi in */
+    .a4-sheet { 
+      background: white; 
+      width: 100%; 
+      max-width: 210mm; 
+      min-height: 297mm;
+      margin: 0 auto; 
+      padding: 12mm 15mm; 
+      box-shadow: 0 4px 10px rgba(0,0,0,0.15); 
+      border-radius: 4px; 
+      display: flex; 
+      flex-direction: column; 
+      justify-content: space-between; 
+      page-break-after: always;
+      break-after: page;
+      margin-bottom: 20px;
+    }
     
     /* 標頭排版 */
-    .sheet-header { position: relative; border-bottom: 2px solid #1e293b; padding-bottom: 10px; margin-bottom: 12px; text-align: center; }
-    .logo-box { position: absolute; left: 0; top: 4px; width: 60px; height: 42px; display: flex; align-items: center; justify-content: center; }
+    .sheet-header { position: relative; border-bottom: 2px solid #1e293b; padding-bottom: 8px; margin-bottom: 10px; text-align: center; }
+    .logo-box { position: absolute; left: 0; top: 2px; width: 60px; height: 42px; display: flex; align-items: center; justify-content: center; }
     .logo-box img { max-width: 100%; max-height: 100%; object-fit: contain; }
     .logo-placeholder { font-size: 0.65rem; color: #64748b; border: 1px dashed #cbd5e1; padding: 4px; text-align: center; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; }
 
     .header-content { padding: 0 70px; } 
     .header-content h1 { font-size: 0.95rem; font-weight: bold; color: #475569; margin-bottom: 2px; letter-spacing: 0.5px; }
-    .header-content h2 { font-size: 1.35rem; font-weight: bold; text-transform: uppercase; margin-bottom: 2px; color: #0f172a; letter-spacing: 0.5px; }
-    .header-content p { font-size: 0.8rem; color: #64748b; }
+    .header-content h2 { font-size: 1.3rem; font-weight: bold; text-transform: uppercase; margin-bottom: 2px; color: #0f172a; letter-spacing: 0.5px; }
+    .header-content p { font-size: 0.75rem; color: #64748b; }
 
     /* Thông tin đơn hàng */
-    .order-info { display: grid; grid-template-columns: 1fr 1.3fr 1fr; gap: 8px; margin-bottom: 12px; font-size: 0.88rem; background: #f8fafc; padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 4px; align-items: center; }
+    .order-info { display: grid; grid-template-columns: 1fr 1.3fr 1fr; gap: 8px; margin-bottom: 10px; font-size: 0.85rem; background: #f8fafc; padding: 6px 10px; border: 1px solid #cbd5e1; border-radius: 4px; align-items: center; }
     .order-info div { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     
-    /* 材料表格 & Google Sheets style filter headers */
+    /* 材料表格 */
     table { width: 100%; border-collapse: collapse; margin-bottom: 15px; }
-    th, td { border: 1px solid #333; padding: 8px 8px; font-size: 0.85rem; text-align: left; vertical-align: middle; }
+    th, td { border: 1px solid #333; padding: 7px 8px; font-size: 0.85rem; text-align: left; vertical-align: middle; }
     th { background-color: #e2e8f0; font-weight: bold; text-align: center; color: #0f172a; }
-    th .th-title { margin-bottom: 4px; display: block; }
     
-    .sheet-filter { width: 100%; padding: 4px 6px; font-size: 0.75rem; border: 1px solid #94a3b8; border-radius: 4px; background-color: #fff; outline: none; color: #334155; }
-
     td.center { text-align: center; }
     td.right { text-align: right; }
 
     /* Phần chữ ký */
-    .sign-section { display: flex; justify-content: space-between; margin-top: 20px; margin-bottom: 10px; text-align: center; font-size: 0.9rem; }
+    .sign-section { display: flex; justify-content: space-between; margin-top: 20px; margin-bottom: 5px; text-align: center; font-size: 0.9rem; }
     .sign-box { width: 35%; }
     .sign-space { height: 45px; }
 
-    /* 列印時自動隱藏控制選單 */
+    /* Định dạng khi máy in kích hoạt */
     @media print {
       body { background: white; padding: 0; }
       .control-card { display: none; }
-      .sheet-filter { display: none; }
-      .a4-sheet { box-shadow: none; padding: 10mm; margin: 0; max-width: 100%; width: 100%; min-height: 297mm; page-break-after: always; }
+      .a4-sheet { 
+        box-shadow: none; 
+        padding: 10mm; 
+        margin: 0; 
+        max-width: 100%; 
+        width: 100%; 
+        min-height: 297mm; 
+        page-break-after: always;
+        break-after: page;
+      }
     }
   </style>
 </head>
@@ -91,7 +113,7 @@
 
   <div class="a4-preview-container" id="a4Container">
     <div class="a4-sheet">
-      <div style="text-align: center; color: #64748b; padding: 50px 0;">
+      <div style="text-align: center; color: #64748b; padding: 100px 0;">
         <h2>請先載入資料並在上方勾選要列印的指令表。</h2>
       </div>
     </div>
@@ -172,7 +194,7 @@
       if (checkboxes.length === 0) {
         container.innerHTML = `
           <div class="a4-sheet">
-            <div style="text-align: center; color: #64748b; padding: 80px 20px;">
+            <div style="text-align: center; color: #64748b; padding: 120px 20px;">
               <h2>尚未選擇任何指令表</h2>
               <p style="margin-top: 10px; font-size: 0.9rem;">請在上方控制面板勾選您想要預覽或列印的訂單。</p>
             </div>
@@ -231,7 +253,6 @@
           });
         }
 
-        // Tạo khung HTML chuẩn cho từng trang A4 của đơn hàng
         allPagesHtml += `
           <div class="a4-sheet">
             <div>
