@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>富裕鞋業 - 生產材料卡片清單 (Pinned Landscape Cards)</title>
+  <title>富裕鞋業 - 生產材料卡片清單 (Strict Print Anchor)</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: Arial, sans-serif; }
     body { background-color: #f1f5f9; padding: 10px; color: #1e293b; }
@@ -22,30 +22,32 @@
     .filter-group label { font-size: 0.75rem; font-weight: bold; color: #475569; margin-bottom: 2px; }
     .filter-input { width: 100%; padding: 5px 8px; font-size: 0.85rem; border: 1px solid #cbd5e1; border-radius: 6px; outline: none; background: #fff; }
 
-    .order-checklist { max-height: 120px; overflow-y: auto; border: 1px solid #cbd5e1; border-radius: 6px; padding: 6px; background: #fff; margin-bottom: 8px; }
-    .order-checklist label { display: flex; align-items: center; gap: 6px; padding: 3px 5px; font-size: 0.85rem; cursor: pointer; }
-    .order-checklist label:hover { background: #f1f5f9; border-radius: 4px; }
+    .order-checklist { max-height: 125px; overflow-y: auto; border: 1px solid #cbd5e1; border-radius: 6px; padding: 6px; background: #fff; margin-bottom: 8px; }
+    .order-checklist label { display: flex; align-items: center; gap: 6px; padding: 3px 5px; font-size: 0.85rem; cursor: pointer; border-radius: 4px; }
+    .order-checklist label:hover { background: #f1f5f9; }
 
-    /* Thiết lập trang in chuẩn A4 KHỔ NGANG (Landscape) có Neo trang độc lập */
+    /* ==========================================
+       THIẾT LẬP NEO KHỔ GIẤY IN (A4 LANDSCAPE)
+       ========================================== */
     @page {
       size: A4 landscape;
-      margin: 4mm;
+      margin: 0mm; /* Đưa lề về 0 để kiểm soát hoàn toàn bằng CSS bên trong card */
     }
 
     .cards-container { 
       display: flex; 
       flex-direction: column; 
-      gap: 25px; 
+      gap: 20px; 
       align-items: center; 
     }
 
     .material-card { 
       background: white; 
-      width: 275mm; 
-      height: 180mm; 
-      max-height: 180mm;
+      width: 285mm; 
+      height: 195mm; 
+      max-height: 195mm;
       margin: 0 auto; 
-      padding: 6mm 10mm; 
+      padding: 8mm 12mm; 
       box-shadow: 0 4px 15px rgba(0,0,0,0.1); 
       border-radius: 8px; 
       border: 1px solid #cbd5e1;
@@ -53,62 +55,78 @@
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      
-      /* Neo ngắt trang cứng (Strict Page Break Anchoring) */
-      page-break-after: always !important;
-      break-after: page !important;
-      page-break-inside: avoid !important;
-      break-inside: avoid !important;
       overflow: hidden;
+      
+      /* Neo ngắt trang mặc định trên trình duyệt */
+      page-break-after: always;
+      break-after: page;
+      page-break-inside: avoid;
+      break-inside: avoid;
     }
 
-    .card-header { border-bottom: 2px solid #2563eb; padding-bottom: 4px; margin-bottom: 5px; display: flex; justify-content: space-between; align-items: center; }
+    .card-header { border-bottom: 2px solid #2563eb; padding-bottom: 5px; margin-bottom: 6px; display: flex; justify-content: space-between; align-items: center; }
     .card-logo-title { display: flex; align-items: center; gap: 10px; }
-    .logo-box { width: 42px; height: 22px; display: flex; align-items: center; justify-content: center; }
+    .logo-box { width: 45px; height: 24px; display: flex; align-items: center; justify-content: center; }
     .logo-box img { max-width: 100%; max-height: 100%; object-fit: contain; }
-    .logo-placeholder { font-size: 0.4rem; color: #64748b; border: 1px dashed #cbd5e1; padding: 2px; text-align: center; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; }
+    .logo-placeholder { font-size: 0.45rem; color: #64748b; border: 1px dashed #cbd5e1; padding: 2px; text-align: center; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; }
 
-    .header-text h1 { font-size: 0.7rem; font-weight: bold; color: #475569; }
-    .header-text h2 { font-size: 0.95rem; font-weight: bold; color: #0f172a; text-transform: uppercase; }
+    .header-text h1 { font-size: 0.75rem; font-weight: bold; color: #475569; }
+    .header-text h2 { font-size: 1rem; font-weight: bold; color: #0f172a; text-transform: uppercase; }
 
-    .card-info-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-bottom: 5px; font-size: 0.8rem; background: #f8fafc; padding: 5px 8px; border: 1px solid #e2e8f0; border-radius: 6px; }
-    .card-info-item span { display: block; color: #64748b; font-size: 0.65rem; }
-    .card-info-item b { color: #0f172a; font-size: 0.8rem; }
+    .card-info-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-bottom: 6px; font-size: 0.8rem; background: #f8fafc; padding: 6px 10px; border: 1px solid #e2e8f0; border-radius: 6px; }
+    .card-info-item span { display: block; color: #64748b; font-size: 0.7rem; }
+    .card-info-item b { color: #0f172a; font-size: 0.85rem; }
 
-    table { width: 100%; border-collapse: collapse; margin-bottom: 5px; }
-    th, td { border: 1px solid #333; padding: 4px 6px; font-size: 0.78rem; text-align: left; vertical-align: middle; }
+    table { width: 100%; border-collapse: collapse; margin-bottom: 6px; }
+    th, td { border: 1px solid #333; padding: 5px 7px; font-size: 0.8rem; text-align: left; vertical-align: middle; }
     th { background-color: #e2e8f0; font-weight: bold; text-align: center; color: #0f172a; }
     
     td.center { text-align: center; }
     td.right { text-align: right; }
     .nowrap { white-space: nowrap; }
 
-    .card-footer { display: flex; justify-content: space-between; font-size: 0.7rem; color: #64748b; border-top: 1px dashed #cbd5e1; padding-top: 4px; margin-top: auto; }
+    .card-footer { display: flex; justify-content: space-between; font-size: 0.75rem; color: #64748b; border-top: 1px dashed #cbd5e1; padding-top: 5px; margin-top: auto; }
 
-    /* Cấu hình khi bấm In trực tiếp (Print Mode) */
+    /* ==========================================
+       CẤU HÌNH NEO CHUẨN XÁC KHI BẤM IN (PRINT)
+       ========================================== */
     @media print {
       html, body {
         background: white !important;
         padding: 0 !important;
         margin: 0 !important;
+        width: 297mm;
+        height: 210mm;
       }
       .control-card { 
         display: none !important; 
       }
       .cards-container {
+        display: block !important;
         gap: 0 !important;
       }
       .material-card { 
         box-shadow: none !important; 
         margin: 0 auto !important; 
-        width: 275mm !important; 
-        height: 180mm !important;
-        max-height: 180mm !important;
+        width: 297mm !important; 
+        height: 210mm !important;
+        max-height: 210mm !important;
+        padding: 10mm 15mm !important; /* Lề trong chuẩn cho máy in */
         border: none !important;
+        border-radius: 0 !important;
+        
+        /* Neo ngắt trang tuyệt đối bằng lệnh phần cứng máy in */
+        page-break-before: always !important;
         page-break-after: always !important;
-        break-after: page !important;
         page-break-inside: avoid !important;
+        break-before: page !important;
+        break-after: page !important;
         break-inside: avoid !important;
+      }
+      /* Tránh trang trắng thừa đầu tiên */
+      .material-card:first-child {
+        page-break-before: avoid !important;
+        break-before: avoid !important;
       }
     }
   </style>
@@ -116,7 +134,7 @@
 <body>
 
   <div class="control-card">
-    <div class="control-title">🖨️ 生產訂單材料卡片清單 (Pinned Landscape Cards)</div>
+    <div class="control-title">🖨️ 生產訂單材料卡片清單 (Strict Print Anchor)</div>
     <input type="text" id="scriptUrl" placeholder="請貼上網址..." style="margin-bottom: 6px;">
     
     <button class="btn btn-blue" onclick="loadData()">🔄 從庫存載入資料</button>
@@ -150,12 +168,12 @@
       </div>
     </div>
 
-    <button class="btn btn-green" onclick="window.print()" style="margin-top: 8px;">🖨️ 批量列印橫向卡片 (已釘選)</button>
+    <button class="btn btn-green" onclick="window.print()" style="margin-top: 8px;">🖨️ 批量列印橫向卡片 (,Chính xác từng trang)</button>
   </div>
 
   <div class="cards-container" id="cardsContainer">
     <div class="material-card">
-      <div style="text-align: center; color: #64748b; padding: 60px 0; width: 100%;">
+      <div style="text-align: center; color: #64748b; padding: 70px 0; width: 100%;">
         <h2>請先載入資料並在上方勾選要列印的指令表。</h2>
       </div>
     </div>
@@ -278,7 +296,7 @@
       if (checkboxes.length === 0) {
         container.innerHTML = `
           <div class="material-card">
-            <div style="text-align: center; color: #64748b; padding: 60px 20px; width: 100%;">
+            <div style="text-align: center; color: #64748b; padding: 70px 20px; width: 100%;">
               <h2>尚未選擇任何指令表</h2>
               <p style="margin-top: 6px; font-size: 0.85rem;">請在上方控制面板勾選您想要預覽或列印的訂單卡片。</p>
             </div>
@@ -333,7 +351,7 @@
         }
 
         allCardsHtml += `
-          <div class="material-card">
+          <div class="material-card" id="card-${selectedOrder}">
             <div>
               <div class="card-header">
                 <div class="card-logo-title">
@@ -345,7 +363,7 @@
                     <h2>SAUCONY 生產材料卡片清單</h2>
                   </div>
                 </div>
-                <div style="font-size: 0.7rem; color: #475569;"><b>倉管備料清單</b></div>
+                <div style="font-size: 0.75rem; color: #475569;"><b>倉管備料清單</b></div>
               </div>
 
               <div class="card-info-grid">
