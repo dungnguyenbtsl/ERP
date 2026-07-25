@@ -7,19 +7,21 @@
 
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: Arial, sans-serif; -webkit-tap-highlight-color: transparent; }
-    body { background-color: #f1f5f9; padding: 8px; color: #1e293b; }
+    body { background-color: #e2e8f0; padding: 12px; color: #1e293b; }
     
-    .control-card { background: white; padding: 12px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-bottom: 12px; max-width: 280mm; margin-left: auto; margin-right: auto; }
-    .control-title { font-size: 0.95rem; font-weight: bold; color: #0f172a; margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
+    .control-card { background: white; padding: 14px; border-radius: 10px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06); margin-bottom: 16px; max-width: 285mm; margin-left: auto; margin-right: auto; }
+    .control-title { font-size: 1rem; font-weight: bold; color: #0f172a; margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
     
     input[type="text"], select { width: 100%; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.9rem; margin-bottom: 6px; outline: none; background: #fff; }
     input[type="text"]:focus { border-color: #2563eb; box-shadow: 0 0 0 2px rgba(37,99,235,0.15); }
     
-    .btn { width: 100%; padding: 10px; border: none; border-radius: 6px; font-weight: bold; font-size: 0.95rem; cursor: pointer; margin-top: 4px; display: flex; align-items: center; justify-content: center; gap: 6px; }
+    .btn { width: 100%; padding: 10px; border: none; border-radius: 6px; font-weight: bold; font-size: 0.95rem; cursor: pointer; margin-top: 4px; display: flex; align-items: center; justify-content: center; gap: 6px; transition: background 0.2s; }
     .btn-blue { background: #2563eb; color: white; }
-    .btn-blue:active { background: #1d4ed8; }
+    .btn-blue:hover { background: #1d4ed8; }
+    .btn-blue:active { background: #1e40af; }
     .btn-green { background: #16a34a; color: white; }
-    .btn-green:active { background: #15803d; }
+    .btn-green:hover { background: #15803d; }
+    .btn-green:active { background: #166534; }
     .btn-sm { padding: 4px 8px; font-size: 0.75rem; width: auto; display: inline-flex; }
 
     .filter-grid { display: grid; grid-template-columns: 1fr; gap: 6px; margin-bottom: 6px; }
@@ -33,7 +35,7 @@
     .order-checklist input[type="checkbox"] { width: 16px; height: 16px; accent-color: #2563eb; }
 
     /* ==========================================
-       THIẾT LẬP KHỔ GIẤY IN & NEO ĐÁY TRANG A4 NGANG
+       TỐI ƯU HIỂN THỊ XEM TRƯỚC (PREVIEW MODE)
        ========================================== */
     @page {
       size: A4 landscape;
@@ -43,10 +45,11 @@
     .cards-container { 
       display: flex; 
       flex-direction: column; 
-      gap: 15px; 
+      gap: 20px; 
       align-items: center; 
       width: 100%;
-      overflow-x: auto;
+      max-width: 295mm;
+      margin: 0 auto;
     }
 
     .material-card { 
@@ -57,8 +60,8 @@
       max-height: 192mm;
       margin: 0 auto; 
       padding: 7mm 12mm 6mm 12mm; 
-      box-shadow: 0 4px 15px rgba(0,0,0,0.1); 
-      border-radius: 8px; 
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.15), 0 8px 10px -6px rgba(0, 0, 0, 0.1); 
+      border-radius: 10px; 
       border: 1px solid #cbd5e1;
       position: relative;
       display: flex;
@@ -108,8 +111,16 @@
        MEDIA QUERY CHO TABLET & PC (MÀN HÌNH RỘNG HƠN)
        ========================================== */
     @media (min-width: 640px) {
-      body { padding: 10px; }
+      body { padding: 20px; }
       .filter-grid { grid-template-columns: repeat(3, 1fr); }
+    }
+
+    /* Thu nhỏ tỷ lệ hiển thị trên màn hình điện thoại nhỏ để thấy trọn vẹn form A4 ngang mà không cần cuộn ngang */
+    @media (max-width: 900px) {
+      .cards-container {
+        overflow-x: auto;
+        padding-bottom: 10px;
+      }
     }
 
     /* ==========================================
@@ -134,6 +145,8 @@
         display: block !important;
         gap: 0 !important;
         overflow: visible !important;
+        max-width: none !important;
+        margin: 0 !important;
       }
       .material-card { 
         box-shadow: none !important; 
@@ -158,7 +171,6 @@
         page-break-before: avoid !important;
         break-before: avoid !important;
       }
-      /* Chế độ in riêng một thẻ cụ thể - bắt buộc ép chuẩn A4 landscape */
       body.print-single .material-card:not(.printing-target) {
         display: none !important;
       }
@@ -506,7 +518,7 @@
             </div>
 
             <div class="card-footer">
-              <div>備註：請依清單 100% 核對物料數量與顏色。</div>
+              <div>備註：請依清單 100% 核對物料數量與顏色層級。</div>
               <div>列印日期：${new Date().toLocaleDateString('zh-TW')}</div>
             </div>
           </div>
