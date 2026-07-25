@@ -4,8 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>富裕鞋業 - SAUCONY 生產物料清單</title>
-  <!-- Thư viện hỗ trợ xuất Excel (SheetJS) -->
-  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
   <!-- Thư viện hỗ trợ xuất Word (html-docx-js) -->
   <script src="https://cdn.jsdelivr.net/npm/html-docx-js@0.3.1/dist/html-docx.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
@@ -186,7 +184,7 @@
 
     <div class="action-buttons">
       <button class="btn btn-green" onclick="window.print()">🖨️ In / PDF</button>
-      <button class="btn btn-excel" onclick="exportExcel()">📥 Xuất Excel chuẩn thẻ kho</button>
+      <button class="btn btn-excel" onclick="exportExcelAsHtml()">📥 Xuất Excel chuẩn form thẻ kho</button>
     </div>
     <div style="margin-top: 4px;">
       <button class="btn btn-word" onclick="exportWord()">📄 Xuất Word nguyên bản form</button>
@@ -435,14 +433,14 @@
       container.innerHTML = allCardsHtml;
     }
 
-    // Xuất Excel: Dựng file Excel theo đúng định dạng khung thẻ kho và tự động vẽ border
-    function exportExcel() {
+    // Xuất Excel giữ nguyên 100% giao diện khung thẻ card (Định dạng chuẩn MHTML nhúng CSS)
+    function exportExcelAsHtml() {
       const checkboxes = document.querySelectorAll('#orderChecklist input[type="checkbox"]:checked');
       if (checkboxes.length === 0) return alert("請先勾選要匯出的指令表！");
 
-      let aoaData = [];
+      let cardsHtml = '';
 
-      checkboxes.forEach((cb, cardIndex) => {
+      checkboxes.forEach(cb => {
         const selectedOrder = cb.value;
         const matchedRows = sheetData.filter(row => String(getColValue(row, ['指令表', 'đơn sản xuất', 'po sx'], '')).trim() === selectedOrder);
 
@@ -462,60 +460,99 @@
           }
         }
 
-        if (cardIndex > 0) {
-          aoaData.push([]);
-          aoaData.push([]);
-        }
+        let tableRowsHtml = '';
+        matchedRows.forEach((row, index) => {
+          const name = getColValue(row, ['摘要', '品名', '材料名稱', 'tên vật tư'], '-');
+          const color = getColValue(row, ['顏色', 'màu sắc'], '-');
+          const qty = getColValue(row, ['數量', 'số lượng', 'sl'], '0');
+          const unit = getColValue(row, ['單位', 'đơn vị'], 'PCS');
 
-        aoaData.push(["RIGHT RICH INTL. CO. LTD 富裕鞋業", "", "", "", "", "倉管備料清單"]);
-        aoaData.push(["SAUCONY 生產物料清單", "", "", "", "", ""]);
-        aoaData.push(["指令表單號:", selectedOrder, "廠型-SKU:", factorySku, "鞋數量:", shoeQty + " 雙", "客戶交期:", deliveryDate]);
-        aoaData.push([]); 
-        aoaData.push(["序號 (STT)", "材料名稱 / 品名 (摘要)", "顏色 (Màu)", "單位", "數量", "點檢"]);
+          tableRowsHtml += `
+            <tr>
+              <td align="center" style="border: 1px solid #333; padding: 5px; font-size: 10pt;">${index + 1}</td>
+              <td style="border: 1px solid #333; padding: 5px; font-size: 10pt;">${name}</td>
+              <td align="center" style="border: 1px solid #333; padding: 5px; font-size: 10pt;">${color}</td>
+              <td align="center" style="border: 1px solid #333; padding: 5px; font-size: 10pt;">${unit}</td>
+              <td align="right" style="border: 1px solid #333; padding: 5px; font-size: 10pt; font-weight: bold; color: #1d4ed8;">${qty}</td>
+              <td align="center" style="border: 1px solid #333; padding: 5px; font-size: 10pt;">☐</td>
+            </tr>
+          `;
+        });
 
-        if (matchedRows.length === 0) {
-          aoaData.push(["-", "找不到該指令表的材料資料。", "-", "-", "0", "☐"]);
-        } else {
-          matchedRows.forEach((row, index) => {
-            const name = getColValue(row, ['摘要', '品名', '材料名稱', 'tên vật tư'], '-');
-            const color = getColValue(row, ['顏色', 'màu sắc'], '-');
-            const qty = getColValue(row, ['數量', 'số lượng', 'sl'], '0');
-            const unit = getColValue(row, ['單位', 'đơn vị'], 'PCS');
+        cardsHtml += `
+          <div style="margin-bottom: 40px; page-break-after: always; width: 850px; font-family: Arial, sans-serif;">
+            <table style="width: 100%; border-collapse: collapse; border-bottom: 2px solid #2563eb; margin-bottom: 10px; padding-bottom: 5px;">
+              <tr>
+                <td>
+                  <div style="font-size: 9pt; font-weight: bold; color: #475569;">RIGHT RICH INTL. CO. LTD 富裕鞋業</div>
+                  <div style="font-size: 13pt; font-weight: bold; color: #0f172a; text-transform: uppercase;">SAUCONY 生產物料清單</div>
+                </td>
+                <td align="right" style="font-size: 9pt; font-weight: bold; color: #475569;">倉管備料清單</td>
+              </tr>
+            </table>
 
-            aoaData.push([index + 1, name, color, unit, qty, "☐"]);
-          });
-        }
+            <table style="width: 100%; border-collapse: collapse; margin-bottom: 10px; background: #f8fafc;">
+              <tr>
+                <td style="border: 1px solid #cbd5e1; padding: 8px; width: 25%; font-size: 10pt;"><b>指令表單號：</b><br/><span style="color:#2563eb; font-weight:bold; font-size:11pt;">${selectedOrder}</span></td>
+                <td style="border: 1px solid #cbd5e1; padding: 8px; width: 25%; font-size: 10pt;"><b>廠型-SKU：</b><br/><span style="font-weight:bold;">${factorySku}</span></td>
+                <td style="border: 1px solid #cbd5e1; padding: 8px; width: 25%; font-size: 10pt;"><b>鞋數量：</b><br/><span style="color:#059669; font-weight:bold;">${shoeQty} 雙</span></td>
+                <td style="border: 1px solid #cbd5e1; padding: 8px; width: 25%; font-size: 10pt;"><b>客戶交期：</b><br/><span style="color:#b45309; font-weight:bold;">${deliveryDate}</span></td>
+              </tr>
+            </table>
 
-        aoaData.push(["備註：請依清單品100%核对物料數量与顏色。", "", "", "", "列印日期:", new Date().toLocaleDateString('zh-TW')]);
+            <table style="width: 100%; border-collapse: collapse; margin-bottom: 5px;">
+              <thead>
+                <tr style="background-color: #e2e8f0;">
+                  <th style="border: 1px solid #333; padding: 6px; font-size: 10pt; width: 6%;">序號</th>
+                  <th style="border: 1px solid #333; padding: 6px; font-size: 10pt; width: 52%;">材料名稱 / 品名 (摘要)</th>
+                  <th style="border: 1px solid #333; padding: 6px; font-size: 10pt; width: 22%;">顏色</th>
+                  <th style="border: 1px solid #333; padding: 6px; font-size: 10pt; width: 7%;">單位</th>
+                  <th style="border: 1px solid #333; padding: 6px; font-size: 10pt; width: 8%;">數量</th>
+                  <th style="border: 1px solid #333; padding: 6px; font-size: 10pt; width: 5%;">點檢</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${tableRowsHtml}
+              </tbody>
+            </table>
+
+            <table style="width: 100%; border-collapse: collapse; margin-top: 8px; border-top: 1px dashed #cbd5e1; padding-top: 5px;">
+              <tr>
+                <td style="font-size: 9pt; color: #64748b;">備註：請依清單品100%核对物料數量与顏色。</td>
+                <td align="right" style="font-size: 9pt; color: #64748b;">列印日期：${new Date().toLocaleDateString('zh-TW')}</td>
+              </tr>
+            </table>
+          </div>
+        `;
       });
 
-      const worksheet = XLSX.utils.aoa_to_sheet(aoaData);
+      const excelTemplate = `
+        <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40">
+        <head>
+          <meta charset="utf-8">
+          <!--[if gte mso 9]>
+          <xml>
+           <x:ExcelWorkbook>
+            <x:ExcelWorksheets>
+             <x:ExcelWorksheet>
+              <x:Name>SAUCONY_The_Kho</x:Name>
+              <x:WorksheetOptions>
+               <x:DisplayGridlines/>
+              </x:WorksheetOptions>
+             </x:ExcelWorksheet>
+            </x:ExcelWorksheets>
+           </x:ExcelWorkbook>
+          </xml>
+          <![endif]-->
+        </head>
+        <body>
+          ${cardsHtml}
+        </body>
+        </html>
+      `;
 
-      // Cấu hình khung viền (borders) cho toàn bộ các ô trong file Excel
-      const range = XLSX.utils.decode_range(worksheet['!ref']);
-      const thinBorder = {
-        top: { style: "thin", color: { rgb: "333333" } },
-        bottom: { style: "thin", color: { rgb: "333333" } },
-        left: { style: "thin", color: { rgb: "333333" } },
-        right: { style: "thin", color: { rgb: "333333" } }
-      };
-
-      for (let R = range.s.r; R <= range.e.r; ++R) {
-        for (let C = range.s.c; C <= range.e.c; ++C) {
-          const cellAddress = XLSX.utils.encode_cell({ r: R, c: C });
-          if (!worksheet[cellAddress]) continue;
-          if (!worksheet[cellAddress].s) worksheet[cellAddress].s = {};
-          worksheet[cellAddress].s.border = thinBorder;
-        }
-      }
-      
-      worksheet['!cols'] = [
-        { wch: 12 }, { wch: 35 }, { wch: 18 }, { wch: 10 }, { wch: 12 }, { wch: 15 }
-      ];
-
-      const workbook = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(workbook, worksheet, "SAUCONY_The_Kho");
-      XLSX.writeFile(workbook, "SAUCONY_The_Vat_Lieu.xlsx");
+      const blob = new Blob(['\ufeff' + excelTemplate], { type: 'application/vnd.ms-excel' });
+      saveAs(blob, "SAUCONY_The_Vat_Lieu.xls");
     }
 
     // Xuất Word: Đóng gói toàn bộ form giao diện thẻ card hiện tại thành file Word chuẩn cấu trúc A4 ngang
