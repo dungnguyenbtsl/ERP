@@ -6,8 +6,7 @@
   <title>富裕鞋業 - SAUCONY 生產物料清單</title>
   <!-- Thư viện hỗ trợ xuất Excel (SheetJS) -->
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-  <!-- Thư viện hỗ trợ xuất Word (html-docx-js) -->
-  <script src="https://cdn.jsdelivr.net/npm/html-docx-js@0.3.1/dist/html-docx.js"></script>
+  <!-- Thư viện hỗ trợ tải file (FileSaver) -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
 
   <style>
@@ -518,32 +517,14 @@
       XLSX.writeFile(workbook, "SAUCONY_The_Vat_Lieu.xlsx");
     }
 
-    // Xuất Word: Đóng gói toàn bộ form giao diện thẻ card hiện tại thành file Word chuẩn cấu trúc A4 ngang
+    // Xuất Word: Dùng định dạng WordXML trực tiếp để không bị lỗi trang trắng trên điện thoại và máy tính
     function exportWord() {
       const checkboxes = document.querySelectorAll('#orderChecklist input[type="checkbox"]:checked');
       if (checkboxes.length === 0) return alert("請先勾選要匯出的指令表！");
 
-      let htmlContent = `
-        <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
-        <head><meta charset='utf-8'><title>SAUCONY 物料清單</title>
-        <style>
-          @page { size: 297mm 210mm; margin: 15mm; }
-          body { font-family: Arial, sans-serif; }
-          .material-card { width: 100%; page-break-after: always; margin-bottom: 20px; border: 1px solid #94a3b8; padding: 15px; }
-          .card-header { border-bottom: 2px solid #2563eb; padding-bottom: 8px; margin-bottom: 10px; }
-          .card-info-grid { width: 100%; border-collapse: collapse; margin-bottom: 10px; background: #f8fafc; }
-          .card-info-grid td { border: 1px solid #cbd5e1; padding: 6px; font-size: 10pt; }
-          table.main-table { width: 100%; border-collapse: collapse; margin-top: 5px; }
-          table.main-table th, table.main-table td { border: 1px solid #333; padding: 5px; font-size: 10pt; text-align: left; }
-          table.main-table th { background-color: #e2e8f0; text-align: center; }
-          .center { text-align: center; }
-          .right { text-align: right; }
-          .card-footer { margin-top: 15px; border-top: 1px dashed #cbd5e1; padding-top: 5px; font-size: 9pt; color: #64748b; width: 100%; }
-        </style>
-        </head><body>
-      `;
+      let bodyContent = '';
 
-      checkboxes.forEach(cb => {
+      checkboxes.forEach((cb, cardIndex) => {
         const selectedOrder = cb.value;
         const matchedRows = sheetData.filter(row => String(getColValue(row, ['指令表', 'đơn sản xuất', 'po sx'], '')).trim() === selectedOrder);
 
@@ -572,69 +553,89 @@
 
           tableRowsHtml += `
             <tr>
-              <td class="center" style="width: 6%;">${index + 1}</td>
-              <td style="width: 52%;">${name}</td>
-              <td class="center" style="width: 22%;">${color}</td>
-              <td class="center" style="width: 7%;">${unit}</td>
-              <td class="right" style="width: 8%; font-weight: bold; color: #1d4ed8;">${qty}</td>
-              <td class="center" style="width: 5%;">☐</td>
+              <td style="width: 6%; text-align: center; border: 1px solid #333; padding: 4px;">${index + 1}</td>
+              <td style="width: 52%; border: 1px solid #333; padding: 4px;">${name}</td>
+              <td style="width: 22%; text-align: center; border: 1px solid #333; padding: 4px;">${color}</td>
+              <td style="width: 7%; text-align: center; border: 1px solid #333; padding: 4px;">${unit}</td>
+              <td style="width: 8%; text-align: right; font-weight: bold; color: #1d4ed8; border: 1px solid #333; padding: 4px;">${qty}</td>
+              <td style="width: 5%; text-align: center; border: 1px solid #333; padding: 4px;">☐</td>
             </tr>
           `;
         });
 
-        htmlContent += `
-          <div class="material-card">
-            <div class="card-header">
-              <table style="width: 100%; border: none;">
-                <tr>
-                  <td style="border: none; width: 60%;">
-                    <div style="font-size: 9pt; font-weight: bold; color: #475569;">RIGHT RICH INTL. CO. LTD 富裕鞋業</div>
-                    <div style="font-size: 12pt; font-weight: bold; color: #0f172a; text-transform: uppercase;">SAUCONY 生產物料清單</div>
-                  </td>
-                  <td style="border: none; text-align: right; font-size: 9pt; font-weight: bold; color: #475569;">倉管備料清單</td>
-                </tr>
-              </table>
-            </div>
-
-            <table class="card-info-grid">
+        bodyContent += `
+          <div style="${cardIndex > 0 ? 'page-break-before: always;' : ''} margin-bottom: 30px;">
+            <table style="width: 100%; border-collapse: collapse; border-bottom: 2px solid #2563eb; margin-bottom: 8px; padding-bottom: 4px;">
               <tr>
-                <td style="width: 25%;"><b>指令表單號：</b><br/><span style="color:#2563eb; font-weight:bold; font-size:11pt;">${selectedOrder}</span></td>
-                <td style="width: 25%;"><b>廠型-SKU：</b><br/><span style="font-weight:bold;">${factorySku}</span></td>
-                <td style="width: 25%;"><b>鞋數量：</b><br/><span style="color:#059669; font-weight:bold;">${shoeQty} 雙</span></td>
-                <td style="width: 25%;"><b>客戶交期：</b><br/><span style="color:#b45309; font-weight:bold;">${deliveryDate}</span></td>
+                <td style="border: none;">
+                  <span style="font-size: 9pt; font-weight: bold; color: #475569;">RIGHT RICH INTL. CO. LTD 富裕鞋業</span><br/>
+                  <span style="font-size: 13pt; font-weight: bold; color: #0f172a;">SAUCONY 生產物料清單</span>
+                </td>
+                <td style="border: none; text-align: right; font-size: 9pt; font-weight: bold; color: #475569; vertical-align: bottom;">倉管備料清單</td>
               </tr>
             </table>
 
-            <table class="main-table">
+            <table style="width: 100%; border-collapse: collapse; margin-bottom: 8px; background-color: #f8fafc;">
+              <tr>
+                <td style="border: 1px solid #cbd5e1; padding: 6px; width: 25%;"><span style="font-size: 8pt; color: #64748b;">指令表單號：</span><br/><b style="color:#2563eb; font-size: 11pt;">${selectedOrder}</b></td>
+                <td style="border: 1px solid #cbd5e1; padding: 6px; width: 25%;"><span style="font-size: 8pt; color: #64748b;">廠型-SKU：</span><br/><b>${factorySku}</b></td>
+                <td style="border: 1px solid #cbd5e1; padding: 6px; width: 25%;"><span style="font-size: 8pt; color: #64748b;">鞋數量：</span><br/><b style="color:#059669;">${shoeQty} 雙</b></td>
+                <td style="border: 1px solid #cbd5e1; padding: 6px; width: 25%;"><span style="font-size: 8pt; color: #64748b;">客戶交期：</span><br/><b style="color:#b45309;">${deliveryDate}</b></td>
+              </tr>
+            </table>
+
+            <table style="width: 100%; border-collapse: collapse; margin-bottom: 6px;">
               <thead>
-                <tr>
-                  <th>序號</th>
-                  <th>材料名稱 / 品名 (摘要)</th>
-                  <th>顏色</th>
-                  <th>單位</th>
-                  <th>數量</th>
-                  <th>點檢</th>
+                <tr style="background-color: #e2e8f0;">
+                  <th style="border: 1px solid #333; padding: 5px; font-size: 9pt; text-align: center;">序號</th>
+                  <th style="border: 1px solid #333; padding: 5px; font-size: 9pt; text-align: center;">材料名稱 / 品名 (摘要)</th>
+                  <th style="border: 1px solid #333; padding: 5px; font-size: 9pt; text-align: center;">顏色</th>
+                  <th style="border: 1px solid #333; padding: 5px; font-size: 9pt; text-align: center;">單位</th>
+                  <th style="border: 1px solid #333; padding: 5px; font-size: 9pt; text-align: center;">數量</th>
+                  <th style="border: 1px solid #333; padding: 5px; font-size: 9pt; text-align: center;">點檢</th>
                 </tr>
               </thead>
-            <tbody>
+              <tbody>
                 ${tableRowsHtml}
               </tbody>
             </table>
 
-            <table class="card-footer" style="border: none;">
+            <table style="width: 100%; border-collapse: collapse; border-top: 1px dashed #cbd5e1; margin-top: 6px; padding-top: 4px;">
               <tr>
-                <td style="border: none;">備註：請依清單品100%核对物料數量与顏色。</td>
-                <td style="border: none; text-align: right;">列印日期：${new Date().toLocaleDateString('zh-TW')}</td>
+                <td style="border: none; font-size: 8pt; color: #64748b;">備註：請依清單品100%核对物料數量与顏色。</td>
+                <td style="border: none; text-align: right; font-size: 8pt; color: #64748b;">列印日期：${new Date().toLocaleDateString('zh-TW')}</td>
               </tr>
             </table>
           </div>
         `;
       });
 
-      htmlContent += "</body></html>";
+      const wordDocument = `
+        <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
+        <head>
+          <meta charset='utf-8'>
+          <title>SAUCONY 生產物料清單</title>
+          <style>
+            @page WordSection1 {
+              size: 297mm 210mm;
+              mso-page-orientation: landscape;
+              margin: 15mm;
+            }
+            div.WordSection1 {
+              page: WordSection1;
+            }
+          </style>
+        </head>
+        <body>
+          <div class="WordSection1">
+            ${bodyContent}
+          </div>
+        </body>
+        </html>
+      `;
 
-      const converted = htmlDocx.asBlob(htmlContent);
-      saveAs(converted, "SAUCONY_Danh_Sach_Vat_Lieu.docx");
+      const blob = new Blob(['\ufeff' + wordDocument], { type: 'application/msword' });
+      saveAs(blob, "SAUCONY_Danh_Sach_Vat_Lieu.doc");
     }
   </script>
 </body>
