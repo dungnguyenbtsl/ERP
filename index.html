@@ -86,9 +86,16 @@
     .card-info-item b { color: #0f172a; font-size: 0.82rem; }
 
     table { width: 100%; border-collapse: collapse; margin-bottom: 5px; table-layout: fixed; }
-    th, td { border: 1px solid #333; padding: 4px 6px; font-size: 0.78rem; text-align: left; vertical-align: middle; overflow: hidden; text-overflow: ellipsis; }
+    th, td { border: 1px solid #333; padding: 4px 6px; font-size: 0.76rem; text-align: left; vertical-align: middle; }
     th { background-color: #e2e8f0; font-weight: bold; text-align: center; color: #0f172a; }
     
+    /* Cho phép tên vật liệu và màu sắc xuống dòng tự nhiên nếu dài */
+    td.wrap-text { 
+      word-break: break-all; 
+      overflow-wrap: break-word; 
+      white-space: normal; 
+    }
+
     td.center { text-align: center; }
     td.right { text-align: right; }
     .nowrap { white-space: nowrap; }
@@ -474,11 +481,11 @@
             tableRowsHtml += `
               <tr>
                 <td class="center nowrap" style="width: 5%;"><b>${index + 1}</b></td>
-                <td style="width: 48%;">${name}</td>
-                <td class="center" style="width: 25%;">${color}</td>
-                <td class="center nowrap" style="width: 8%;">${unit}</td>
+                <td class="wrap-text" style="width: 50%;">${name}</td>
+                <td class="center wrap-text" style="width: 23%;">${color}</td>
+                <td class="center nowrap" style="width: 7%;">${unit}</td>
                 <td class="right nowrap" style="width: 9%; font-weight: bold; color: #1d4ed8;">${qty}</td>
-                <td class="center nowrap" style="width: 5%;">☐</td>
+                <td class="center nowrap" style="width: 6%;">☐</td>
               </tr>
             `;
           });
@@ -526,11 +533,11 @@
                 <thead>
                   <tr>
                     <th style="width: 5%;">序號</th>
-                    <th style="width: 48%;">材料名稱 / 品名 (摘要)</th>
-                    <th style="width: 25%;">顏色</th>
-                    <th style="width: 8%;">單位</th>
+                    <th style="width: 50%;">材料名稱 / 品名 (摘要)</th>
+                    <th style="width: 23%;">顏色</th>
+                    <th style="width: 7%;">單位</th>
                     <th style="width: 9%;">數量</th>
-                    <th style="width: 5%;">點檢</th>
+                    <th style="width: 6%;">點檢</th>
                   </tr>
                 </thead>
                 <tbody>
