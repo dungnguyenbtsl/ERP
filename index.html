@@ -85,7 +85,7 @@
 <body>
 
   <div class="control-card">
-    <div class="control-title">🖨️ 生產訂單材料匯總表 (A4 直向備料清單)</div>
+    <div class="control-title">🖨️ 生產訂單材料匯總表 (倉管備料清單)</div>
     <input type="text" id="scriptUrl" placeholder="請貼上網址..." style="margin-bottom: 6px;">
     
     <button class="btn btn-blue" onclick="loadData()">🔄 從庫存載入資料</button>
@@ -150,7 +150,6 @@
       try {
         const res = await fetch(url);
         sheetData = await res.json();
-        
         processMasterRecords(sheetData);
         alert("✅ 資料載入成功！");
       } catch (err) {
@@ -160,26 +159,18 @@
 
     function getColValue(row, possibleNames, defaultValue = '-') {
       const keys = Object.keys(row);
-      
       for (let name of possibleNames) {
         const cleanTarget = name.toLowerCase().replace(/\s+/g, '');
         for (let key of keys) {
-          const cleanKey = key.toLowerCase().replace(/\s+/g, '');
-          if (cleanKey === cleanTarget) {
-            if (row[key] !== "" && row[key] !== null && row[key] !== undefined) {
-              return row[key];
-            }
+          if (key.toLowerCase().replace(/\s+/g, '') === cleanTarget) {
+            if (row[key] !== "" && row[key] !== null && row[key] !== undefined) return row[key];
           }
         }
       }
-
       for (let name of possibleNames) {
         const foundKey = keys.find(k => k.toLowerCase().replace(/\s+/g, '').includes(name.toLowerCase().replace(/\s+/g, '')));
-        if (foundKey && row[foundKey] !== "" && row[foundKey] !== null && row[foundKey] !== undefined) {
-          return row[foundKey];
-        }
+        if (foundKey && row[foundKey] !== "" && row[foundKey] !== null && row[foundKey] !== undefined) return row[foundKey];
       }
-      
       return defaultValue;
     }
 
@@ -197,21 +188,13 @@
           if (deliveryDate && deliveryDate !== '-') {
             try {
               const d = new Date(deliveryDate);
-              if (!isNaN(d.getTime())) {
-                deliveryDate = d.toLocaleDateString('zh-TW');
-              }
+              if (!isNaN(d.getTime())) deliveryDate = d.toLocaleDateString('zh-TW');
             } catch (e) {}
           }
 
-          map.set(orderNo, {
-            orderNo: orderNo,
-            sku: factorySku,
-            date: deliveryDate,
-            shoeQty: shoeQty
-          });
+          map.set(orderNo, { orderNo, sku: factorySku, date: deliveryDate, shoeQty });
         }
       });
-
       masterRecords = Array.from(map.values());
       applyFilters();
     }
@@ -222,12 +205,10 @@
       const qDate = document.getElementById('filterDate').value.trim().toLowerCase();
 
       const filtered = masterRecords.filter(item => {
-        const matchOrder = item.orderNo.toLowerCase().includes(qOrder);
-        const matchSku = item.sku.toLowerCase().includes(qSku);
-        const matchDate = item.date.toLowerCase().includes(qDate);
-        return matchOrder && matchSku && matchDate;
+        return item.orderNo.toLowerCase().includes(qOrder) &&
+               item.sku.toLowerCase().includes(qSku) &&
+               item.date.toLowerCase().includes(qDate);
       });
-
       renderOrderChecklist(filtered);
     }
 
@@ -242,9 +223,7 @@
       }
 
       const checkedSet = new Set();
-      document.querySelectorAll('#orderChecklist input[type="checkbox"]:checked').forEach(cb => {
-        checkedSet.add(cb.value);
-      });
+      document.querySelectorAll('#orderChecklist input[type="checkbox"]:checked').forEach(cb => checkedSet.add(cb.value));
 
       recordsArray.forEach(item => {
         const isChecked = checkedSet.has(item.orderNo) ? 'checked' : '';
@@ -253,13 +232,11 @@
                            <b>指令表：</b> ${item.orderNo} &nbsp;|&nbsp; <b>SKU：</b> ${item.sku} &nbsp;|&nbsp; <b>交期：</b> ${item.date}`;
         checklistDiv.appendChild(label);
       });
-
       renderA4SheetsBatch();
     }
 
     function toggleSelectAll(select) {
-      const checkboxes = document.querySelectorAll('#orderChecklist input[type="checkbox"]');
-      checkboxes.forEach(cb => cb.checked = select);
+      document.querySelectorAll('#orderChecklist input[type="checkbox"]').forEach(cb => cb.checked = select);
       renderA4SheetsBatch();
     }
 
@@ -283,11 +260,7 @@
 
       checkboxes.forEach(cb => {
         const selectedOrder = cb.value;
-
-        const matchedRows = sheetData.filter(row => {
-          const orderNo = String(getColValue(row, ['指令表', 'đơn sản xuất', 'po sx'], '')).trim();
-          return orderNo === selectedOrder;
-        });
+        const matchedRows = sheetData.filter(row => String(getColValue(row, ['指令表', 'đơn sản xuất', 'po sx'], '')).trim() === selectedOrder);
 
         let factorySku = '-';
         let deliveryDate = '-';
@@ -297,13 +270,10 @@
           factorySku = getColValue(matchedRows[0], ['廠型-SKU', '廠型', 'sku', 'hình thể'], '-');
           deliveryDate = getColValue(matchedRows[0], ['客戶交期', '出貨日期', 'ngày xuất', 'xuất hàng'], '-');
           shoeQty = getColValue(matchedRows[0], ['鞋數量', '鞋k số lượng', 'số lượng giày', 'pairs'], '-');
-          
           if (deliveryDate && deliveryDate !== '-') {
             try {
               const d = new Date(deliveryDate);
-              if (!isNaN(d.getTime())) {
-                deliveryDate = d.toLocaleDateString('zh-TW');
-              }
+              if (!isNaN(d.getTime())) deliveryDate = d.toLocaleDateString('zh-TW');
             } catch (e) {}
           }
         }
