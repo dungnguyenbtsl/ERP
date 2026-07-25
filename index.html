@@ -3,9 +3,10 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SAUCONY 生産材料總匯表 - PS37283</title>
+    <title>SAUCONY 生産材料總匯表 - Dynamic Batch Print Tool</title>
+    <!-- SheetJS cho phép đọc file Excel trực tiếp trên webapp -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
-        /* Base styles */
         *, *::before, *::after {
             box-sizing: border-box;
         }
@@ -14,42 +15,65 @@
             color: #222222;
             margin: 0;
             padding: 20px;
-            font-size: 10pt;
             background-color: #f0f2f5;
         }
-
-        /* Toolbar for web action */
-        .toolbar {
-            max-width: 800px;
-            margin: 0 auto 15px auto;
-            text-align: right;
+        .control-panel {
+            max-width: 900px;
+            margin: 0 auto 20px auto;
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
         }
-        .btn-print {
+        .control-panel h2 {
+            margin-top: 0;
+            font-size: 16pt;
+            color: #0056b3;
+        }
+        .file-input-group {
+            margin-bottom: 15px;
+        }
+        .file-input-group label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .btn-action {
             background-color: #0056b3;
             color: white;
             border: none;
-            padding: 8px 16px;
-            font-size: 10pt;
+            padding: 10px 20px;
+            font-size: 11pt;
             font-weight: bold;
             border-radius: 4px;
             cursor: pointer;
+            margin-right: 10px;
         }
-        .btn-print:hover {
+        .btn-action:hover {
             background-color: #004085;
         }
-
-        /* Page Container */
-        .page-container {
-            width: 100%;
-            max-width: 800px;
-            margin: 0 auto;
-            background: #ffffff;
-            padding: 15px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        .btn-print {
+            background-color: #28a745;
+        }
+        .btn-print:hover {
+            background-color: #218838;
         }
 
+        /* Khu vực hiển thị danh sách phiếu */
+        #preview-area {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        .page-container {
+            width: 100%;
+            background: #ffffff;
+            padding: 15px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            page-break-after: always;
+        }
         .header-top {
             display: flex;
             align-items: center;
@@ -69,7 +93,6 @@
         }
         .company-name {
             font-size: 9pt;
-            font-weight: normal;
             color: #333;
             margin: 0;
         }
@@ -86,7 +109,6 @@
             margin-bottom: 6px;
         }
         
-        /* Info Box */
         .info-box {
             background-color: #f4f7fc;
             border: 1px solid #cce0ff;
@@ -104,9 +126,6 @@
             padding: 3px 4px;
             font-size: 9.5pt;
         }
-        .label {
-            color: #333;
-        }
         .val-blue {
             color: #0056b3;
             font-weight: bold;
@@ -116,7 +135,6 @@
             font-weight: bold;
         }
 
-        /* Data Table */
         table.data-table {
             width: 100%;
             border-collapse: collapse;
@@ -132,7 +150,6 @@
             background-color: #e9ecef;
             font-weight: bold;
             color: #111;
-            font-size: 9pt;
         }
         table.data-table td.text-left {
             text-align: left;
@@ -145,7 +162,7 @@
             vertical-align: middle;
         }
 
-        /* PRINT STYLES - Khắc phục triệt để lỗi khi in từ trình duyệt */
+        /* PRINT STYLES - Xử lý chuẩn khi in từ webapp */
         @media print {
             @page {
                 size: A4 portrait;
@@ -158,12 +175,11 @@
                 -webkit-print-color-adjust: exact;
                 print-color-adjust: exact;
             }
-            .toolbar {
+            .control-panel {
                 display: none !important;
             }
             .page-container {
                 width: 100% !important;
-                max-width: 100% !important;
                 margin: 0 !important;
                 padding: 5px !important;
                 border: none !important;
@@ -186,72 +202,120 @@
 </head>
 <body>
 
-    <!-- Nút in (sẽ tự động ẩn đi khi bấm lệnh in) -->
-    <div class="toolbar">
-        <button class="btn-print" onclick="window.print()">🖨️ In Phiếu (Print)</button>
+    <!-- Bảng điều khiển tải file và in hàng loạt -->
+    <div class="control-panel">
+        <h2>🛠️ Hệ Thống In Tem & Tổng Hợp Phụ Liệu SAUCONY</h2>
+        <div class="file-input-group">
+            <label for="excelFile">Tải lên file Excel dữ liệu sản xuất (.xlsx):</label>
+            <input type="file" id="excelFile" accept=".xlsx, .xls" onchange="handleExcelUpload(event)">
+        </div>
+        <button class="btn-action btn-print" onclick="window.print()">🖨️ In Tất Cả Phiếu</button>
     </div>
 
-    <!-- Nội dung chính -->
-    <div class="page-container">
-        <!-- Header -->
-        <div class="header-top">
-            <div class="logo-box">AR</div>
-            <div class="company-header">
-                <div class="company-name">RIGHT RICH INTL. CO. LTD 富裕鞋業有限公司</div>
-                <div class="main-title">SAUCONY 生產材料總匯表</div>
-            </div>
-            <div style="width: 30px;"></div>
-        </div>
-        <div class="sub-title">材料倉庫明細清單</div>
-
-        <!-- Info Box -->
-        <div class="info-box">
-            <div class="info-row">
-                <div class="info-cell" style="width: 50%;">
-                    <span class="label">指令表 (指令單號)：</span>
-                    <span class="val-blue">PS37283</span>
-                </div>
-                <div class="info-cell" style="width: 50%;">
-                    <span class="label">廠型-SKU：</span>
-                    <span class="val-blue">S53141女-S10584-2</span>
-                </div>
-            </div>
-            <div class="info-row">
-                <div class="info-cell">
-                    <span class="label">鞋數量：</span>
-                    <span class="val-blue">624 雙</span>
-                </div>
-                <div class="info-cell">
-                    <span class="label">客戶交期：</span>
-                    <span class="val-orange">2026/6/25</span>
-                </div>
-            </div>
-        </div>
-
-        <!-- Table -->
-        <table class="data-table">
-            <thead>
-                <tr>
-                    <th style="width: 6%;">序號</th>
-                    <th style="width: 50%;">材料名稱 / 品名 (摘要)</th>
-                    <th style="width: 24%;">顏色</th>
-                    <th style="width: 8%;">單位</th>
-                    <th style="width: 8%;">數量</th>
-                    <th style="width: 4%;">點核</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>1</td>
-                    <td class="text-left">刮布標 LX1865-31 底色/TRAIL字體+菱形綠線+Saucony字體/菱形綠線山/TRAIL外框 37*60MM 上腰</td>
-                    <td>13-4111TPG藍15F+19-0201TPG灰0XD</td>
-                    <td>PRS</td>
-                    <td class="val-blue">624</td>
-                    <td><span class="checkbox-box"></span></td>
-                </tr>
-            </tbody>
-        </table>
+    <!-- Khu vực sinh giao diện phiếu tự động -->
+    <div id="preview-area">
+        <p style="text-align:center; color:#666; padding: 40px;">Vui lòng tải lên file Excel để hệ thống tự động tổng hợp và hiển thị danh sách phiếu...</p>
     </div>
 
+    <script>
+        function handleExcelUpload(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const data = new Uint8Array(e.target.result);
+                const workbook = XLSX.read(data, {type: 'array'});
+                const firstSheetName = workbook.SheetNames[0];
+                const worksheet = workbook.Sheets[firstSheetName];
+                const json = XLSX.utils.sheet_to_json(worksheet);
+
+                renderPreviews(json);
+            };
+            reader.readAsArrayBuffer(file);
+        }
+
+        function renderPreviews(data) {
+            const previewArea = document.getElementById('preview-area');
+            previewArea.innerHTML = '';
+
+            if (data.length === 0) {
+                previewArea.innerHTML = '<p style="text-align:center; color:red;">File Excel không có dữ liệu!</p>';
+                return;
+            }
+
+            data.forEach((row, index) => {
+                const orderNo = row['指令表'] || row['指令單號'] || row['OrderNo'] || 'PS37283';
+                const sku = row['廠型-SKU'] || row['SKU'] || 'S53141女-S10584-2';
+                const qty = row['鞋數量'] || row['Quantity'] || '624';
+                const deliveryDate = row['客戶交期'] || row['DeliveryDate'] || '2026/6/25';
+                
+                const matName = row['材料名稱'] || row['品名'] || '刮布標 LX1865-31 底色/TRAIL字體+菱形綠線+Saucony字體/菱形綠線山/TRAIL外框 37*60MM 上腰';
+                const color = row['顏色'] || '13-4111TPG藍15F+19-0201TPG灰0XD';
+                const unit = row['單位'] || 'PRS';
+                const matQty = row['數量'] || '624';
+
+                const html = `
+                <div class="page-container">
+                    <div class="header-top">
+                        <div class="logo-box">AR</div>
+                        <div class="company-header">
+                            <div class="company-name">RIGHT RICH INTL. CO. LTD 富裕鞋業有限公司</div>
+                            <div class="main-title">SAUCONY 生產材料總匯表</div>
+                        </div>
+                        <div style="width: 30px;"></div>
+                    </div>
+                    <div class="sub-title">材料倉庫明細清單</div>
+
+                    <div class="info-box">
+                        <div class="info-row">
+                            <div class="info-cell" style="width: 50%;">
+                                <span class="label">指令表 (指令單號)：</span>
+                                <span class="val-blue">${orderNo}</span>
+                            </div>
+                            <div class="info-cell" style="width: 50%;">
+                                <span class="label">廠型-SKU：</span>
+                                <span class="val-blue">${sku}</span>
+                            </div>
+                        </div>
+                        <div class="info-row">
+                            <div class="info-cell">
+                                <span class="label">鞋數量：</span>
+                                <span class="val-blue">${qty} 雙</span>
+                            </div>
+                            <div class="info-cell">
+                                <span class="label">客戶交期：</span>
+                                <span class="val-orange">${deliveryDate}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 6%;">序號</th>
+                                <th style="width: 50%;">材料名稱 / 品名 (摘要)</th>
+                                <th style="width: 24%;">顏色</th>
+                                <th style="width: 8%;">單位</th>
+                                <th style="width: 8%;">數量</th>
+                                <th style="width: 4%;">點核</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>1</td>
+                                <td class="text-left">${matName}</td>
+                                <td>${color}</td>
+                                <td style="font-weight:bold;">${unit}</td>
+                                <td class="val-blue">${matQty}</td>
+                                <td><span class="checkbox-box"></span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>`;
+                previewArea.innerHTML += html;
+            });
+        }
+    </script>
 </body>
 </html>
