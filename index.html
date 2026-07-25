@@ -4,6 +4,12 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>富裕鞋業 - SAUCONY 生產物料清單</title>
+  <!-- Thư viện hỗ trợ xuất Excel (SheetJS) -->
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <!-- Thư viện hỗ trợ xuất Word -->
+  <script src="https://cdn.jsdelivr.net/npm/html-docx-js@0.3.1/dist/html-docx.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: Arial, sans-serif; }
     body { background-color: #f1f5f9; padding: 10px; color: #1e293b; }
@@ -16,6 +22,8 @@
     .btn { width: 100%; padding: 8px; border: none; border-radius: 6px; font-weight: bold; font-size: 0.95rem; cursor: pointer; margin-top: 4px; }
     .btn-blue { background: #2563eb; color: white; }
     .btn-green { background: #16a34a; color: white; }
+    .btn-excel { background: #059669; color: white; }
+    .btn-word { background: #ea580c; color: white; }
 
     .filter-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 6px; margin-bottom: 6px; }
     .filter-group { display: flex; flex-direction: column; }
@@ -25,6 +33,8 @@
     .order-checklist { max-height: 125px; overflow-y: auto; border: 1px solid #cbd5e1; border-radius: 6px; padding: 6px; background: #fff; margin-bottom: 8px; }
     .order-checklist label { display: flex; align-items: center; gap: 6px; padding: 3px 5px; font-size: 0.85rem; cursor: pointer; border-radius: 4px; }
     .order-checklist label:hover { background: #f1f5f9; }
+
+    .action-buttons { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 6px; }
 
     /* ==========================================
        THIẾT LẬP KHỔ GIẤY IN & NEO ĐÁY TRANG A4
@@ -140,7 +150,7 @@
 <body>
 
   <div class="control-card">
-    <div class="control-title">🖨️ SAUCONY 生產物料清單批量列印</div>
+    <div class="control-title">🖨️ SAUCONY 生產物料清單批量處理</div>
     <input type="text" id="scriptUrl" placeholder="請貼上網址..." style="margin-bottom: 6px;">
     
     <button class="btn btn-blue" onclick="loadData()">🔄 從庫存載入資料</button>
@@ -174,7 +184,13 @@
       </div>
     </div>
 
-    <button class="btn btn-green" onclick="window.print()" style="margin-top: 8px;">🖨️ 批量列印橫向卡片</button>
+    <div class="action-buttons">
+      <button class="btn btn-green" onclick="window.print()">🖨️ In / PDF</button>
+      <button class="btn btn-excel" onclick="exportExcel()">📥 Xuất Excel</button>
+    </div>
+    <div style="margin-top: 4px;">
+      <button class="btn btn-word" onclick="exportWord()">📄 Xuất Word</button>
+    </div>
   </div>
 
   <div class="cards-container" id="cardsContainer">
@@ -417,6 +433,64 @@
       });
 
       container.innerHTML = allCardsHtml;
+    }
+
+    // Tính năng xuất Excel
+    function exportExcel() {
+      const checkboxes = document.querySelectorAll('#orderChecklist input[type="checkbox"]:checked');
+      if (checkboxes.length === 0) return alert("請先勾選要匯出的指令表！");
+
+      let excelData = [];
+      checkboxes.forEach(cb => {
+        const selectedOrder = cb.value;
+        const matchedRows = sheetData.filter(row => String(getColValue(row, ['指令表', 'đơn sản xuất', 'po sx'], '')).trim() === selectedOrder);
+
+        matchedRows.forEach((row, index) => {
+          excelData.push({
+            "指令表 (Mã đơn)": selectedOrder,
+            "廠型-SKU (SKU)": getColValue(row, ['廠型-SKU', '廠型', 'sku', 'hình thể'], '-'),
+            "鞋數量 (Số lượng giày)": getColValue(row, ['鞋數量', '鞋k số lượng', 'số lượng giày', 'pairs'], '-'),
+            "客戶交期 (Ngày giao)": getColValue(row, ['客戶交期', '出貨日期', 'ngày xuất', 'xuất hàng'], '-'),
+            "序號 (STT)": index + 1,
+            "材料名稱 / 品名 (Tên vật tư)": getColValue(row, ['摘要', '品名', '材料名稱', 'tên vật tư'], '-'),
+            "顏色 (Màu sắc)": getColValue(row, ['顏色', 'màu sắc'], '-'),
+            "單位 (Đơn vị)": getColValue(row, ['單位', 'đơn vị'], 'PCS'),
+            "數量 (Số lượng)": getColValue(row, ['數量', 'số lượng', 'sl'], '0')
+          });
+        });
+      });
+
+      const worksheet = XLSX.utils.json_to_sheet(excelData);
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, "SAUCONY_Vat_Lieu");
+      XLSX.writeFile(workbook, "SAUCONY_San_Xuat_Vat_Lieu.xlsx");
+    }
+
+    // Tính năng xuất Word
+    function exportWord() {
+      const container = document.getElementById('cardsContainer');
+      const checkboxes = document.querySelectorAll('#orderChecklist input[type="checkbox"]:checked');
+      if (checkboxes.length === 0) return alert("請先勾選要匯出的指令表！");
+
+      let htmlContent = `
+        <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
+        <head><meta charset='utf-8'><title>SAUCONY 物料清單</title>
+        <style>
+          body { font-family: Arial, sans-serif; }
+          .material-card { page-break-after: always; margin-bottom: 30px; }
+          table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+          th, td { border: 1px solid #333; padding: 5px; font-size: 11pt; text-align: left; }
+          th { background-color: #e2e8f0; text-align: center; }
+          .center { text-align: center; }
+          .right { text-align: right; }
+        </style>
+        </head><body>
+      `;
+      htmlContent += container.innerHTML;
+      htmlContent += "</body></html>";
+
+      const converted = htmlDocx.asBlob(htmlContent);
+      saveAs(converted, "SAUCONY_Danh_Sach_Vat_Lieu.docx");
     }
   </script>
 </body>
