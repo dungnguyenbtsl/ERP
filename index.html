@@ -284,7 +284,7 @@
         const isChecked = checkedSet.has(item.orderNo) ? 'checked' : '';
         const label = document.createElement('label');
         label.innerHTML = `<input type="checkbox" value="${item.orderNo}" ${isChecked} onchange="renderCardsBatch()"> 
-                           <b>指令表：</b> ${item.orderNo} &nbsp;|&nbsp; <b>SKU：</b> ${item.sku} &nbsp;|&nbsp; <b>交期：</b> ${item.date}`;
+                           <b>指令表：</b> <b style="color: #2563eb;">${item.orderNo}</b> &nbsp;|&nbsp; <b>SKU：</b> ${item.sku} &nbsp;|&nbsp; <b>交期：</b> ${item.date}`;
         checklistDiv.appendChild(label);
       });
       renderCardsBatch();
@@ -346,7 +346,7 @@
             tableRowsHtml += `
               <tr>
                 <td class="center">${index + 1}</td>
-                <td><b>${name}</b></td>
+                <td>${name}</td>
                 <td class="center">${color}</td>
                 <td class="center nowrap">${unit}</td>
                 <td class="right nowrap" style="font-weight: bold; color: #1d4ed8;">${qty}</td>
@@ -375,7 +375,7 @@
               <div class="card-info-grid">
                 <div class="card-info-item">
                   <span>指令表單號：</span>
-                  <b style="color:#2563eb;">${selectedOrder}</b>
+                  <b style="color:#2563eb; font-size: 0.9rem;">${selectedOrder}</b>
                 </div>
                 <div class="card-info-item">
                   <span>廠型-SKU：</span>
