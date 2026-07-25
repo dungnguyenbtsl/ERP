@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>富裕鞋業 - 生產材料卡片清單 (Strict Print Anchor)</title>
+  <title>富裕鞋業 - 生產材料卡片清單 (Bottom Footer Anchor)</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: Arial, sans-serif; }
     body { background-color: #f1f5f9; padding: 10px; color: #1e293b; }
@@ -27,11 +27,11 @@
     .order-checklist label:hover { background: #f1f5f9; }
 
     /* ==========================================
-       THIẾT LẬP NEO KHỔ GIẤY IN (A4 LANDSCAPE)
+       THIẾT LẬP KHỔ GIẤY IN & NEO ĐÁY TRANG A4
        ========================================== */
     @page {
       size: A4 landscape;
-      margin: 0mm; /* Đưa lề về 0 để kiểm soát hoàn toàn bằng CSS bên trong card */
+      margin: 0mm;
     }
 
     .cards-container { 
@@ -44,27 +44,26 @@
     .material-card { 
       background: white; 
       width: 285mm; 
-      height: 195mm; 
-      max-height: 195mm;
+      height: 192mm; 
+      max-height: 192mm;
       margin: 0 auto; 
-      padding: 8mm 12mm; 
+      padding: 7mm 12mm 6mm 12mm; /* Giữ khoảng cách đáy chuẩn */
       box-shadow: 0 4px 15px rgba(0,0,0,0.1); 
       border-radius: 8px; 
       border: 1px solid #cbd5e1;
       position: relative;
       display: flex;
       flex-direction: column;
-      justify-content: space-between;
+      justify-content: space-between; /* Neo dãn đều: Header trên, Bảng giữa, Footer ghim chặt đáy */
       overflow: hidden;
       
-      /* Neo ngắt trang mặc định trên trình duyệt */
       page-break-after: always;
       break-after: page;
       page-break-inside: avoid;
       break-inside: avoid;
     }
 
-    .card-header { border-bottom: 2px solid #2563eb; padding-bottom: 5px; margin-bottom: 6px; display: flex; justify-content: space-between; align-items: center; }
+    .card-header { border-bottom: 2px solid #2563eb; padding-bottom: 5px; margin-bottom: 5px; display: flex; justify-content: space-between; align-items: center; }
     .card-logo-title { display: flex; align-items: center; gap: 10px; }
     .logo-box { width: 45px; height: 24px; display: flex; align-items: center; justify-content: center; }
     .logo-box img { max-width: 100%; max-height: 100%; object-fit: contain; }
@@ -73,22 +72,32 @@
     .header-text h1 { font-size: 0.75rem; font-weight: bold; color: #475569; }
     .header-text h2 { font-size: 1rem; font-weight: bold; color: #0f172a; text-transform: uppercase; }
 
-    .card-info-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-bottom: 6px; font-size: 0.8rem; background: #f8fafc; padding: 6px 10px; border: 1px solid #e2e8f0; border-radius: 6px; }
-    .card-info-item span { display: block; color: #64748b; font-size: 0.7rem; }
-    .card-info-item b { color: #0f172a; font-size: 0.85rem; }
+    .card-info-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-bottom: 5px; font-size: 0.8rem; background: #f8fafc; padding: 5px 10px; border: 1px solid #e2e8f0; border-radius: 6px; }
+    .card-info-item span { display: block; color: #64748b; font-size: 0.68rem; }
+    .card-info-item b { color: #0f172a; font-size: 0.82rem; }
 
-    table { width: 100%; border-collapse: collapse; margin-bottom: 6px; }
-    th, td { border: 1px solid #333; padding: 5px 7px; font-size: 0.8rem; text-align: left; vertical-align: middle; }
+    table { width: 100%; border-collapse: collapse; margin-bottom: 5px; }
+    th, td { border: 1px solid #333; padding: 4px 6px; font-size: 0.78rem; text-align: left; vertical-align: middle; }
     th { background-color: #e2e8f0; font-weight: bold; text-align: center; color: #0f172a; }
     
     td.center { text-align: center; }
     td.right { text-align: right; }
     .nowrap { white-space: nowrap; }
 
-    .card-footer { display: flex; justify-content: space-between; font-size: 0.75rem; color: #64748b; border-top: 1px dashed #cbd5e1; padding-top: 5px; margin-top: auto; }
+    /* Neo đáy card: Ghim chặt phần ghi chú và ngày tháng sát đáy khung */
+    .card-footer { 
+      display: flex; 
+      justify-content: space-between; 
+      align-items: center;
+      font-size: 0.72rem; 
+      color: #64748b; 
+      border-top: 1px dashed #cbd5e1; 
+      padding-top: 4px; 
+      margin-top: auto; 
+    }
 
     /* ==========================================
-       CẤU HÌNH NEO CHUẨN XÁC KHI BẤM IN (PRINT)
+       CẤU HÌNH IN TRỰC TIẾP (PRINT MODE)
        ========================================== */
     @media print {
       html, body {
@@ -111,11 +120,10 @@
         width: 297mm !important; 
         height: 210mm !important;
         max-height: 210mm !important;
-        padding: 10mm 15mm !important; /* Lề trong chuẩn cho máy in */
+        padding: 10mm 15mm 8mm 15mm !important; 
         border: none !important;
         border-radius: 0 !important;
         
-        /* Neo ngắt trang tuyệt đối bằng lệnh phần cứng máy in */
         page-break-before: always !important;
         page-break-after: always !important;
         page-break-inside: avoid !important;
@@ -123,7 +131,6 @@
         break-after: page !important;
         break-inside: avoid !important;
       }
-      /* Tránh trang trắng thừa đầu tiên */
       .material-card:first-child {
         page-break-before: avoid !important;
         break-before: avoid !important;
@@ -134,7 +141,7 @@
 <body>
 
   <div class="control-card">
-    <div class="control-title">🖨️ 生產訂單材料卡片清單 (Strict Print Anchor)</div>
+    <div class="control-title">🖨️ 生產訂單材料卡片清單 (Bottom Footer Anchor)</div>
     <input type="text" id="scriptUrl" placeholder="請貼上網址..." style="margin-bottom: 6px;">
     
     <button class="btn btn-blue" onclick="loadData()">🔄 從庫存載入資料</button>
@@ -168,7 +175,7 @@
       </div>
     </div>
 
-    <button class="btn btn-green" onclick="window.print()" style="margin-top: 8px;">🖨️ 批量列印橫向卡片 (,Chính xác từng trang)</button>
+    <button class="btn btn-green" onclick="window.print()" style="margin-top: 8px;">🖨️ 批量列印橫向卡片 (固定底é)</button>
   </div>
 
   <div class="cards-container" id="cardsContainer">
