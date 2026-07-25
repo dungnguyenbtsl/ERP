@@ -20,6 +20,7 @@
     .btn-blue:active { background: #1d4ed8; }
     .btn-green { background: #16a34a; color: white; }
     .btn-green:active { background: #15803d; }
+    .btn-sm { padding: 4px 8px; font-size: 0.75rem; width: auto; display: inline-flex; }
 
     .filter-grid { display: grid; grid-template-columns: 1fr; gap: 6px; margin-bottom: 6px; }
     .filter-group { display: flex; flex-direction: column; }
@@ -140,6 +141,7 @@
         padding: 10mm 15mm 8mm 15mm !important; 
         border: none !important;
         border-radius: 0 !important;
+        display: flex !important;
         
         page-break-before: always !important;
         page-break-after: always !important;
@@ -151,6 +153,16 @@
       .material-card:first-child {
         page-break-before: avoid !important;
         break-before: avoid !important;
+      }
+      /* Chế độ in riêng một thẻ khi được kích hoạt */
+      body.print-single .material-card:not(.printing-target) {
+        display: none !important;
+      }
+      body.print-single .material-card.printing-target {
+        page-break-before: avoid !important;
+        page-break-after: avoid !important;
+        break-before: avoid !important;
+        break-after: avoid !important;
       }
     }
   </style>
@@ -187,13 +199,18 @@
         </div>
       </div>
 
+      <!-- Ô tìm kiếm nhanh ngay trong danh sách chọn (checklist) -->
+      <div style="margin-bottom: 4px;">
+        <input type="text" id="quickChecklistSearch" class="filter-input" placeholder="🔍 在清單中快速搜尋..." oninput="applyFilters()" style="margin-bottom: 4px; padding: 5px 8px; font-size: 0.8rem;">
+      </div>
+
       <div id="orderChecklist" class="order-checklist">
         <span style="color: #64748b; font-size: 0.85rem;">請先載入資料...</span>
       </div>
     </div>
 
     <div>
-      <button class="btn btn-green" onclick="window.print()">🖨️ 列印 / 匯出 PDF</button>
+      <button class="btn btn-green" onclick="window.print()">🖨️ 列印全部 / 匯出 PDF</button>
     </div>
   </div>
 
@@ -228,7 +245,17 @@
         processMasterRecords(sheetData);
         alert("✅ 資料載入成功！");
       } catch (err) {
-        alert("❌ 載入失敗，請檢查網址是否正確！");
+        // Xử lý khi mất mạng hoặc API lỗi (hiển thị thông báo chi tiết và dữ liệu cache nếu có)
+        const cached = localStorage.getItem('saucony_sheet_cache');
+        if (cached) {
+          try {
+            sheetData = JSON.parse(cached);
+            processMasterRecords(sheetData);
+            alert("⚠️ 網路連線失敗，已自動載入本機快取資料！");
+            return;
+          } catch(e) {}
+        }
+        alert("❌ 載入失敗，請檢查網址或網路連線是否正常！");
       }
     }
 
@@ -250,6 +277,7 @@
     }
 
     function processMasterRecords(data) {
+      localStorage.setItem('saucony_sheet_cache', JSON.stringify(data));
       const map = new Map();
       data.forEach(row => {
         const orderNo = String(getColValue(row, ['指令表', 'đơn sản xuất', 'po sx'], '')).trim();
@@ -278,11 +306,20 @@
       const qOrder = document.getElementById('filterOrder').value.trim().toLowerCase();
       const qSku = document.getElementById('filterSku').value.trim().toLowerCase();
       const qDate = document.getElementById('filterDate').value.trim().toLowerCase();
+      const qQuick = document.getElementById('quickChecklistSearch').value.trim().toLowerCase();
 
       const filtered = masterRecords.filter(item => {
-        return item.orderNo.toLowerCase().includes(qOrder) &&
-               item.sku.toLowerCase().includes(qSku) &&
-               item.date.toLowerCase().includes(qDate);
+        const matchMain = item.orderNo.toLowerCase().includes(qOrder) &&
+                          item.sku.toLowerCase().includes(qSku) &&
+                          item.date.toLowerCase().includes(qDate);
+        if (!matchMain) return false;
+
+        if (qQuick) {
+          return item.orderNo.toLowerCase().includes(qQuick) ||
+                 item.sku.toLowerCase().includes(qQuick) ||
+                 item.date.toLowerCase().includes(qQuick);
+        }
+        return true;
       });
       renderOrderChecklist(filtered);
     }
@@ -297,22 +334,53 @@
         return;
       }
 
-      const checkedSet = new Set();
+      // Khôi phục trạng thái chọn đã lưu trước đó nếu có
+      let savedChecked = [];
+      try {
+        savedChecked = JSON.parse(localStorage.getItem('saucony_checked_orders') || '[]');
+      } catch(e) {}
+
+      const checkedSet = new Set(savedChecked);
       document.querySelectorAll('#orderChecklist input[type="checkbox"]:checked').forEach(cb => checkedSet.add(cb.value));
 
       recordsArray.forEach(item => {
         const isChecked = checkedSet.has(item.orderNo) ? 'checked' : '';
         const label = document.createElement('label');
-        label.innerHTML = `<input type="checkbox" value="${item.orderNo}" ${isChecked} onchange="renderCardsBatch()"> 
+        label.innerHTML = `<input type="checkbox" value="${item.orderNo}" ${isChecked} onchange="saveSelectionAndRender()"> 
                            <div><b>指令表：</b> <b style="color: #2563eb;">${item.orderNo}</b><br><span style="color: #64748b; font-size: 0.75rem;">SKU：${item.sku} | 交期：${item.date}</span></div>`;
         checklistDiv.appendChild(label);
       });
       renderCardsBatch();
     }
 
+    function saveSelectionAndRender() {
+      const checkedSet = [];
+      document.querySelectorAll('#orderChecklist input[type="checkbox"]:checked').forEach(cb => {
+        checkedSet.push(cb.value);
+      });
+      localStorage.setItem('saucony_checked_orders', JSON.stringify(checkedSet));
+      renderCardsBatch();
+    }
+
     function toggleSelectAll(select) {
       document.querySelectorAll('#orderChecklist input[type="checkbox"]').forEach(cb => cb.checked = select);
-      renderCardsBatch();
+      saveSelectionAndRender();
+    }
+
+    // In riêng lẻ một thẻ cụ thể
+    function printSingleCard(orderNo) {
+      const cardEl = document.getElementById(`card-${orderNo}`);
+      if (!cardEl) return;
+      document.body.classList.add('print-single');
+      document.querySelectorAll('.material-card').forEach(c => c.classList.remove('printing-target'));
+      cardEl.classList.add('printing-target');
+      
+      window.print();
+      
+      setTimeout(() => {
+        document.body.classList.remove('print-single');
+        cardEl.classList.remove('printing-target');
+      }, 500);
     }
 
     function renderCardsBatch() {
@@ -389,7 +457,10 @@
                     <h2>SAUCONY 生產物料清單</h2>
                   </div>
                 </div>
-                <div style="font-size: 0.75rem; color: #475569;"><b>倉管備料清單</b></div>
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <button class="btn btn-blue btn-sm" onclick="printSingleCard('${selectedOrder}')">🖨️ 列印此頁</button>
+                  <div style="font-size: 0.75rem; color: #475569;"><b>倉管備料清單</b></div>
+                </div>
               </div>
 
               <div class="card-info-grid">
