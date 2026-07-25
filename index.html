@@ -2,30 +2,34 @@
 <html lang="zh-TW">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>富裕鞋業 - SAUCONY 生產物料清單</title>
 
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: Arial, sans-serif; }
-    body { background-color: #f1f5f9; padding: 10px; color: #1e293b; }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: Arial, sans-serif; -webkit-tap-highlight-color: transparent; }
+    body { background-color: #f1f5f9; padding: 8px; color: #1e293b; }
     
-    .control-card { background: white; padding: 12px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-bottom: 15px; max-width: 280mm; margin-left: auto; margin-right: auto; }
-    .control-title { font-size: 1rem; font-weight: bold; color: #0f172a; margin-bottom: 8px; }
+    .control-card { background: white; padding: 12px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-bottom: 12px; max-width: 280mm; margin-left: auto; margin-right: auto; }
+    .control-title { font-size: 0.95rem; font-weight: bold; color: #0f172a; margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
     
-    input[type="text"], select { width: 100%; padding: 6px 8px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.9rem; margin-bottom: 6px; outline: none; }
+    input[type="text"], select { width: 100%; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.9rem; margin-bottom: 6px; outline: none; background: #fff; }
+    input[type="text"]:focus { border-color: #2563eb; box-shadow: 0 0 0 2px rgba(37,99,235,0.15); }
     
-    .btn { width: 100%; padding: 8px; border: none; border-radius: 6px; font-weight: bold; font-size: 0.95rem; cursor: pointer; margin-top: 4px; }
+    .btn { width: 100%; padding: 10px; border: none; border-radius: 6px; font-weight: bold; font-size: 0.95rem; cursor: pointer; margin-top: 4px; display: flex; align-items: center; justify-content: center; gap: 6px; }
     .btn-blue { background: #2563eb; color: white; }
+    .btn-blue:active { background: #1d4ed8; }
     .btn-green { background: #16a34a; color: white; }
+    .btn-green:active { background: #15803d; }
 
-    .filter-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 6px; margin-bottom: 6px; }
+    .filter-grid { display: grid; grid-template-columns: 1fr; gap: 6px; margin-bottom: 6px; }
     .filter-group { display: flex; flex-direction: column; }
     .filter-group label { font-size: 0.75rem; font-weight: bold; color: #475569; margin-bottom: 2px; }
-    .filter-input { width: 100%; padding: 5px 8px; font-size: 0.85rem; border: 1px solid #cbd5e1; border-radius: 6px; outline: none; background: #fff; }
+    .filter-input { width: 100%; padding: 7px 10px; font-size: 0.85rem; border: 1px solid #cbd5e1; border-radius: 6px; outline: none; background: #fff; }
 
-    .order-checklist { max-height: 125px; overflow-y: auto; border: 1px solid #cbd5e1; border-radius: 6px; padding: 6px; background: #fff; margin-bottom: 8px; }
-    .order-checklist label { display: flex; align-items: center; gap: 6px; padding: 3px 5px; font-size: 0.85rem; cursor: pointer; border-radius: 4px; }
+    .order-checklist { max-height: 160px; overflow-y: auto; border: 1px solid #cbd5e1; border-radius: 6px; padding: 6px; background: #fff; margin-bottom: 8px; -webkit-overflow-scrolling: touch; }
+    .order-checklist label { display: flex; align-items: center; gap: 8px; padding: 6px 8px; font-size: 0.85rem; cursor: pointer; border-radius: 4px; border-bottom: 1px solid #f1f5f9; }
     .order-checklist label:hover { background: #f1f5f9; }
+    .order-checklist input[type="checkbox"] { width: 16px; height: 16px; accent-color: #2563eb; }
 
     /* ==========================================
        THIẾT LẬP KHỔ GIẤY IN & NEO ĐÁY TRANG A4
@@ -38,13 +42,16 @@
     .cards-container { 
       display: flex; 
       flex-direction: column; 
-      gap: 20px; 
+      gap: 15px; 
       align-items: center; 
+      width: 100%;
+      overflow-x: auto;
     }
 
     .material-card { 
       background: white; 
       width: 285mm; 
+      min-width: 285mm;
       height: 192mm; 
       max-height: 192mm;
       margin: 0 auto; 
@@ -97,6 +104,14 @@
     }
 
     /* ==========================================
+       MEDIA QUERY CHO TABLET & PC (MÀN HÌNH RỘNG HƠN)
+       ========================================== */
+    @media (min-width: 640px) {
+      body { padding: 10px; }
+      .filter-grid { grid-template-columns: repeat(3, 1fr); }
+    }
+
+    /* ==========================================
        CẤU HÌNH IN TRỰC TIẾP (PRINT MODE)
        ========================================== */
     @media print {
@@ -113,11 +128,13 @@
       .cards-container {
         display: block !important;
         gap: 0 !important;
+        overflow: visible !important;
       }
       .material-card { 
         box-shadow: none !important; 
         margin: 0 auto !important; 
         width: 297mm !important; 
+        min-width: 297mm !important;
         height: 210mm !important;
         max-height: 210mm !important;
         padding: 10mm 15mm 8mm 15mm !important; 
@@ -142,7 +159,7 @@
 
   <div class="control-card">
     <div class="control-title">🖨️ SAUCONY 生產物料清單批量處理</div>
-    <input type="text" id="scriptUrl" placeholder="請貼上網址..." style="margin-bottom: 6px;">
+    <input type="text" id="scriptUrl" placeholder="請輸入網址..." style="margin-bottom: 6px;">
     
     <button class="btn btn-blue" onclick="loadData()">🔄 從庫存載入資料</button>
 
@@ -176,7 +193,7 @@
     </div>
 
     <div>
-      <button class="btn btn-green" onclick="window.print()">🖨️ In / PDF</button>
+      <button class="btn btn-green" onclick="window.print()">🖨️ 列印 / 匯出 PDF</button>
     </div>
   </div>
 
@@ -287,7 +304,7 @@
         const isChecked = checkedSet.has(item.orderNo) ? 'checked' : '';
         const label = document.createElement('label');
         label.innerHTML = `<input type="checkbox" value="${item.orderNo}" ${isChecked} onchange="renderCardsBatch()"> 
-                           <b>指令表：</b> <b style="color: #2563eb;">${item.orderNo}</b> &nbsp;|&nbsp; <b>SKU：</b> ${item.sku} &nbsp;|&nbsp; <b>交期：</b> ${item.date}`;
+                           <div><b>指令表：</b> <b style="color: #2563eb;">${item.orderNo}</b><br><span style="color: #64748b; font-size: 0.75rem;">SKU：${item.sku} | 交期：${item.date}</span></div>`;
         checklistDiv.appendChild(label);
       });
       renderCardsBatch();
@@ -412,7 +429,7 @@
             </div>
 
             <div class="card-footer">
-              <div>備註：請依清單品100%核对物料數量与顏色。</div>
+              <div>備註：請依清單 100% 核對物料數量與顏色。</div>
               <div>列印日期：${new Date().toLocaleDateString('zh-TW')}</div>
             </div>
           </div>
