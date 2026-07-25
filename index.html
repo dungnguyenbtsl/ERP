@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SAUCONY 生産材料總匯表 - Dynamic Batch Print Tool</title>
-    <!-- SheetJS cho phép đọc file Excel trực tiếp trên webapp -->
+    <!-- SheetJS for Excel file parsing -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
         *, *::before, *::after {
@@ -59,7 +59,7 @@
             background-color: #218838;
         }
 
-        /* Khu vực hiển thị danh sách phiếu */
+        /* Print Preview Area */
         #preview-area {
             max-width: 900px;
             margin: 0 auto;
@@ -162,7 +162,7 @@
             vertical-align: middle;
         }
 
-        /* PRINT STYLES - Xử lý chuẩn khi in từ webapp */
+        /* PRINT STYLES */
         @media print {
             @page {
                 size: A4 portrait;
@@ -202,19 +202,17 @@
 </head>
 <body>
 
-    <!-- Bảng điều khiển tải file và in hàng loạt -->
     <div class="control-panel">
-        <h2>🛠️ Hệ Thống In Tem & Tổng Hợp Phụ Liệu SAUCONY</h2>
+        <h2>🛠️ Công Cụ In Tem & Tổng Hợp Phụ Liệu SAUCONY</h2>
         <div class="file-input-group">
-            <label for="excelFile">Tải lên file Excel dữ liệu sản xuất (.xlsx):</label>
+            <label for="excelFile">Chọn file Excel dữ liệu sản xuất:</label>
             <input type="file" id="excelFile" accept=".xlsx, .xls" onchange="handleExcelUpload(event)">
         </div>
         <button class="btn-action btn-print" onclick="window.print()">🖨️ In Tất Cả Phiếu</button>
     </div>
 
-    <!-- Khu vực sinh giao diện phiếu tự động -->
     <div id="preview-area">
-        <p style="text-align:center; color:#666; padding: 40px;">Vui lòng tải lên file Excel để hệ thống tự động tổng hợp và hiển thị danh sách phiếu...</p>
+        <p style="text-align:center; color:#666; padding: 40px;">Vui lòng tải lên file Excel để hiển thị danh sách phiếu in...</p>
     </div>
 
     <script>
