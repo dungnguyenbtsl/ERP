@@ -3,9 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SAUCONY 生産材料總匯表 - Fast Google Sheets Sync</title>
-    <!-- SheetJS để đọc trực tiếp dữ liệu -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <title>SAUCONY 生産材料總匯表 - Lightning Sync</title>
     <style>
         *, *::before, *::after {
             box-sizing: border-box;
@@ -14,14 +12,14 @@
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             color: #222222;
             margin: 0;
-            padding: 20px;
+            padding: 10px;
             background-color: #f0f2f5;
         }
         .control-panel {
             max-width: 900px;
-            margin: 0 auto 20px auto;
+            margin: 0 auto 15px auto;
             background: #ffffff;
-            padding: 15px 20px;
+            padding: 10px 15px;
             border-radius: 8px;
             box-shadow: 0 2px 6px rgba(0,0,0,0.1);
             display: flex;
@@ -30,19 +28,19 @@
         }
         .control-panel h2 {
             margin: 0;
-            font-size: 14pt;
+            font-size: 13pt;
             color: #0056b3;
         }
         .btn-action {
             background-color: #0056b3;
             color: white;
             border: none;
-            padding: 8px 16px;
+            padding: 6px 14px;
             font-size: 10pt;
             font-weight: bold;
             border-radius: 4px;
             cursor: pointer;
-            margin-left: 8px;
+            margin-left: 6px;
         }
         .btn-action:hover {
             background-color: #004085;
@@ -196,49 +194,63 @@
 <body>
 
     <div class="control-panel">
-        <h2>⚡ Hệ Thống In Tem Siêu Tốc (Google Sheets)</h2>
+        <h2>⚡ In Tem Tức Thì (Native CSV Fetch)</h2>
         <div>
-            <button class="btn-action" onclick="loadFromGoogleSheet()">🔄 Tải Lại Ngay</button>
+            <button class="btn-action" onclick="loadCSV()">🔄 Tải Lại</button>
             <button class="btn-action btn-print" onclick="window.print()">🖨️ In Tất Cả</button>
         </div>
     </div>
 
     <div id="preview-area">
-        <p style="text-align:center; color:#666; padding: 40px;">Đang tải dữ liệu tức thì...</p>
+        <p style="text-align:center; color:#666; padding: 20px;">Đang tải dữ liệu...</p>
     </div>
 
     <script>
-        const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ8U1LYwacMO6PVEwA3l3CbW52i6UaNg6qri-mXzoUFgjuEg2mZLkOkUP6nUSzymYbqrcJOVW68On2Y/pub?gid=1952387178&single=true&output=csv";
+        const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ8U1LYwacMO6PVEwA3l3CbW52i6UaNg6qri-mXzoUFgjuEg2mZLkOkUP6nUSzymYbqrcJOVW68On2Y/pub?gid=1952387178&single=true&output=csv";
 
-        async function loadFromGoogleSheet() {
+        async function loadCSV() {
             const previewArea = document.getElementById('preview-area');
-            previewArea.innerHTML = '<p style="text-align:center; color:#0056b3; padding: 40px;">Đang đồng bộ dữ liệu siêu tốc...</p>';
-
             try {
-                const response = await fetch(SHEET_CSV_URL);
-                const arrayBuffer = await response.arrayBuffer();
-                const data = new Uint8Array(arrayBuffer);
-                const workbook = XLSX.read(data, {type: 'array'});
-                const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
-                const json = XLSX.utils.sheet_to_json(firstSheet);
-
-                renderPreviews(json);
-            } catch (error) {
-                console.error(error);
-                previewArea.innerHTML = '<p style="text-align:center; color:red; padding: 40px;">Không thể tải dữ liệu trực tiếp. Vui lòng kiểm tra lại liên kết Sheet!</p>';
+                const response = await fetch(CSV_URL);
+                const text = await response.text();
+                parseAndRender(text);
+            } catch (e) {
+                previewArea.innerHTML = '<p style="text-align:center; color:red;">Lỗi tải dữ liệu!</p>';
             }
         }
 
-        function renderPreviews(data) {
+        function parseCSVLine(text) {
+            let result = [], cell = '', insideQuotes = false;
+            for (let i = 0; i < text.length; i++) {
+                let c = text[i];
+                if (c === '"') {
+                    if (insideQuotes && text[i + +1] === '"') { cell += '"'; i++; }
+                    else { insideQuotes = !insideQuotes; }
+                } else if (c === ',' && !insideQuotes) {
+                    result.push(cell.trim()); cell = '';
+                } else {
+                    cell += c;
+                }
+            }
+            result.push(cell.trim());
+            return result;
+        }
+
+        function parseAndRender(csvText) {
+            const lines = csvText.split(/\r\n|\n/).filter(l => l.trim() !== '');
+            if (lines.length < 2) return;
+
+            const headers = parseCSVLine(lines[0]);
             const previewArea = document.getElementById('preview-area');
             previewArea.innerHTML = '';
 
-            if (!data || data.length === 0) {
-                previewArea.innerHTML = '<p style="text-align:center; color:red;">Không có dữ liệu trong bảng!</p>';
-                return;
-            }
+            for (let i = 1; i < lines.length; i++) {
+                const rowData = parseCSVLine(lines[i]);
+                const row = {};
+                headers.forEach((h, index) => {
+                    row[h] = rowData[index] || '';
+                });
 
-            data.forEach((row) => {
                 const orderNo = row['指令表'] || row['指令單號'] || row['OrderNo'] || '';
                 const sku = row['廠型-SKU'] || row['SKU'] || '';
                 const qty = row['鞋數量'] || row['Quantity'] || '';
@@ -308,12 +320,10 @@
                     </table>
                 </div>`;
                 previewArea.innerHTML += html;
-            });
+            }
         }
 
-        window.onload = function() {
-            loadFromGoogleSheet();
-        };
+        window.onload = loadCSV;
     </script>
 </body>
 </html>
