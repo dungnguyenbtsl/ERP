@@ -3,6 +3,571 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>富裕鞋業有限公司 - SAUCONY 生產物料清單</title>
+
+  <!-- Nhúng font 思源宋體 (Source Han Serif TC) từ Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Noto Serif TC', Arial, sans-serif; -webkit-tap-highlight-color: transparent; }
+    body { background-color: #e2e8f0; padding: 12px; color: #1e293b; }
+    
+    .control-card { background: white; padding: 14px; border-radius: 10px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06); margin-bottom: 16px; max-width: 285mm; margin-left: auto; margin-right: auto; }
+    .control-title { font-size: 1rem; font-weight: bold; color: #0f172a; margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
+    
+    input[type="text"], select { width: 100%; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.9rem; margin-bottom: 6px; outline: none; background: #fff; font-family: 'Noto Serif TC', Arial, sans-serif; }
+    input[type="text"]:focus { border-color: #2563eb; box-shadow: 0 0 0 2px rgba(37,99,235,0.15); }
+    
+    .btn { width: 100%; padding: 10px; border: none; border-radius: 6px; font-weight: bold; font-size: 0.95rem; cursor: pointer; margin-top: 4px; display: flex; align-items: center; justify-content: center; gap: 6px; transition: background 0.2s; font-family: 'Noto Serif TC', Arial, sans-serif; }
+    .btn-blue { background: #2563eb; color: white; }
+    .btn-blue:hover { background: #1d4ed8; }
+    .btn-blue:active { background: #1e40af; }
+    .btn-green { background: #16a34a; color: white; }
+    .btn-green:hover { background: #15803d; }
+    .btn-green:active { background: #166534; }
+    .btn-sm { padding: 4px 8px; font-size: 0.75rem; width: auto; display: inline-flex; }
+
+    .filter-grid { display: grid; grid-template-columns: 1fr; gap: 6px; margin-bottom: 6px; }
+    .filter-group { display: flex; flex-direction: column; }
+    .filter-group label { font-size: 0.75rem; font-weight: bold; color: #475569; margin-bottom: 2px; }
+    .filter-input { width: 100%; padding: 7px 10px; font-size: 0.85rem; border: 1px solid #cbd5e1; border-radius: 6px; outline: none; background: #fff; font-family: 'Noto Serif TC', Arial, sans-serif; }
+
+    .order-checklist { max-height: 160px; overflow-y: auto; border: 1px solid #cbd5e1; border-radius: 6px; padding: 6px; background: #fff; margin-bottom: 8px; -webkit-overflow-scrolling: touch; }
+    .order-checklist label { display: flex; align-items: center; gap: 8px; padding: 6px 8px; font-size: 0.85rem; cursor: pointer; border-radius: 4px; border-bottom: 1px solid #f1f5f9; }
+    .order-checklist label:hover { background: #f1f5f9; }
+    .order-checklist input[type="checkbox"] { width: 16px; height: 16px; accent-color: #2563eb; }
+
+    @page {
+      size: A4 landscape;
+      margin: 0mm;
+    }
+
+    .cards-container { 
+      display: flex; 
+      flex-direction: column; 
+      gap: 20px; 
+      align-items: center; 
+      width: 100%;
+      max-width: 295mm;
+      margin: 0 auto;
+    }
+
+    .material-card { 
+      background: white; 
+      width: 285mm; 
+      min-width: 285mm;
+      height: 192mm; 
+      max-height: 192mm;
+      margin: 0 auto; 
+      padding: 7mm 12mm 6mm 12mm; 
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.15), 0 8px 10px -6px rgba(0, 0, 0, 0.1); 
+      border-radius: 10px; 
+      border: 1px solid #cbd5e1;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between; 
+      overflow: hidden;
+      
+      page-break-after: always;
+      break-after: page;
+      page-break-inside: avoid;
+      break-inside: avoid;
+    }
+
+    .card-header { border-bottom: 2px solid #2563eb; padding-bottom: 5px; margin-bottom: 5px; display: flex; justify-content: space-between; align-items: center; }
+    .card-logo-title { display: flex; align-items: center; gap: 10px; }
+    .logo-box { width: 45px; height: 24px; display: flex; align-items: center; justify-content: center; }
+    .logo-box img { max-width: 100%; max-height: 100%; object-fit: contain; }
+    .logo-placeholder { font-size: 0.45rem; color: #64748b; border: 1px dashed #cbd5e1; padding: 2px; text-align: center; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; }
+
+    .header-text h1 { font-size: 0.72rem; font-weight: bold; color: #475569; }
+    .header-text h2 { font-size: 1.05rem; font-weight: 700; color: #0f172a; text-transform: uppercase; letter-spacing: 0.5px; }
+
+    .card-info-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-bottom: 5px; font-size: 0.8rem; background: #f8fafc; padding: 5px 10px; border: 1px solid #e2e8f0; border-radius: 6px; }
+    .card-info-item span { display: block; color: #64748b; font-size: 0.68rem; }
+    .card-info-item b { color: #0f172a; font-size: 0.82rem; }
+
+    table { width: 100%; border-collapse: collapse; margin-bottom: 5px; table-layout: fixed; }
+    th, td { border: 1px solid #333; padding: 4px 6px; font-size: 0.76rem; text-align: left; vertical-align: middle; }
+    th { background-color: #e2e8f0; font-weight: bold; text-align: center; color: #0f172a; }
+    
+    td.wrap-text { 
+      word-break: break-all; 
+      overflow-wrap: break-word; 
+      white-space: normal; 
+    }
+
+    td.center { text-align: center; }
+    td.right { text-align: right; }
+    .nowrap { white-space: nowrap; }
+
+    .card-footer { 
+      display: flex; 
+      justify-content: space-between; 
+      align-items: center;
+      font-size: 0.72rem; 
+      color: #64748b; 
+      border-top: 1px dashed #cbd5e1; 
+      padding-top: 4px; 
+      margin-top: auto; 
+    }
+
+    @media (min-width: 640px) {
+      body { padding: 20px; }
+      .filter-grid { grid-template-columns: repeat(3, 1fr); }
+    }
+
+    @media (max-width: 900px) {
+      .cards-container {
+        overflow-x: auto;
+        padding-bottom: 10px;
+      }
+    }
+
+    @media print {
+      @page {
+        size: A4 landscape;
+        margin: 0mm;
+      }
+      html, body {
+        background: white !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        width: 297mm;
+        height: 210mm;
+      }
+      .control-card { 
+        display: none !important; 
+      }
+      .btn-print-single, button[onclick^="printSingleCard"] {
+        display: none !important;
+      }
+      .cards-container {
+        display: block !important;
+        gap: 0 !important;
+        overflow: visible !important;
+        max-width: none !important;
+        margin: 0 !important;
+      }
+      .material-card { 
+        box-shadow: none !important; 
+        margin: 0 auto !important; 
+        width: 297mm !important; 
+        min-width: 297mm !important;
+        height: 210mm !important;
+        max-height: 210mm !important;
+        padding: 10mm 15mm 8mm 15mm !important; 
+        border: none !important;
+        border-radius: 0 !important;
+        display: flex !important;
+        
+        page-break-before: always !important;
+        page-break-after: always !important;
+        page-break-inside: avoid !important;
+        break-before: page !important;
+        break-after: page !important;
+        break-inside: avoid !important;
+      }
+      .material-card:first-child {
+        page-break-before: avoid !important;
+        break-before: avoid !important;
+      }
+      body.print-single .material-card:not(.printing-target) {
+        display: none !important;
+      }
+      body.print-single .material-card.printing-target {
+        width: 297mm !important;
+        min-width: 297mm !important;
+        height: 210mm !important;
+        max-height: 210mm !important;
+        padding: 10mm 15mm 8mm 15mm !important;
+        margin: 0 auto !important;
+        page-break-before: avoid !important;
+        page-break-after: avoid !important;
+        break-before: avoid !important;
+        break-after: avoid !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="control-card">
+    <div class="control-title">🖨️ SAUCONY 生產物料清單批量處理</div>
+    <input type="text" id="scriptUrl" placeholder="請輸入網址..." style="margin-bottom: 6px;">
+    
+    <button class="btn btn-blue" onclick="loadData()">🔄 從庫存載入資料</button>
+
+    <div style="margin-top: 8px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+        <label style="font-size: 0.85rem; font-weight: bold;">篩選指令表：</label>
+        <div>
+          <button onclick="toggleSelectAll(true)" style="font-size: 0.8rem; background: none; border: none; color: #2563eb; cursor: pointer; text-decoration: underline; margin-right: 8px; font-family: 'Noto Serif TC', sans-serif;">全選</button>
+          <button onclick="toggleSelectAll(false)" style="font-size: 0.8rem; background: none; border: none; color: #64748b; cursor: pointer; text-decoration: underline; font-family: 'Noto Serif TC', sans-serif;">取消全選</button>
+        </div>
+      </div>
+      
+      <div class="filter-grid">
+        <div class="filter-group">
+          <label>指令表：</label>
+          <input type="text" id="filterOrder" class="filter-input" placeholder="輸入指令表..." oninput="applyFilters()">
+        </div>
+        <div class="filter-group">
+          <label>廠型-SKU：</label>
+          <input type="text" id="filterSku" class="filter-input" placeholder="輸入SKU..." oninput="applyFilters()">
+        </div>
+        <div class="filter-group">
+          <label>客戶交期：</label>
+          <input type="text" id="filterDate" class="filter-input" placeholder="輸入交期..." oninput="applyFilters()">
+        </div>
+      </div>
+
+      <div style="margin-bottom: 4px;">
+        <input type="text" id="quickChecklistSearch" class="filter-input" placeholder="🔍 在清單中快速搜尋..." oninput="applyFilters()" style="margin-bottom: 4px; padding: 5px 8px; font-size: 0.8rem;">
+      </div>
+
+      <div id="orderChecklist" class="order-checklist">
+        <span style="color: #64748b; font-size: 0.85rem;">請先載入資料...</span>
+      </div>
+    </div>
+
+    <div>
+      <button class="btn btn-green" onclick="window.print()">🖨️ 列印全部 / 匯出 PDF</button>
+    </div>
+  </div>
+
+  <div class="cards-container" id="cardsContainer">
+    <div class="material-card">
+      <div style="text-align: center; color: #64748b; padding: 70px 0; width: 100%;">
+        <h2>請先載入資料並在上方勾選要列印的指令表。</h2>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let sheetData = [];
+    let masterRecords = [];
+
+    document.addEventListener('DOMContentLoaded', () => {
+      try {
+        const savedUrl = localStorage.getItem('saucony_gas_url');
+        if (savedUrl) {
+          document.getElementById('scriptUrl').value = savedUrl;
+          loadData();
+        }
+      } catch (e) {
+        console.error("Init error:", e);
+      }
+    });
+
+    async function loadData() {
+      const urlEl = document.getElementById('scriptUrl');
+      if (!urlEl) return;
+      const url = urlEl.value.trim();
+      if (!url) {
+        alert("請輸入網址！");
+        return;
+      }
+
+      try {
+        localStorage.setItem('saucony_gas_url', url);
+      } catch (e) {}
+
+      try {
+        const res = await fetch(url);
+        if (!res.ok) throw new Error("Network response was not ok");
+        sheetData = await res.json();
+        processMasterRecords(sheetData);
+        alert("✅ 資料載入成功！");
+      } catch (err) {
+        console.error(err);
+        try {
+          const cached = localStorage.getItem('saucony_sheet_cache');
+          if (cached) {
+            sheetData = JSON.parse(cached);
+            processMasterRecords(sheetData);
+            alert("⚠️ 網路連線失敗，已自動載入本機快取資料！");
+            return;
+          }
+        } catch(e) {}
+        alert("❌ 載入失敗，請檢查網址或網路連線是否正常！");
+      }
+    }
+
+    function getColValue(row, possibleNames, defaultValue = '-') {
+      if (!row || typeof row !== 'object') return defaultValue;
+      try {
+        const keys = Object.keys(row);
+        for (let name of possibleNames) {
+          const cleanTarget = name.toLowerCase().replace(/\s+/g, '');
+          for (let key of keys) {
+            if (key.toLowerCase().replace(/\s+/g, '') === cleanTarget) {
+              if (row[key] !== "" && row[key] !== null && row[key] !== undefined) return row[key];
+            }
+          }
+        }
+        for (let name of possibleNames) {
+          const foundKey = keys.find(k => k.toLowerCase().replace(/\s+/g, '').includes(name.toLowerCase().replace(/\s+/g, '')));
+          if (foundKey && row[foundKey] !== "" && row[foundKey] !== null && row[foundKey] !== undefined) return row[foundKey];
+        }
+      } catch (e) {}
+      return defaultValue;
+    }
+
+    function processMasterRecords(data) {
+      if (!Array.isArray(data)) return;
+      try {
+        localStorage.setItem('saucony_sheet_cache', JSON.stringify(data));
+      } catch (e) {}
+
+      const map = new Map();
+      data.forEach(row => {
+        const orderNo = String(getColValue(row, ['指令表', 'đơn sản xuất', 'po sx'], '')).trim();
+        if (!orderNo || orderNo === '-') return;
+
+        if (!map.has(orderNo)) {
+          let factorySku = String(getColValue(row, ['廠型-SKU', '廠型', 'sku', 'hình thể'], '-')).trim();
+          let deliveryDate = String(getColValue(row, ['客戶交期', '出貨日期', 'ngày xuất', 'xuất hàng'], '-')).trim();
+          let shoeQty = String(getColValue(row, ['鞋數量', '鞋k số lượng', 'số lượng giày', 'pairs'], '-')).trim();
+          
+          if (deliveryDate && deliveryDate !== '-') {
+            try {
+              const d = new Date(deliveryDate);
+              if (!isNaN(d.getTime())) deliveryDate = d.toLocaleDateString('zh-TW');
+            } catch (e) {}
+          }
+
+          map.set(orderNo, { orderNo, sku: factorySku, date: deliveryDate, shoeQty });
+        }
+      });
+      masterRecords = Array.from(map.values());
+      applyFilters();
+    }
+
+    function applyFilters() {
+      try {
+        const qOrder = document.getElementById('filterOrder').value.trim().toLowerCase();
+        const qSku = document.getElementById('filterSku').value.trim().toLowerCase();
+        const qDate = document.getElementById('filterDate').value.trim().toLowerCase();
+        const qQuick = document.getElementById('quickChecklistSearch').value.trim().toLowerCase();
+
+        const filtered = masterRecords.filter(item => {
+          const matchMain = item.orderNo.toLowerCase().includes(qOrder) &&
+                            item.sku.toLowerCase().includes(qSku) &&
+                            item.date.toLowerCase().includes(qDate);
+          if (!matchMain) return false;
+
+          if (qQuick) {
+            return item.orderNo.toLowerCase().includes(qQuick) ||
+                   item.sku.toLowerCase().includes(qQuick) ||
+                   item.date.toLowerCase().includes(qQuick);
+          }
+          return true;
+        });
+        renderOrderChecklist(filtered);
+      } catch (e) {
+        console.error("Filter error:", e);
+      }
+    }
+
+    function renderOrderChecklist(recordsArray) {
+      const checklistDiv = document.getElementById('orderChecklist');
+      if (!checklistDiv) return;
+      checklistDiv.innerHTML = '';
+
+      if (recordsArray.length === 0) {
+        checklistDiv.innerHTML = '<span style="color: red; font-size: 0.85rem;">找不到符合篩選條件的指令表！</span>';
+        renderCardsBatch();
+        return;
+      }
+
+      let savedChecked = [];
+      try {
+        savedChecked = JSON.parse(localStorage.getItem('saucony_checked_orders') || '[]');
+      } catch(e) {}
+
+      const checkedSet = new Set(savedChecked);
+      document.querySelectorAll('#orderChecklist input[type="checkbox"]:checked').forEach(cb => checkedSet.add(cb.value));
+
+      recordsArray.forEach(item => {
+        const isChecked = checkedSet.has(item.orderNo) ? 'checked' : '';
+        const label = document.createElement('label');
+        label.innerHTML = `<input type="checkbox" value="${item.orderNo}" ${isChecked} onchange="saveSelectionAndRender()"> 
+                           <div><b>指令表：</b> <b style="color: #2563eb;">${item.orderNo}</b><br><span style="color: #64748b; font-size: 0.75rem;">SKU：${item.sku} | 交期：${item.date}</span></div>`;
+        checklistDiv.appendChild(label);
+      });
+      renderCardsBatch();
+    }
+
+    function saveSelectionAndRender() {
+      try {
+        const checkedSet = [];
+        document.querySelectorAll('#orderChecklist input[type="checkbox"]:checked').forEach(cb => {
+          checkedSet.push(cb.value);
+        });
+        localStorage.setItem('saucony_checked_orders', JSON.stringify(checkedSet));
+        renderCardsBatch();
+      } catch (e) {}
+    }
+
+    function toggleSelectAll(select) {
+      document.querySelectorAll('#orderChecklist input[type="checkbox"]').forEach(cb => cb.checked = select);
+      saveSelectionAndRender();
+    }
+
+    function printSingleCard(orderNo) {
+      const cardEl = document.getElementById(`card-${orderNo}`);
+      if (!cardEl) return;
+      document.body.classList.add('print-single');
+      document.querySelectorAll('.material-card').forEach(c => c.classList.remove('printing-target'));
+      cardEl.classList.add('printing-target');
+      
+      window.print();
+      
+      setTimeout(() => {
+        document.body.classList.remove('print-single');
+        cardEl.classList.remove('printing-target');
+      }, 500);
+    }
+
+    function renderCardsBatch() {
+      const container = document.getElementById('cardsContainer');
+      if (!container) return;
+      const checkboxes = document.querySelectorAll('#orderChecklist input[type="checkbox"]:checked');
+      
+      if (checkboxes.length === 0) {
+        container.innerHTML = `
+          <div class="material-card">
+            <div style="text-align: center; color: #64748b; padding: 70px 20px; width: 100%;">
+              <h2>尚未選擇任何指令表</h2>
+              <p style="margin-top: 6px; font-size: 0.85rem;">請在上方控制面板勾選您想要預覽或列印的訂單卡片。</p>
+            </div>
+          </div>
+        `;
+        return;
+      }
+
+      let allCardsHtml = '';
+
+      checkboxes.forEach(cb => {
+        const selectedOrder = cb.value;
+        const matchedRows = sheetData.filter(row => String(getColValue(row, ['指令表', 'đơn sản xuất', 'po sx'], '')).trim() === selectedOrder);
+
+        let factorySku = '-';
+        let deliveryDate = '-';
+        let shoeQty = '-';
+
+        if (matchedRows.length > 0) {
+          factorySku = getColValue(matchedRows[0], ['廠型-SKU', '廠型', 'sku', 'hình thể'], '-');
+          deliveryDate = getColValue(matchedRows[0], ['客戶交期', '出貨日期', 'ngày xuất', 'xuất hàng'], '-');
+          shoeQty = getColValue(matchedRows[0], ['鞋數量', '鞋k số lượng', 'số lượng giày', 'pairs'], '-');
+          if (deliveryDate && deliveryDate !== '-') {
+            try {
+              const d = new Date(deliveryDate);
+              if (!isNaN(d.getTime())) deliveryDate = d.toLocaleDateString('zh-TW');
+            } catch (e) {}
+          }
+        }
+
+        let tableRowsHtml = '';
+        if (matchedRows.length === 0) {
+          tableRowsHtml = '<tr><td colspan="6" style="text-align: center; color: red; padding: 10px;">找不到該指令表的材料資料。</td></tr>';
+        } else {
+          matchedRows.forEach((row, index) => {
+            const name = getColValue(row, ['摘要', '品名', '材料名稱', 'tên vật tư'], '-');
+            const color = getColValue(row, ['顏色', 'màu sắc'], '-');
+            const qty = getColValue(row, ['數量', 'số lượng', 'sl'], '0');
+            const unit = getColValue(row, ['單位', 'đơn vị'], 'PCS');
+
+            tableRowsHtml += `
+              <tr>
+                <td class="center nowrap" style="width: 5%;"><b>${index + 1}</b></td>
+                <td class="wrap-text" style="width: 50%;">${name}</td>
+                <td class="center wrap-text" style="width: 23%;">${color}</td>
+                <td class="center nowrap" style="width: 7%;">${unit}</td>
+                <td class="right nowrap" style="width: 9%; font-weight: bold; color: #1d4ed8;">${qty}</td>
+                <td class="center nowrap" style="width: 6%;">☐</td>
+              </tr>
+            `;
+          });
+        }
+
+        allCardsHtml += `
+          <div class="material-card" id="card-${selectedOrder}">
+            <div>
+              <div class="card-header">
+                <div class="card-logo-title">
+                  <div class="logo-box">
+                    <img src="https://dungnguyenbtsl.github.io/FULIAO-LABEL/logo.jpeg" alt="Logo" onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\'logo-placeholder\'>Logo</div>';">
+                  </div>
+                  <div class="header-text">
+                    <h1>富裕鞋業有限公司 RIGHT RICH INTL. CO. LTD</h1>
+                    <h2>SAUCONY 生產物料清單</h2>
+                  </div>
+                </div>
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <button class="btn btn-blue btn-sm btn-print-single" onclick="printSingleCard('${selectedOrder}')">🖨️ 列印此頁</button>
+                  <div style="font-size: 0.75rem; color: #475569;"><b>倉管備料清單</b></div>
+                </div>
+              </div>
+
+              <div class="card-info-grid">
+                <div class="card-info-item">
+                  <span>指令表單號：</span>
+                  <b style="color:#2563eb; font-size: 0.9rem;">${selectedOrder}</b>
+                </div>
+                <div class="card-info-item">
+                  <span>廠型-SKU：</span>
+                  <b>${factorySku}</b>
+                </div>
+                <div class="card-info-item">
+                  <span>鞋數量：</span>
+                  <b style="color:#059669;">${shoeQty} 雙</b>
+                </div>
+                <div class="card-info-item">
+                  <span>客戶交期：</span>
+                  <b style="color:#b45309;">${deliveryDate}</b>
+                </div>
+              </div>
+
+              <table>
+                <thead>
+                  <tr>
+                    <th style="width: 5%;">序號</th>
+                    <th style="width: 45%;">材料名稱 / 品名 (摘要)</th>
+                    <th style="width: 32%;">顏色</th>
+                    <th style="width: 7%;">單位</th>
+                    <th style="width: 5%;">數量</th>
+                    <th style="width: 6%;">點檢</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${tableRowsHtml}
+                </tbody>
+              </table>
+            </div>
+
+            <div class="card-footer">
+              <div>備註：請依清單 100% 核對物料數量與顏色層級。</div>
+              <div>列印日期：${new Date().toLocaleDateString('zh-TW')}</div>
+            </div>
+          </div>
+        `;
+      });
+
+      container.innerHTML = allCardsHtml;
+    }
+  </script>
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>富裕鞋業 - SAUCONY 生產物料清單</title>
 
   <!-- Nhúng font 思源宋體 (Source Han Serif TC) từ Google Fonts -->
