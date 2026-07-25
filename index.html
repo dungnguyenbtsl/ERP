@@ -3,9 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SAUCONY 生産材料總匯表 - Dynamic Batch Print Tool</title>
-    <!-- SheetJS for Excel file parsing -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <title>SAUCONY 生産材料總匯表 - Google Sheets Integration Tool</title>
     <style>
         *, *::before, *::after {
             box-sizing: border-box;
@@ -24,19 +22,14 @@
             padding: 20px;
             border-radius: 8px;
             box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
         .control-panel h2 {
-            margin-top: 0;
-            font-size: 16pt;
+            margin: 0;
+            font-size: 15pt;
             color: #0056b3;
-        }
-        .file-input-group {
-            margin-bottom: 15px;
-        }
-        .file-input-group label {
-            display: block;
-            font-weight: bold;
-            margin-bottom: 5px;
         }
         .btn-action {
             background-color: #0056b3;
@@ -47,7 +40,7 @@
             font-weight: bold;
             border-radius: 4px;
             cursor: pointer;
-            margin-right: 10px;
+            margin-left: 10px;
         }
         .btn-action:hover {
             background-color: #004085;
@@ -59,7 +52,6 @@
             background-color: #218838;
         }
 
-        /* Print Preview Area */
         #preview-area {
             max-width: 900px;
             margin: 0 auto;
@@ -162,7 +154,6 @@
             vertical-align: middle;
         }
 
-        /* PRINT STYLES */
         @media print {
             @page {
                 size: A4 portrait;
@@ -203,55 +194,54 @@
 <body>
 
     <div class="control-panel">
-        <h2>🛠️ Công Cụ In Tem & Tổng Hợp Phụ Liệu SAUCONY</h2>
-        <div class="file-input-group">
-            <label for="excelFile">Chọn file Excel dữ liệu sản xuất:</label>
-            <input type="file" id="excelFile" accept=".xlsx, .xls" onchange="handleExcelUpload(event)">
+        <h2>🔗 Dữ liệu đồng bộ từ Google Sheets</h2>
+        <div>
+            <button class="btn-action" onclick="loadDataFromGoogleSheet()">🔄 Tải Lại Dữ Liệu</button>
+            <button class="btn-action btn-print" onclick="window.print()">🖨️ In Tất Cả</button>
         </div>
-        <button class="btn-action btn-print" onclick="window.print()">🖨️ In Tất Cả Phiếu</button>
     </div>
 
     <div id="preview-area">
-        <p style="text-align:center; color:#666; padding: 40px;">Vui lòng tải lên file Excel để hiển thị danh sách phiếu in...</p>
+        <p style="text-align:center; color:#666; padding: 40px;">Đang kết nối lấy dữ liệu từ Google Sheets API...</p>
     </div>
 
     <script>
-        function handleExcelUpload(e) {
-            const file = e.target.files[0];
-            if (!file) return;
+        // Thay URL Web App Google Apps Script của bạn vào đây
+        const APPS_SCRIPT_URL = "YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE";
 
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const data = new Uint8Array(e.target.result);
-                const workbook = XLSX.read(data, {type: 'array'});
-                const firstSheetName = workbook.SheetNames[0];
-                const worksheet = workbook.Sheets[firstSheetName];
-                const json = XLSX.utils.sheet_to_json(worksheet);
+        async function loadDataFromGoogleSheet() {
+            const previewArea = document.getElementById('preview-area');
+            previewArea.innerHTML = '<p style="text-align:center; color:#0056b3; padding: 40px;">Đang đồng bộ dữ liệu từ Google Sheet...</p>';
 
-                renderPreviews(json);
-            };
-            reader.readAsArrayBuffer(file);
+            try {
+                const response = await fetch(APPS_SCRIPT_URL);
+                const data = await response.json();
+                renderPreviews(data);
+            } catch (error) {
+                console.error(error);
+                previewArea.innerHTML = '<p style="text-align:center; color:red; padding: 40px;">Lỗi kết nối Google Sheets! Vui lòng kiểm tra lại URL Web App.</p>';
+            }
         }
 
         function renderPreviews(data) {
             const previewArea = document.getElementById('preview-area');
             previewArea.innerHTML = '';
 
-            if (data.length === 0) {
-                previewArea.innerHTML = '<p style="text-align:center; color:red;">File Excel không có dữ liệu!</p>';
+            if (!data || data.length === 0) {
+                previewArea.innerHTML = '<p style="text-align:center; color:red;">Google Sheet không có dữ liệu!</p>';
                 return;
             }
 
-            data.forEach((row, index) => {
-                const orderNo = row['指令表'] || row['指令單號'] || row['OrderNo'] || 'PS37283';
-                const sku = row['廠型-SKU'] || row['SKU'] || 'S53141女-S10584-2';
-                const qty = row['鞋數量'] || row['Quantity'] || '624';
-                const deliveryDate = row['客戶交期'] || row['DeliveryDate'] || '2026/6/25';
+            data.forEach((row) => {
+                const orderNo = row['指令表'] || row['指令單號'] || row['OrderNo'] || '';
+                const sku = row['廠型-SKU'] || row['SKU'] || '';
+                const qty = row['鞋數量'] || row['Quantity'] || '';
+                const deliveryDate = row['客戶交期'] || row['DeliveryDate'] || '';
                 
-                const matName = row['材料名稱'] || row['品名'] || '刮布標 LX1865-31 底色/TRAIL字體+菱形綠線+Saucony字體/菱形綠線山/TRAIL外框 37*60MM 上腰';
-                const color = row['顏色'] || '13-4111TPG藍15F+19-0201TPG灰0XD';
-                const unit = row['單位'] || 'PRS';
-                const matQty = row['數量'] || '624';
+                const matName = row['材料名稱'] || row['品名'] || '';
+                const color = row['顏色'] || '';
+                const unit = row['單位'] || '';
+                const matQty = row['數量'] || '';
 
                 const html = `
                 <div class="page-container">
@@ -314,6 +304,15 @@
                 previewArea.innerHTML += html;
             });
         }
+
+        // Tự động tải dữ liệu khi mở trang
+        window.onload = function() {
+            if (APPS_SCRIPT_URL !== "YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE") {
+                loadDataFromGoogleSheet();
+            } else {
+                document.getElementById('preview-area').innerHTML = '<p style="text-align:center; color:#d97706; padding: 40px;">⚠️ Vui lòng cấu hình biến <b>APPS_SCRIPT_URL</b> bằng đường dẫn Web App Google Apps Script của bạn.</p>';
+            }
+        };
     </script>
 </body>
 </html>
