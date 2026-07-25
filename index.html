@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>富裕鞋業 - 生產材料卡片清單 (Card View - 1 Card / 1 A4)</title>
+  <title>富裕鞋業 - 生產材料卡片清單 (Card View Fixed)</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: Arial, sans-serif; }
     body { background-color: #f1f5f9; padding: 10px; color: #1e293b; }
@@ -26,26 +26,26 @@
     .order-checklist label { display: flex; align-items: center; gap: 6px; padding: 3px 5px; font-size: 0.85rem; cursor: pointer; }
     .order-checklist label:hover { background: #f1f5f9; border-radius: 4px; }
 
-    /* Thiết lập chuẩn A4 cho từng Card View */
+    /* Thiết lập trang in A4 chuẩn xác, chống nhảy trang */
     @page {
       size: A4 portrait;
-      margin: 0;
+      margin: 10mm;
     }
 
     .cards-container { 
       display: flex; 
       flex-direction: column; 
-      gap: 15px; 
+      gap: 20px; 
       align-items: center; 
     }
 
     .material-card { 
       background: white; 
       width: 210mm; 
-      height: 297mm; /* Cố định chính xác chiều cao 1 trang A4 */
-      max-height: 297mm;
+      height: 277mm; /* Chiều cao an toàn (297mm trừ đi lề) để tuyệt đối không bị tràn sang trang 2 */
+      max-height: 277mm;
       margin: 0 auto; 
-      padding: 12mm 15mm; 
+      padding: 10mm 12mm; 
       box-shadow: 0 4px 15px rgba(0,0,0,0.1); 
       border-radius: 6px; 
       position: relative;
@@ -68,19 +68,19 @@
     .header-text h1 { font-size: 0.75rem; font-weight: bold; color: #475569; }
     .header-text h2 { font-size: 1rem; font-weight: bold; color: #0f172a; text-transform: uppercase; }
 
-    .card-info-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-bottom: 10px; font-size: 0.8rem; background: #f8fafc; padding: 8px 10px; border: 1px solid #e2e8f0; border-radius: 6px; }
+    .card-info-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-bottom: 8px; font-size: 0.8rem; background: #f8fafc; padding: 6px 10px; border: 1px solid #e2e8f0; border-radius: 6px; }
     .card-info-item span { display: block; color: #64748b; font-size: 0.7rem; }
     .card-info-item b { color: #0f172a; font-size: 0.85rem; }
 
-    table { width: 100%; border-collapse: collapse; margin-bottom: 10px; }
-    th, td { border: 1px solid #333; padding: 6px 8px; font-size: 0.8rem; text-align: left; vertical-align: middle; }
+    table { width: 100%; border-collapse: collapse; margin-bottom: 8px; }
+    th, td { border: 1px solid #333; padding: 5px 7px; font-size: 0.8rem; text-align: left; vertical-align: middle; }
     th { background-color: #e2e8f0; font-weight: bold; text-align: center; color: #0f172a; }
     
     td.center { text-align: center; }
     td.right { text-align: right; }
     .nowrap { white-space: nowrap; }
 
-    .card-footer { display: flex; justify-content: space-between; font-size: 0.75rem; color: #64748b; border-top: 1px dashed #cbd5e1; padding-top: 8px; margin-top: auto; }
+    .card-footer { display: flex; justify-content: space-between; font-size: 0.75rem; color: #64748b; border-top: 1px dashed #cbd5e1; padding-top: 6px; margin-top: auto; }
 
     /* Cấu hình khi bấm In trực tiếp */
     @media print {
@@ -99,8 +99,8 @@
         box-shadow: none !important; 
         margin: 0 !important; 
         width: 100% !important; 
-        height: 297mm !important;
-        max-height: 297mm !important;
+        height: 277mm !important;
+        max-height: 277mm !important;
         border: none !important;
         page-break-after: always !important;
         break-after: page !important;
@@ -113,7 +113,7 @@
 <body>
 
   <div class="control-card">
-    <div class="control-title">🖨️ 生產訂單材料卡片清單 (1 Card = 1 Trang A4)</div>
+    <div class="control-title">🖨️ 生產訂單材料卡片清單 (Card View - 完美 A4)</div>
     <input type="text" id="scriptUrl" placeholder="請貼上網址..." style="margin-bottom: 6px;">
     
     <button class="btn btn-blue" onclick="loadData()">🔄 從庫存載入資料</button>
