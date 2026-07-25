@@ -85,8 +85,8 @@
     .card-info-item span { display: block; color: #64748b; font-size: 0.68rem; }
     .card-info-item b { color: #0f172a; font-size: 0.82rem; }
 
-    table { width: 100%; border-collapse: collapse; margin-bottom: 5px; }
-    th, td { border: 1px solid #333; padding: 4px 6px; font-size: 0.78rem; text-align: left; vertical-align: middle; }
+    table { width: 100%; border-collapse: collapse; margin-bottom: 5px; table-layout: fixed; }
+    th, td { border: 1px solid #333; padding: 4px 6px; font-size: 0.78rem; text-align: left; vertical-align: middle; overflow: hidden; text-overflow: ellipsis; }
     th { background-color: #e2e8f0; font-weight: bold; text-align: center; color: #0f172a; }
     
     td.center { text-align: center; }
@@ -131,7 +131,6 @@
       .control-card { 
         display: none !important; 
       }
-      /* Ẩn các nút in riêng lẻ khi in toàn trang */
       .btn-print-single, button[onclick^="printSingleCard"] {
         display: none !important;
       }
@@ -474,12 +473,12 @@
 
             tableRowsHtml += `
               <tr>
-                <td class="center" style="width: 6%;">${index + 1}</td>
-                <td style="width: 42%; max-width: 120px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${name}</td>
+                <td class="center nowrap" style="width: 5%;"><b>${index + 1}</b></td>
+                <td style="width: 48%;">${name}</td>
                 <td class="center" style="width: 25%;">${color}</td>
-                <td class="center nowrap" style="width: 9%;">${unit}</td>
-                <td class="right nowrap" style="width: 13%; font-weight: bold; color: #1d4ed8;">${qty}</td>
-                <td class="center" style="width: 5%;">☐</td>
+                <td class="center nowrap" style="width: 8%;">${unit}</td>
+                <td class="right nowrap" style="width: 9%; font-weight: bold; color: #1d4ed8;">${qty}</td>
+                <td class="center nowrap" style="width: 5%;">☐</td>
               </tr>
             `;
           });
@@ -526,11 +525,11 @@
               <table>
                 <thead>
                   <tr>
-                    <th style="width: 6%;">序號</th>
-                    <th style="width: 42%;">材料名稱 / 品名 (摘要)</th>
+                    <th style="width: 5%;">序號</th>
+                    <th style="width: 48%;">材料名稱 / 品名 (摘要)</th>
                     <th style="width: 25%;">顏色</th>
-                    <th style="width: 9%;" class="nowrap">單位</th>
-                    <th style="width: 13%;" class="nowrap">數量</th>
+                    <th style="width: 8%;">單位</th>
+                    <th style="width: 9%;">數量</th>
                     <th style="width: 5%;">點檢</th>
                   </tr>
                 </thead>
