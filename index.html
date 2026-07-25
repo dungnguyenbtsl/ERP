@@ -3,183 +3,125 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Công cụ In & Xuất File Word</title>
+    <title>Hệ Thống Quản Lý & In Nhãn - Tích Hợp Xuất Word</title>
     <style>
-        body {
-            font-family: 'Arial', sans-serif;
-            background-color: #f4f6f9;
-            margin: 0;
-            padding: 20px;
-        }
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            background: #fff;
+        body { font-family: Arial, sans-serif; background: #f8f9fa; margin: 0; padding: 20px; }
+        .sys-container { max-width: 900px; margin: auto; background: #fff; padding: 30px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        h2 { color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 10px; }
+        .section { margin-bottom: 20px; }
+        label { font-weight: bold; display: block; margin-bottom: 5px; color: #333; }
+        input { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; margin-bottom: 10px; }
+        
+        /* KHUNG XEM TRƯỚC SẴN CÓ TRÊN HỆ THỐNG */
+        #khung-xem-truoc {
+            border: 2px dashed #3498db;
             padding: 25px;
-            border-radius: 8px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-        }
-        h2 {
-            text-align: center;
-            color: #333;
-            margin-bottom: 20px;
-        }
-        .form-group {
-            margin-bottom: 15px;
-        }
-        label {
-            display: block;
-            font-weight: bold;
-            margin-bottom: 5px;
-            color: #555;
-        }
-        input, select {
-            width: 100%;
-            padding: 8px 12px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            box-sizing: border-box;
-        }
-        .btn-group {
-            margin-top: 20px;
-            text-align: center;
-        }
-        button {
-            padding: 10px 20px;
-            font-size: 16px;
-            font-weight: bold;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            margin: 5px;
-        }
-        .btn-print {
-            background-color: #007bff;
-            color: white;
-        }
-        .btn-print:hover { background-color: #0056b3; }
-        .btn-word {
-            background-color: #28a745;
-            color: white;
-        }
-        .btn-word:hover { background-color: #218838; }
-
-        /* KHUNG XEM TRƯỚC (Giống bản in và file Word) */
-        .preview-box {
-            margin-top: 30px;
-            padding: 20px;
-            border: 2px dashed #007bff;
             background: #fff;
+            margin-top: 20px;
             border-radius: 6px;
         }
-        .print-template {
-            width: 100%;
-            border-collapse: collapse;
-            font-family: 'Arial', sans-serif;
-        }
-        .print-template th, .print-template td {
-            border: 1px solid #000;
-            padding: 8px 12px;
-            text-align: left;
-        }
-        .print-template th {
-            background-color: #f2f2f2;
-        }
-        .title-phieu {
-            text-align: center;
-            font-size: 18px;
-            font-weight: bold;
-            margin-bottom: 15px;
-        }
+        .sys-table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        .sys-table th, .sys-table td { border: 1px solid #000; padding: 8px 12px; text-align: left; }
+        .sys-table th { background-color: #f1f2f6; }
+        .sys-title { text-align: center; font-weight: bold; font-size: 16px; margin-bottom: 15px; }
+        
+        .toolbar { margin-top: 20px; text-align: right; }
+        .btn { padding: 10px 20px; font-weight: bold; border: none; border-radius: 4px; cursor: pointer; margin-left: 10px; }
+        .btn-print { background: #3498db; color: white; }
+        .btn-word { background: #27ae60; color: white; }
+        .btn:hover { opacity: 0.9; }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <h2>Nhập liệu & Xuất Phiếu</h2>
-
-    <!-- Phần Nhập Liệu -->
-    <div class="form-group">
-        <label>Mã Đơn Đặt Hàng / Mã Đơn Sản Xuất:</label>
-        <input type="text" id="inputMa" placeholder="Nhập mã đơn hàng..." oninput="capNhatPreview()">
-    </div>
-    <div class="form-group">
-        <label>Tên Nguyên Phụ Liệu / Sản Phẩm:</label>
-        <input type="text" id="inputTen" placeholder="Nhập tên hàng..." oninput="capNhatPreview()">
-    </div>
-    <div class="form-group">
+<div class="sys-container">
+    <h2>Hệ Thống Quản Lý Kho & Đơn Hàng (Tích Hợp Xuất Word)</h2>
+    
+    <!-- PHẦN NHẬP LIỆU TRÊN HỆ THỐNG -->
+    <div class="section">
+        <label>Mã Đơn Đặt Hàng:</label>
+        <input type="text" id="sysMa" placeholder="Nhập mã đơn..." oninput="syncData()">
+        
+        <label>Tên Nguyên Phụ Liệu:</label>
+        <input type="text" id="sysTen" placeholder="Nhập tên hàng..." oninput="syncData()">
+        
         <label>Số Lượng (數量):</label>
-        <input type="text" id="inputSoLuong" placeholder="Nhập số lượng..." oninput="capNhatPreview()">
-    </div>
-    <div class="form-group">
+        <input type="text" id="sysSL" placeholder="Nhập số lượng..." oninput="syncData()">
+        
         <label>Đơn Vị (單位):</label>
-        <input type="text" id="inputDonVi" placeholder="Nhập đơn vị (Thùng, Cái...)..." oninput="capNhatPreview()">
+        <input type="text" id="sysDV" placeholder="Nhập đơn vị..." oninput="syncData()">
     </div>
 
-    <!-- Khung Xem Trước (Preview) -->
-    <div class="preview-box">
-        <div id="khung-xem-truoc">
-            <div class="title-phieu">PHIẾU THÔNG TIN NGUYÊN PHỤ LIỆU</div>
-            <table class="print-template">
-                <tr>
-                    <th style="width: 35%;">Thông tin</th>
-                    <th>Nội dung chi tiết</th>
-                </tr>
-                <tr>
-                    <td><strong>Mã đơn hàng:</strong></td>
-                    <td><span id="prevMa">...</span></td>
-                </tr>
-                <tr>
-                    <td><strong>Tên hàng:</strong></td>
-                    <td><span id="prevTen">...</span></td>
-                </tr>
-                <tr>
-                    <td><strong>Số lượng (數量):</strong></td>
-                    <td><span id="prevSoLuong">...</span></td>
-                </tr>
-                <tr>
-                    <td><strong>Đơn vị (單位):</strong></td>
-                    <td><span id="prevDonVi">...</span></td>
-                </tr>
-            </table>
-        </div>
+    <!-- KHUNG XEM TRƯỚC (PRINT PREVIEW) TRÊN HỆ THỐNG -->
+    <div id="khung-xem-truoc">
+        <div class="sys-title">PHIẾU THÔNG TIN NHÃN VẬT TƯ</div>
+        <table class="sys-table">
+            <tr>
+                <th style="width: 35%;">Chỉ tiêu</th>
+                <th>Nội dung chi tiết</th>
+            </tr>
+            <tr>
+                <td><strong>Mã đơn hàng:</strong></td>
+                <td><span id="outMa">...</span></td>
+            </tr>
+            <tr>
+                <td><strong>Tên nguyên phụ liệu:</strong></td>
+                <td><span id="outTen">...</span></td>
+            </tr>
+            <tr>
+                <td><strong>Số lượng (數量):</strong></td>
+                <td><span id="outSL">...</span></td>
+            </tr>
+            <tr>
+                <td><strong>Đơn vị (單位):</strong></td>
+                <td><span id="outDV">...</span></td>
+            </tr>
+        </table>
+    </div>
 
-        <!-- Nút thao tác -->
-        <div class="btn-group">
-            <button class="btn-print" onclick="window.print()">🖨️ In Trực Tiếp</button>
-            <button class="btn-word" onclick="xuatFileWord('khung-xem-truoc', 'Phieu_Nguyen_Phu_Lieu.doc')">📄 Xuất File Word</button>
-        </div>
+    <!-- KHU VỰC NÚT BẤM (ĐÃ TÍCH HỢP NÚT XUẤT WORD) -->
+    <div class="toolbar">
+        <button class="btn btn-print" onclick="window.print()">🖨️ In Trực Tiếp</button>
+        <!-- Nút gọi hàm xuất Word gắn với ID của khung xem trước -->
+        <button class="btn btn-word" onclick="xuatFileWord('khung-xem-truoc', 'Phieu_Xuat_Kho.doc')">📄 Xuất File Word</button>
     </div>
 </div>
 
 <script>
-    // Hàm cập nhật thời gian thực từ ô nhập liệu lên khung xem trước
-    function capNhatPreview() {
-        document.getElementById('prevMa').innerText = document.getElementById('inputMa').value || '...';
-        document.getElementById('prevTen').innerText = document.getElementById('inputTen').value || '...';
-        document.getElementById('prevSoLuong').innerText = document.getElementById('inputSoLuong').value || '...';
-        document.getElementById('prevDonVi').innerText = document.getElementById('inputDonVi').value || '...';
+    // Hàm đồng bộ dữ liệu nhập vào khung xem trước
+    function syncData() {
+        document.getElementById('outMa').innerText = document.getElementById('sysMa').value || '...';
+        document.getElementById('outTen').innerText = document.getElementById('sysTen').value || '...';
+        document.getElementById('outSL').innerText = document.getElementById('sysSL').value || '...';
+        document.getElementById('outDV').innerText = document.getElementById('sysDV').value || '...';
     }
 
-    // Hàm xuất nội dung khung xem trước thành file Word (.doc)
-    function xuatFileWord(elementId, filename = 'Tai_Khoan.doc') {
-        var htmlContent = document.getElementById(elementId).innerHTML;
+    // --- HÀM XUẤT FILE WORD GIỮ NGUYÊN KHUNG VÀ BẢNG BIỂU ---
+    function xuatFileWord(elementId, filename = 'Tai_Lieu.doc') {
+        var element = document.getElementById(elementId);
+        if (!element) {
+            alert("Không tìm thấy khung xem trước!");
+            return;
+        }
+        var htmlContent = element.innerHTML;
 
+        // Định dạng chuẩn Office Word tương thích HTML
         var header = "<html xmlns:o='urn:schemas-microsoft-com:office:office' " +
                      "xmlns:w='urn:schemas-microsoft-com:office:word' " +
                      "xmlns='http://www.w3.org/TR/REC-html40'>" +
                      "<head><meta charset='utf-8'>" +
                      "<style>" +
-                     "  body { font-family: 'Arial', sans-serif; margin: 20px; }" +
-                     "  .title-phieu { text-align: center; font-size: 18px; font-weight: bold; margin-bottom: 15px; }" +
-                     "  table { border-collapse: collapse; width: 100%; font-family: 'Arial', sans-serif; }" +
-                     "  td, th { border: 1px solid #000; padding: 8px 12px; text-align: left; }" +
-                     "  th { background-color: #f2f2f2; }" +
+                     "  body { font-family: 'Arial', sans-serif; }" +
+                     "  .sys-title { text-align: center; font-weight: bold; font-size: 16px; margin-bottom: 15px; }" +
+                     "  .sys-table { width: 100%; border-collapse: collapse; margin-top: 15px; }" +
+                     "  .sys-table th, .sys-table td { border: 1px solid #000; padding: 8px 12px; text-align: left; }" +
+                     "  .sys-table th { background-color: #f1f2f6; }" +
                      "</style></head><body>";
                      
         var footer = "</body></html>";
         var sourceHTML = header + htmlContent + footer;
 
+        // Tạo gói dữ liệu Blob và kích hoạt tải về file .doc
         var blob = new Blob(['\ufeff', sourceHTML], {
             type: 'application/msword'
         });
