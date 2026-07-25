@@ -1,365 +1,257 @@
 <!DOCTYPE html>
-<html lang="zh-TW">
+<html lang="vi">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>富裕鞋業 - 生產材料總匯表 (倉管備料清單)</title>
-  <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: Arial, sans-serif; }
-    body { background-color: #f1f5f9; padding: 10px; color: #1e293b; }
-    
-    .control-card { background: white; padding: 12px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-bottom: 15px; max-width: 210mm; margin-left: auto; margin-right: auto; }
-    .control-title { font-size: 1rem; font-weight: bold; color: #0f172a; margin-bottom: 8px; }
-    
-    input[type="text"], select { width: 100%; padding: 6px 8px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.9rem; margin-bottom: 6px; outline: none; }
-    
-    .btn { width: 100%; padding: 8px; border: none; border-radius: 6px; font-weight: bold; font-size: 0.95rem; cursor: pointer; margin-top: 4px; }
-    .btn-blue { background: #2563eb; color: white; }
-    .btn-green { background: #16a34a; color: white; }
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SAUCONY 生産材料總匯表 - PS37283</title>
+    <style>
+        /* Base styles */
+        *, *::before, *::after {
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            color: #222222;
+            margin: 0;
+            padding: 20px;
+            font-size: 10pt;
+            background-color: #f0f2f5;
+        }
 
-    .filter-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 6px; margin-bottom: 6px; }
-    .filter-group { display: flex; flex-direction: column; }
-    .filter-group label { font-size: 0.75rem; font-weight: bold; color: #475569; margin-bottom: 2px; }
-    .filter-input { width: 100%; padding: 5px 8px; font-size: 0.85rem; border: 1px solid #cbd5e1; border-radius: 6px; outline: none; background: #fff; }
+        /* Toolbar for web action */
+        .toolbar {
+            max-width: 800px;
+            margin: 0 auto 15px auto;
+            text-align: right;
+        }
+        .btn-print {
+            background-color: #0056b3;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            font-size: 10pt;
+            font-weight: bold;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .btn-print:hover {
+            background-color: #004085;
+        }
 
-    .order-checklist { max-height: 120px; overflow-y: auto; border: 1px solid #cbd5e1; border-radius: 6px; padding: 6px; background: #fff; margin-bottom: 8px; }
-    .order-checklist label { display: flex; align-items: center; gap: 6px; padding: 3px 5px; font-size: 0.85rem; cursor: pointer; }
-    .order-checklist label:hover { background: #f1f5f9; border-radius: 4px; }
+        /* Page Container */
+        .page-container {
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto;
+            background: #ffffff;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
 
-    .a4-preview-container { display: flex; flex-direction: column; gap: 20px; align-items: center; }
-    
-    @page {
-      size: A4 portrait;
-      margin: 10mm;
-    }
+        .header-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 4px;
+        }
+        .logo-box {
+            border: 1px solid #333;
+            padding: 2px 6px;
+            font-weight: bold;
+            font-size: 11pt;
+            letter-spacing: 1px;
+        }
+        .company-header {
+            text-align: center;
+            flex-grow: 1;
+        }
+        .company-name {
+            font-size: 9pt;
+            font-weight: normal;
+            color: #333;
+            margin: 0;
+        }
+        .main-title {
+            font-size: 13pt;
+            font-weight: bold;
+            margin: 2px 0 0 0;
+            letter-spacing: 0.5px;
+        }
+        .sub-title {
+            text-align: center;
+            font-size: 7.5pt;
+            color: #666;
+            margin-bottom: 6px;
+        }
+        
+        /* Info Box */
+        .info-box {
+            background-color: #f4f7fc;
+            border: 1px solid #cce0ff;
+            border-radius: 6px;
+            padding: 6px 10px;
+            margin-bottom: 8px;
+            display: table;
+            width: 100%;
+        }
+        .info-row {
+            display: table-row;
+        }
+        .info-cell {
+            display: table-cell;
+            padding: 3px 4px;
+            font-size: 9.5pt;
+        }
+        .label {
+            color: #333;
+        }
+        .val-blue {
+            color: #0056b3;
+            font-weight: bold;
+        }
+        .val-orange {
+            color: #d97706;
+            font-weight: bold;
+        }
 
-    .a4-sheet { 
-      background: white; 
-      width: 210mm; 
-      min-height: 297mm;
-      max-height: 297mm;
-      margin: 0 auto; 
-      padding: 10mm 12mm; 
-      box-shadow: 0 4px 15px rgba(0,0,0,0.1); 
-      border-radius: 6px; 
-      position: relative;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-    }
-    
-    .sheet-top-content { width: 100%; }
+        /* Data Table */
+        table.data-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 9pt;
+        }
+        table.data-table th, table.data-table td {
+            border: 1px solid #333333;
+            padding: 5px 6px;
+            text-align: center;
+            vertical-align: middle;
+        }
+        table.data-table th {
+            background-color: #e9ecef;
+            font-weight: bold;
+            color: #111;
+            font-size: 9pt;
+        }
+        table.data-table td.text-left {
+            text-align: left;
+        }
+        .checkbox-box {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border: 1px solid #555;
+            vertical-align: middle;
+        }
 
-    .sheet-header { border-bottom: 2px solid #1e293b; padding-bottom: 5px; margin-bottom: 6px; text-align: center; position: relative; }
-    .logo-box { position: absolute; left: 0; top: 2px; width: 45px; height: 25px; display: flex; align-items: center; justify-content: center; }
-    .logo-box img { max-width: 100%; max-height: 100%; object-fit: contain; }
-    .logo-placeholder { font-size: 0.45rem; color: #64748b; border: 1px dashed #cbd5e1; padding: 2px; text-align: center; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; }
-
-    .header-content { padding: 0 50px; } 
-    .header-content h1 { font-size: 0.75rem; font-weight: bold; color: #475569; margin-bottom: 1px; }
-    .header-content h2 { font-size: 1.05rem; font-weight: bold; text-transform: uppercase; margin-bottom: 1px; color: #0f172a; }
-    .header-content p { font-size: 0.5rem; color: #64748b; }
-
-    .order-info { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 10px; margin-bottom: 8px; font-size: 0.82rem; background: #f8fafc; padding: 6px 10px; border: 1px solid #cbd5e1; border-radius: 6px; }
-    
-    table { width: 100%; border-collapse: collapse; margin-bottom: 10px; }
-    th, td { border: 1px solid #333; padding: 5px 7px; font-size: 0.8rem; text-align: left; vertical-align: middle; }
-    th { background-color: #e2e8f0; font-weight: bold; text-align: center; color: #0f172a; }
-    
-    td.center { text-align: center; }
-    td.right { text-align: right; }
-    .nowrap { white-space: nowrap; }
-
-    /* Cấu hình chuyên biệt cho máy in */
-    @media print {
-      html, body {
-        background: white !important;
-        padding: 0 !important;
-        margin: 0 !important;
-      }
-      .control-card { 
-        display: none !important; 
-      }
-      .a4-preview-container {
-        gap: 0 !important;
-      }
-      .a4-sheet { 
-        box-shadow: none !important; 
-        margin: 0 !important; 
-        width: 100% !important; 
-        height: 297mm !important;
-        max-height: 297mm !important;
-        page-break-after: always !important;
-        break-after: page !important;
-        page-break-inside: avoid !important;
-        break-inside: avoid !important;
-        padding: 5mm 8mm !important;
-      }
-    }
-  </style>
+        /* PRINT STYLES - Khắc phục triệt để lỗi khi in từ trình duyệt */
+        @media print {
+            @page {
+                size: A4 portrait;
+                margin: 8mm;
+            }
+            body {
+                background-color: #ffffff !important;
+                padding: 0 !important;
+                margin: 0 !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+            .toolbar {
+                display: none !important;
+            }
+            .page-container {
+                width: 100% !important;
+                max-width: 100% !important;
+                margin: 0 !important;
+                padding: 5px !important;
+                border: none !important;
+                box-shadow: none !important;
+                border-radius: 0 !important;
+            }
+            .info-box {
+                background-color: #f4f7fc !important;
+                border: 1px solid #cce0ff !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+            table.data-table th {
+                background-color: #e9ecef !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+        }
+    </style>
 </head>
 <body>
 
-  <div class="control-card">
-    <div class="control-title">🖨️ 生產訂單材料匯總表 (倉管備料清單)</div>
-    <input type="text" id="scriptUrl" placeholder="請貼上網址..." style="margin-bottom: 6px;">
-    
-    <button class="btn btn-blue" onclick="loadData()">🔄 從庫存載入資料</button>
-
-    <div style="margin-top: 8px;">
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-        <label style="font-size: 0.85rem; font-weight: bold;">篩選指令表：</label>
-        <div>
-          <button onclick="toggleSelectAll(true)" style="font-size: 0.8rem; background: none; border: none; color: #2563eb; cursor: pointer; text-decoration: underline; margin-right: 8px;">全選</button>
-          <button onclick="toggleSelectAll(false)" style="font-size: 0.8rem; background: none; border: none; color: #64748b; cursor: pointer; text-decoration: underline;">取消全選</button>
-        </div>
-      </div>
-      
-      <div class="filter-grid">
-        <div class="filter-group">
-          <label>指令表：</label>
-          <input type="text" id="filterOrder" class="filter-input" placeholder="輸入指令表..." oninput="applyFilters()">
-        </div>
-        <div class="filter-group">
-          <label>廠型-SKU：</label>
-          <input type="text" id="filterSku" class="filter-input" placeholder="輸入SKU..." oninput="applyFilters()">
-        </div>
-        <div class="filter-group">
-          <label>客戶交期：</label>
-          <input type="text" id="filterDate" class="filter-input" placeholder="輸入交期..." oninput="applyFilters()">
-        </div>
-      </div>
-
-      <div id="orderChecklist" class="order-checklist">
-        <span style="color: #64748b; font-size: 0.85rem;">請先載入資料...</span>
-      </div>
+    <!-- Nút in (sẽ tự động ẩn đi khi bấm lệnh in) -->
+    <div class="toolbar">
+        <button class="btn-print" onclick="window.print()">🖨️ In Phiếu (Print)</button>
     </div>
 
-    <button class="btn btn-green" onclick="window.print()" style="margin-top: 8px;">🖨️ 批量列印所選的備料匯總表</button>
-  </div>
+    <!-- Nội dung chính -->
+    <div class="page-container">
+        <!-- Header -->
+        <div class="header-top">
+            <div class="logo-box">AR</div>
+            <div class="company-header">
+                <div class="company-name">RIGHT RICH INTL. CO. LTD 富裕鞋業有限公司</div>
+                <div class="main-title">SAUCONY 生產材料總匯表</div>
+            </div>
+            <div style="width: 30px;"></div>
+        </div>
+        <div class="sub-title">材料倉庫明細清單</div>
 
-  <div class="a4-preview-container" id="a4Container">
-    <div class="a4-sheet">
-      <div style="text-align: center; color: #64748b; padding: 100px 0; width: 100%;">
-        <h2>請先載入資料並在上方勾選要列印的指令表。</h2>
-      </div>
+        <!-- Info Box -->
+        <div class="info-box">
+            <div class="info-row">
+                <div class="info-cell" style="width: 50%;">
+                    <span class="label">指令表 (指令單號)：</span>
+                    <span class="val-blue">PS37283</span>
+                </div>
+                <div class="info-cell" style="width: 50%;">
+                    <span class="label">廠型-SKU：</span>
+                    <span class="val-blue">S53141女-S10584-2</span>
+                </div>
+            </div>
+            <div class="info-row">
+                <div class="info-cell">
+                    <span class="label">鞋數量：</span>
+                    <span class="val-blue">624 雙</span>
+                </div>
+                <div class="info-cell">
+                    <span class="label">客戶交期：</span>
+                    <span class="val-orange">2026/6/25</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Table -->
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th style="width: 6%;">序號</th>
+                    <th style="width: 50%;">材料名稱 / 品名 (摘要)</th>
+                    <th style="width: 24%;">顏色</th>
+                    <th style="width: 8%;">單位</th>
+                    <th style="width: 8%;">數量</th>
+                    <th style="width: 4%;">點核</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>1</td>
+                    <td class="text-left">刮布標 LX1865-31 底色/TRAIL字體+菱形綠線+Saucony字體/菱形綠線山/TRAIL外框 37*60MM 上腰</td>
+                    <td>13-4111TPG藍15F+19-0201TPG灰0XD</td>
+                    <td>PRS</td>
+                    <td class="val-blue">624</td>
+                    <td><span class="checkbox-box"></span></td>
+                </tr>
+            </tbody>
+        </table>
     </div>
-  </div>
 
-  <script>
-    let sheetData = [];
-    let masterRecords = [];
-
-    document.addEventListener('DOMContentLoaded', () => {
-      const savedUrl = localStorage.getItem('saucony_gas_url');
-      if (savedUrl) {
-        document.getElementById('scriptUrl').value = savedUrl;
-        loadData();
-      }
-    });
-
-    async function loadData() {
-      const url = document.getElementById('scriptUrl').value.trim();
-      if (!url) return alert("請輸入網址！");
-
-      localStorage.setItem('saucony_gas_url', url);
-      try {
-        const res = await fetch(url);
-        sheetData = await res.json();
-        processMasterRecords(sheetData);
-        alert("✅ 資料載入成功！");
-      } catch (err) {
-        alert("❌ 載入失敗，請檢查網址是否正確！");
-      }
-    }
-
-    function getColValue(row, possibleNames, defaultValue = '-') {
-      const keys = Object.keys(row);
-      for (let name of possibleNames) {
-        const cleanTarget = name.toLowerCase().replace(/\s+/g, '');
-        for (let key of keys) {
-          if (key.toLowerCase().replace(/\s+/g, '') === cleanTarget) {
-            if (row[key] !== "" && row[key] !== null && row[key] !== undefined) return row[key];
-          }
-        }
-      }
-      for (let name of possibleNames) {
-        const foundKey = keys.find(k => k.toLowerCase().replace(/\s+/g, '').includes(name.toLowerCase().replace(/\s+/g, '')));
-        if (foundKey && row[foundKey] !== "" && row[foundKey] !== null && row[foundKey] !== undefined) return row[foundKey];
-      }
-      return defaultValue;
-    }
-
-    function processMasterRecords(data) {
-      const map = new Map();
-      data.forEach(row => {
-        const orderNo = String(getColValue(row, ['指令表', 'đơn sản xuất', 'po sx'], '')).trim();
-        if (!orderNo || orderNo === '-') return;
-
-        if (!map.has(orderNo)) {
-          let factorySku = String(getColValue(row, ['廠型-SKU', '廠型', 'sku', 'hình thể'], '-')).trim();
-          let deliveryDate = String(getColValue(row, ['客戶交期', '出貨日期', 'ngày xuất', 'xuất hàng'], '-')).trim();
-          let shoeQty = String(getColValue(row, ['鞋數量', '鞋k số lượng', 'số lượng giày', 'pairs'], '-')).trim();
-          
-          if (deliveryDate && deliveryDate !== '-') {
-            try {
-              const d = new Date(deliveryDate);
-              if (!isNaN(d.getTime())) deliveryDate = d.toLocaleDateString('zh-TW');
-            } catch (e) {}
-          }
-
-          map.set(orderNo, { orderNo, sku: factorySku, date: deliveryDate, shoeQty });
-        }
-      });
-      masterRecords = Array.from(map.values());
-      applyFilters();
-    }
-
-    function applyFilters() {
-      const qOrder = document.getElementById('filterOrder').value.trim().toLowerCase();
-      const qSku = document.getElementById('filterSku').value.trim().toLowerCase();
-      const qDate = document.getElementById('filterDate').value.trim().toLowerCase();
-
-      const filtered = masterRecords.filter(item => {
-        return item.orderNo.toLowerCase().includes(qOrder) &&
-               item.sku.toLowerCase().includes(qSku) &&
-               item.date.toLowerCase().includes(qDate);
-      });
-      renderOrderChecklist(filtered);
-    }
-
-    function renderOrderChecklist(recordsArray) {
-      const checklistDiv = document.getElementById('orderChecklist');
-      checklistDiv.innerHTML = '';
-
-      if (recordsArray.length === 0) {
-        checklistDiv.innerHTML = '<span style="color: red; font-size: 0.85rem;">找不到符合篩選條件的指令表！</span>';
-        renderA4SheetsBatch();
-        return;
-      }
-
-      const checkedSet = new Set();
-      document.querySelectorAll('#orderChecklist input[type="checkbox"]:checked').forEach(cb => checkedSet.add(cb.value));
-
-      recordsArray.forEach(item => {
-        const isChecked = checkedSet.has(item.orderNo) ? 'checked' : '';
-        const label = document.createElement('label');
-        label.innerHTML = `<input type="checkbox" value="${item.orderNo}" ${isChecked} onchange="renderA4SheetsBatch()"> 
-                           <b>指令表：</b> ${item.orderNo} &nbsp;|&nbsp; <b>SKU：</b> ${item.sku} &nbsp;|&nbsp; <b>交期：</b> ${item.date}`;
-        checklistDiv.appendChild(label);
-      });
-      renderA4SheetsBatch();
-    }
-
-    function toggleSelectAll(select) {
-      document.querySelectorAll('#orderChecklist input[type="checkbox"]').forEach(cb => cb.checked = select);
-      renderA4SheetsBatch();
-    }
-
-    function renderA4SheetsBatch() {
-      const container = document.getElementById('a4Container');
-      const checkboxes = document.querySelectorAll('#orderChecklist input[type="checkbox"]:checked');
-      
-      if (checkboxes.length === 0) {
-        container.innerHTML = `
-          <div class="a4-sheet">
-            <div style="text-align: center; color: #64748b; padding: 100px 20px; width: 100%;">
-              <h2>尚未選擇任何指令表</h2>
-              <p style="margin-top: 6px; font-size: 0.85rem;">請在上方控制面板勾選您想要預覽或列印的訂單。</p>
-            </div>
-          </div>
-        `;
-        return;
-      }
-
-      let allPagesHtml = '';
-
-      checkboxes.forEach(cb => {
-        const selectedOrder = cb.value;
-        const matchedRows = sheetData.filter(row => String(getColValue(row, ['指令表', 'đơn sản xuất', 'po sx'], '')).trim() === selectedOrder);
-
-        let factorySku = '-';
-        let deliveryDate = '-';
-        let shoeQty = '-';
-
-        if (matchedRows.length > 0) {
-          factorySku = getColValue(matchedRows[0], ['廠型-SKU', '廠型', 'sku', 'hình thể'], '-');
-          deliveryDate = getColValue(matchedRows[0], ['客戶交期', '出貨日期', 'ngày xuất', 'xuất hàng'], '-');
-          shoeQty = getColValue(matchedRows[0], ['鞋數量', '鞋k số lượng', 'số lượng giày', 'pairs'], '-');
-          if (deliveryDate && deliveryDate !== '-') {
-            try {
-              const d = new Date(deliveryDate);
-              if (!isNaN(d.getTime())) deliveryDate = d.toLocaleDateString('zh-TW');
-            } catch (e) {}
-          }
-        }
-
-        let tableRowsHtml = '';
-        if (matchedRows.length === 0) {
-          tableRowsHtml = '<tr><td colspan="6" style="text-align: center; color: red; padding: 10px;">找不到該指令表的材料資料。</td></tr>';
-        } else {
-          matchedRows.forEach((row, index) => {
-            const name = getColValue(row, ['摘要', '品名', '材料名稱', 'tên vật tư'], '-');
-            const color = getColValue(row, ['顏色', 'màu sắc'], '-');
-            const qty = getColValue(row, ['數量', 'số lượng', 'sl'], '0');
-            const unit = getColValue(row, ['單位', 'đơn vị'], 'PCS');
-
-            tableRowsHtml += `
-              <tr>
-                <td class="center">${index + 1}</td>
-                <td><b>${name}</b></td>
-                <td class="center">${color}</td>
-                <td class="center nowrap">${unit}</td>
-                <td class="right nowrap" style="font-weight: bold; color: #1d4ed8;">${qty}</td>
-                <td class="center">☐</td>
-              </tr>
-            `;
-          });
-        }
-
-        allPagesHtml += `
-          <div class="a4-sheet">
-            <div class="sheet-top-content">
-              <div class="sheet-header">
-                <div class="logo-box">
-                  <img src="https://dungnguyenbtsl.github.io/FULIAO-LABEL/logo.jpeg" alt="富裕鞋業 Logo" onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\'logo-placeholder\'>Logo Error</div>';">
-                </div>
-                <div class="header-content">
-                  <h1>RIGHT RICH INTL. CO. LTD 富裕鞋業有限公司</h1>
-                  <h2>SAUCONY 生產材料總匯表</h2>
-                  <p><b>材料倉庫備料清單</b></p>
-                </div>
-              </div>
-
-              <div class="order-info">
-                <div><b>指令表 (指令單號)：</b> <span style="color:#2563eb; font-weight:bold;">${selectedOrder}</span></div>
-                <div><b>廠型-SKU：</b> <span style="color:#0f172a; font-weight:bold;">${factorySku}</span></div>
-                <div><b>鞋數量：</b> <span style="color:#059669; font-weight:bold;">${shoeQty} 雙</span></div>
-                <div><b>客戶交期：</b> <span style="color:#b45309; font-weight:bold;">${deliveryDate}</span></div>
-              </div>
-
-              <table>
-                <thead>
-                  <tr>
-                    <th style="width: 8%;">序號</th>
-                    <th style="width: 48%;">材料名稱 / 品名 (摘要)</th>
-                    <th style="width: 20%;">顏色</th>
-                    <th style="width: 7%;" class="nowrap">單位</th>
-                    <th style="width: 10%;" class="nowrap">數量</th>
-                    <th style="width: 7%;">點檢</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  ${tableRowsHtml}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        `;
-      });
-
-      container.innerHTML = allPagesHtml;
-    }
-  </script>
 </body>
 </html>
