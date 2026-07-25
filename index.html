@@ -26,28 +26,26 @@
     .order-checklist label { display: flex; align-items: center; gap: 6px; padding: 3px 5px; font-size: 0.85rem; cursor: pointer; }
     .order-checklist label:hover { background: #f1f5f9; border-radius: 4px; }
 
-    .a4-preview-container { display: flex; flex-direction: column; gap: 15px; align-items: center; }
+    .a4-preview-container { display: flex; flex-direction: column; gap: 20px; align-items: center; }
     
     @page {
       size: A4 portrait;
-      margin: 5mm;
+      margin: 10mm;
     }
 
     .a4-sheet { 
       background: white; 
       width: 210mm; 
-      height: 297mm; 
+      min-height: 297mm;
       max-height: 297mm;
       margin: 0 auto; 
-      padding: 8mm 10mm; 
+      padding: 10mm 12mm; 
       box-shadow: 0 4px 15px rgba(0,0,0,0.1); 
       border-radius: 6px; 
       position: relative;
-      page-break-after: always;
-      break-after: page;
-      overflow: hidden;
       display: flex;
       flex-direction: column;
+      justify-content: space-between;
     }
     
     .sheet-top-content { width: 100%; }
@@ -72,10 +70,31 @@
     td.right { text-align: right; }
     .nowrap { white-space: nowrap; }
 
+    /* Cấu hình chuyên biệt cho máy in */
     @media print {
-      body { background: white; padding: 0; }
-      .control-card { display: none !important; }
-      .a4-sheet { box-shadow: none !important; margin: 0 !important; width: 100% !important; height: 100vh !important; max-height: none !important; page-break-after: always; }
+      html, body {
+        background: white !important;
+        padding: 0 !important;
+        margin: 0 !important;
+      }
+      .control-card { 
+        display: none !important; 
+      }
+      .a4-preview-container {
+        gap: 0 !important;
+      }
+      .a4-sheet { 
+        box-shadow: none !important; 
+        margin: 0 !important; 
+        width: 100% !important; 
+        height: 297mm !important;
+        max-height: 297mm !important;
+        page-break-after: always !important;
+        break-after: page !important;
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+        padding: 5mm 8mm !important;
+      }
     }
   </style>
 </head>
