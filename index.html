@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>富裕鞋業 - 生產材料卡片清單 (Card View)</title>
+  <title>富裕鞋業 - 生產材料卡片清單 (Card View - 1 Card / 1 A4)</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: Arial, sans-serif; }
     body { background-color: #f1f5f9; padding: 10px; color: #1e293b; }
@@ -26,7 +26,12 @@
     .order-checklist label { display: flex; align-items: center; gap: 6px; padding: 3px 5px; font-size: 0.85rem; cursor: pointer; }
     .order-checklist label:hover { background: #f1f5f9; border-radius: 4px; }
 
-    /* Khu vực chứa các Card View */
+    /* Thiết lập chuẩn A4 cho từng Card View */
+    @page {
+      size: A4 portrait;
+      margin: 0;
+    }
+
     .cards-container { 
       display: flex; 
       flex-direction: column; 
@@ -34,22 +39,24 @@
       align-items: center; 
     }
 
-    /* Định dạng mỗi Card (tương đương 1 trang A4 hoặc nửa trang tùy ý) */
     .material-card { 
       background: white; 
       width: 210mm; 
-      min-height: 140mm; /* Thiết kế dạng thẻ khối linh hoạt, không bị bó buộc chết cứng chiều cao gây lỗi tràn */
+      height: 297mm; /* Cố định chính xác chiều cao 1 trang A4 */
+      max-height: 297mm;
       margin: 0 auto; 
-      padding: 10mm 12mm; 
+      padding: 12mm 15mm; 
       box-shadow: 0 4px 15px rgba(0,0,0,0.1); 
-      border-radius: 8px; 
-      border: 1px solid #cbd5e1;
+      border-radius: 6px; 
       position: relative;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
+      page-break-after: always;
+      break-after: page;
       page-break-inside: avoid;
       break-inside: avoid;
+      overflow: hidden;
     }
 
     .card-header { border-bottom: 2px solid #2563eb; padding-bottom: 6px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
@@ -66,16 +73,16 @@
     .card-info-item b { color: #0f172a; font-size: 0.85rem; }
 
     table { width: 100%; border-collapse: collapse; margin-bottom: 10px; }
-    th, td { border: 1px solid #333; padding: 5px 7px; font-size: 0.8rem; text-align: left; vertical-align: middle; }
+    th, td { border: 1px solid #333; padding: 6px 8px; font-size: 0.8rem; text-align: left; vertical-align: middle; }
     th { background-color: #e2e8f0; font-weight: bold; text-align: center; color: #0f172a; }
     
     td.center { text-align: center; }
     td.right { text-align: right; }
     .nowrap { white-space: nowrap; }
 
-    .card-footer { display: flex; justify-content: space-between; font-size: 0.75rem; color: #64748b; border-top: 1px dashed #cbd5e1; padding-top: 6px; margin-top: auto; }
+    .card-footer { display: flex; justify-content: space-between; font-size: 0.75rem; color: #64748b; border-top: 1px dashed #cbd5e1; padding-top: 8px; margin-top: auto; }
 
-    /* Cấu hình khi bấm In */
+    /* Cấu hình khi bấm In trực tiếp */
     @media print {
       html, body {
         background: white !important;
@@ -86,13 +93,15 @@
         display: none !important; 
       }
       .cards-container {
-        gap: 10mm !important;
+        gap: 0 !important;
       }
       .material-card { 
         box-shadow: none !important; 
-        margin: 0 auto !important; 
+        margin: 0 !important; 
         width: 100% !important; 
-        border: 1px solid #94a3b8 !important;
+        height: 297mm !important;
+        max-height: 297mm !important;
+        border: none !important;
         page-break-after: always !important;
         break-after: page !important;
         page-break-inside: avoid !important;
@@ -104,7 +113,7 @@
 <body>
 
   <div class="control-card">
-    <div class="control-title">🖨️ 生產訂單材料卡片清單 (Card View 模式)</div>
+    <div class="control-title">🖨️ 生產訂單材料卡片清單 (1 Card = 1 Trang A4)</div>
     <input type="text" id="scriptUrl" placeholder="請貼上網址..." style="margin-bottom: 6px;">
     
     <button class="btn btn-blue" onclick="loadData()">🔄 從庫存載入資料</button>
@@ -143,7 +152,7 @@
 
   <div class="cards-container" id="cardsContainer">
     <div class="material-card">
-      <div style="text-align: center; color: #64748b; padding: 40px 0; width: 100%;">
+      <div style="text-align: center; color: #64748b; padding: 100px 0; width: 100%;">
         <h2>請先載入資料並在上方勾選要列印的指令表。</h2>
       </div>
     </div>
@@ -266,7 +275,7 @@
       if (checkboxes.length === 0) {
         container.innerHTML = `
           <div class="material-card">
-            <div style="text-align: center; color: #64748b; padding: 40px 20px; width: 100%;">
+            <div style="text-align: center; color: #64748b; padding: 100px 20px; width: 100%;">
               <h2>尚未選擇任何指令表</h2>
               <p style="margin-top: 6px; font-size: 0.85rem;">請在上方控制面板勾選您想要預覽或列印的訂單卡片。</p>
             </div>
