@@ -33,7 +33,7 @@
     .order-checklist input[type="checkbox"] { width: 16px; height: 16px; accent-color: #2563eb; }
 
     /* ==========================================
-       THIẾT LẬP KHỔ GIẤY IN & NEO ĐÁY TRANG A4
+       THIẾT LẬP KHỔ GIẤY IN & NEO ĐÁY TRANG A4 NGANG
        ========================================== */
     @page {
       size: A4 landscape;
@@ -116,6 +116,10 @@
        CẤU HÌNH IN TRỰC TIẾP (PRINT MODE)
        ========================================== */
     @media print {
+      @page {
+        size: A4 landscape;
+        margin: 0mm;
+      }
       html, body {
         background: white !important;
         padding: 0 !important;
@@ -154,11 +158,17 @@
         page-break-before: avoid !important;
         break-before: avoid !important;
       }
-      /* Chế độ in riêng một thẻ khi được kích hoạt */
+      /* Chế độ in riêng một thẻ cụ thể - bắt buộc ép chuẩn A4 landscape */
       body.print-single .material-card:not(.printing-target) {
         display: none !important;
       }
       body.print-single .material-card.printing-target {
+        width: 297mm !important;
+        min-width: 297mm !important;
+        height: 210mm !important;
+        max-height: 210mm !important;
+        padding: 10mm 15mm 8mm 15mm !important;
+        margin: 0 auto !important;
         page-break-before: avoid !important;
         page-break-after: avoid !important;
         break-before: avoid !important;
@@ -199,7 +209,6 @@
         </div>
       </div>
 
-      <!-- Ô tìm kiếm nhanh ngay trong danh sách chọn (checklist) -->
       <div style="margin-bottom: 4px;">
         <input type="text" id="quickChecklistSearch" class="filter-input" placeholder="🔍 在清單中快速搜尋..." oninput="applyFilters()" style="margin-bottom: 4px; padding: 5px 8px; font-size: 0.8rem;">
       </div>
@@ -245,7 +254,6 @@
         processMasterRecords(sheetData);
         alert("✅ 資料載入成功！");
       } catch (err) {
-        // Xử lý khi mất mạng hoặc API lỗi (hiển thị thông báo chi tiết và dữ liệu cache nếu có)
         const cached = localStorage.getItem('saucony_sheet_cache');
         if (cached) {
           try {
@@ -334,7 +342,6 @@
         return;
       }
 
-      // Khôi phục trạng thái chọn đã lưu trước đó nếu có
       let savedChecked = [];
       try {
         savedChecked = JSON.parse(localStorage.getItem('saucony_checked_orders') || '[]');
@@ -367,7 +374,6 @@
       saveSelectionAndRender();
     }
 
-    // In riêng lẻ một thẻ cụ thể
     function printSingleCard(orderNo) {
       const cardEl = document.getElementById(`card-${orderNo}`);
       if (!cardEl) return;
