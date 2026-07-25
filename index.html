@@ -206,8 +206,8 @@
     </div>
 
     <script>
-        // Thay URL Web App Google Apps Script của bạn vào đây
-        const APPS_SCRIPT_URL = "YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE";
+        // URL Web App Google Apps Script của bạn đã được cấu hình sẵn
+        const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz_zAN6xMmLIP4UYPfsK0ZhsK-hKyVK2QJLWm-2JezdM9fuf8dE-2U-Y8dULYvZOs7B/exec";
 
         async function loadDataFromGoogleSheet() {
             const previewArea = document.getElementById('preview-area');
@@ -219,7 +219,7 @@
                 renderPreviews(data);
             } catch (error) {
                 console.error(error);
-                previewArea.innerHTML = '<p style="text-align:center; color:red; padding: 40px;">Lỗi kết nối Google Sheets! Vui lòng kiểm tra lại URL Web App.</p>';
+                previewArea.innerHTML = '<p style="text-align:center; color:red; padding: 40px;">Lỗi kết nối Google Sheets! Vui lòng kiểm tra quyền truy cập Web App (Access: Anyone).</p>';
             }
         }
 
@@ -307,11 +307,7 @@
 
         // Tự động tải dữ liệu khi mở trang
         window.onload = function() {
-            if (APPS_SCRIPT_URL !== "YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE") {
-                loadDataFromGoogleSheet();
-            } else {
-                document.getElementById('preview-area').innerHTML = '<p style="text-align:center; color:#d97706; padding: 40px;">⚠️ Vui lòng cấu hình biến <b>APPS_SCRIPT_URL</b> bằng đường dẫn Web App Google Apps Script của bạn.</p>';
-            }
+            loadDataFromGoogleSheet();
         };
     </script>
 </body>
