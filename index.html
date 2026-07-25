@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>富裕鞋業 - 生產材料卡片清單 (Final Landscape Mode)</title>
+  <title>富裕鞋業 - 生產材料卡片清單 (Pinned Landscape Cards)</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: Arial, sans-serif; }
     body { background-color: #f1f5f9; padding: 10px; color: #1e293b; }
@@ -26,24 +26,24 @@
     .order-checklist label { display: flex; align-items: center; gap: 6px; padding: 3px 5px; font-size: 0.85rem; cursor: pointer; }
     .order-checklist label:hover { background: #f1f5f9; border-radius: 4px; }
 
-    /* Thiết lập trang in chuẩn A4 KHỔ NGANG (Landscape) tuyệt đối */
+    /* Thiết lập trang in chuẩn A4 KHỔ NGANG (Landscape) có Neo trang độc lập */
     @page {
       size: A4 landscape;
-      margin: 5mm;
+      margin: 4mm;
     }
 
     .cards-container { 
       display: flex; 
       flex-direction: column; 
-      gap: 20px; 
+      gap: 25px; 
       align-items: center; 
     }
 
     .material-card { 
       background: white; 
-      width: 275mm; /* Khớp tuyệt đối với A4 ngang (297mm) trừ lề */
-      height: 182mm; /* Chiều cao chuẩn an toàn (tổng cộng padding + card < 200mm) để không bao giờ tràn trang 2 */
-      max-height: 182mm;
+      width: 275mm; 
+      height: 180mm; 
+      max-height: 180mm;
       margin: 0 auto; 
       padding: 6mm 10mm; 
       box-shadow: 0 4px 15px rgba(0,0,0,0.1); 
@@ -53,10 +53,12 @@
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      page-break-after: always;
-      break-after: page;
-      page-break-inside: avoid;
-      break-inside: avoid;
+      
+      /* Neo ngắt trang cứng (Strict Page Break Anchoring) */
+      page-break-after: always !important;
+      break-after: page !important;
+      page-break-inside: avoid !important;
+      break-inside: avoid !important;
       overflow: hidden;
     }
 
@@ -83,7 +85,7 @@
 
     .card-footer { display: flex; justify-content: space-between; font-size: 0.7rem; color: #64748b; border-top: 1px dashed #cbd5e1; padding-top: 4px; margin-top: auto; }
 
-    /* Cấu hình khi bấm In trực tiếp */
+    /* Cấu hình khi bấm In trực tiếp (Print Mode) */
     @media print {
       html, body {
         background: white !important;
@@ -100,8 +102,8 @@
         box-shadow: none !important; 
         margin: 0 auto !important; 
         width: 275mm !important; 
-        height: 182mm !important;
-        max-height: 182mm !important;
+        height: 180mm !important;
+        max-height: 180mm !important;
         border: none !important;
         page-break-after: always !important;
         break-after: page !important;
@@ -114,7 +116,7 @@
 <body>
 
   <div class="control-card">
-    <div class="control-title">🖨️ 生產訂單材料卡片清單 (Perfect Fit Landscape)</div>
+    <div class="control-title">🖨️ 生產訂單材料卡片清單 (Pinned Landscape Cards)</div>
     <input type="text" id="scriptUrl" placeholder="請貼上網址..." style="margin-bottom: 6px;">
     
     <button class="btn btn-blue" onclick="loadData()">🔄 從庫存載入資料</button>
@@ -148,7 +150,7 @@
       </div>
     </div>
 
-    <button class="btn btn-green" onclick="window.print()" style="margin-top: 8px;">🖨️ 批量列印橫向卡片</button>
+    <button class="btn btn-green" onclick="window.print()" style="margin-top: 8px;">🖨️ 批量列印橫向卡片 (已釘選)</button>
   </div>
 
   <div class="cards-container" id="cardsContainer">
