@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>富裕鞋業有限公司 - 批量生產訂單材料匯總表 (橫向)</title>
+  <title>RIGHT RICH INTL. CO. LTD 富裕訂購單 (批量列印)</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: Arial, sans-serif; }
     body { background-color: #f1f5f9; padding: 10px; color: #1e293b; }
@@ -30,16 +30,16 @@
     
     @page {
       size: A4 landscape;
-      margin: 5mm;
+      margin: 4mm;
     }
 
     .a4-sheet { 
       background: white; 
       width: 287mm; 
-      height: 198mm;
-      max-height: 198mm;
+      height: 185mm;
+      max-height: 185mm;
       margin: 0 auto; 
-      padding: 4mm 8mm; 
+      padding: 4mm 6mm; 
       box-shadow: 0 4px 15px rgba(0,0,0,0.1); 
       border-radius: 6px; 
       position: relative;
@@ -48,27 +48,32 @@
       page-break-inside: avoid;
       break-inside: avoid;
       overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
     }
-    
-    .sheet-header { border-bottom: 2px solid #1e293b; padding-bottom: 3px; margin-bottom: 5px; text-align: center; position: relative; }
-    .logo-box { position: absolute; left: 0; top: 1px; width: 34px; height: 20px; display: flex; align-items: center; justify-content: center; }
-    .logo-box img { max-width: 100%; max-height: 100%; object-fit: contain; }
-    .logo-placeholder { font-size: 0.4rem; color: #64748b; border: 1px dashed #cbd5e1; padding: 1px; text-align: center; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; }
 
-    .header-content { padding: 0 40px; } 
-    .header-content h1 { font-size: 0.6rem; font-weight: bold; color: #475569; margin-bottom: 0px; }
-    .header-content h2 { font-size: 0.95rem; font-weight: bold; text-transform: uppercase; margin-bottom: 0px; color: #0f172a; }
-    .header-content p { font-size: 0.42rem; color: #64748b; }
+    /* Form Right Rich Layout Styles */
+    .comp-header { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 1.5px solid #000; padding-bottom: 2px; margin-bottom: 4px; }
+    .comp-title { font-size: 1.1rem; font-weight: bold; letter-spacing: 0.5px; color: #000; }
+    .meta-top { font-size: 0.65rem; line-height: 1.2; text-align: right; }
 
-    .order-info { display: grid; grid-template-columns: 1fr 1.3fr 1fr 1fr; gap: 6px; margin-bottom: 5px; font-size: 0.75rem; background: #f8fafc; padding: 3px 8px; border: 1px solid #cbd5e1; border-radius: 6px; }
+    .info-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 2px 8px; font-size: 0.68rem; margin-bottom: 4px; border-bottom: 1px solid #666; padding-bottom: 4px; }
+    .info-item span { font-weight: bold; color: #000; }
+
+    .table-section { width: 100%; border-collapse: collapse; margin-bottom: 2px; }
+    .table-section th, .table-section td { border: 1px solid #000; padding: 2px 3px; font-size: 0.65rem; text-align: left; }
+    .table-section th { background-color: #f1f5f9; text-align: center; font-weight: bold; }
     
-    table { width: 100%; border-collapse: collapse; margin-bottom: 4px; }
-    th, td { border: 1px solid #333; padding: 2px 4px; font-size: 0.7rem; text-align: left; vertical-align: middle; }
-    th { background-color: #e2e8f0; font-weight: bold; text-align: center; color: #0f172a; }
-    
-    td.center { text-align: center; }
-    td.right { text-align: right; }
-    .nowrap { white-space: nowrap; }
+    .size-table { width: 100%; border-collapse: collapse; margin-bottom: 4px; }
+    .size-table th, .size-table td { border: 1px solid #000; padding: 1px 2px; font-size: 0.62rem; text-align: center; }
+    .size-table th { background-color: #e2e8f0; }
+
+    .notes-section { font-size: 0.6rem; border: 1px solid #000; padding: 3px; margin-bottom: 4px; background: #fafafa; }
+    .notes-title { font-weight: bold; margin-bottom: 1px; }
+
+    .form-footer { display: flex; justify-content: space-between; font-size: 0.65rem; align-items: center; border-top: 1px solid #000; padding-top: 2px; }
+    .signatures { display: flex; gap: 15px; }
 
     @media print {
       body { background: white; padding: 0; }
@@ -77,8 +82,8 @@
         box-shadow: none !important; 
         margin: 0 !important; 
         width: 100% !important; 
-        height: 198mm !important;
-        max-height: 198mm !important;
+        height: 185mm !important;
+        max-height: 185mm !important;
         page-break-after: always !important;
         break-after: page !important;
         page-break-inside: avoid !important;
@@ -91,7 +96,7 @@
 <body>
 
   <div class="control-card">
-    <div class="control-title">🖨️ 批量選擇與列印訂單 (A4 橫向匯總)</div>
+    <div class="control-title">🖨️ RIGHT RICH 富裕訂購單 - 批量列印系統</div>
     <input type="text" id="scriptUrl" placeholder="請貼上網址..." style="margin-bottom: 6px;">
     
     <button class="btn btn-blue" onclick="loadData()">🔄 從庫存載入資料</button>
@@ -125,7 +130,7 @@
       </div>
     </div>
 
-    <button class="btn btn-green" onclick="window.print()" style="margin-top: 8px;">🖨️ 批量列印所選的 A4 橫向匯總單</button>
+    <button class="btn btn-green" onclick="window.print()" style="margin-top: 8px;">🖨️ 批量列印所選的富裕訂購單</button>
   </div>
 
   <div class="a4-preview-container" id="a4Container">
@@ -156,7 +161,6 @@
       try {
         const res = await fetch(url);
         sheetData = await res.json();
-        
         processMasterRecords(sheetData);
         alert("✅ 資料載入成功！");
       } catch (err) {
@@ -166,26 +170,19 @@
 
     function getColValue(row, possibleNames, defaultValue = '-') {
       const keys = Object.keys(row);
-      
       for (let name of possibleNames) {
         const cleanTarget = name.toLowerCase().replace(/\s+/g, '');
         for (let key of keys) {
           const cleanKey = key.toLowerCase().replace(/\s+/g, '');
           if (cleanKey === cleanTarget) {
-            if (row[key] !== "" && row[key] !== null && row[key] !== undefined) {
-              return row[key];
-            }
+            if (row[key] !== "" && row[key] !== null && row[key] !== undefined) return row[key];
           }
         }
       }
-
       for (let name of possibleNames) {
         const foundKey = keys.find(k => k.toLowerCase().replace(/\s+/g, '').includes(name.toLowerCase().replace(/\s+/g, '')));
-        if (foundKey && row[foundKey] !== "" && row[foundKey] !== null && row[foundKey] !== undefined) {
-          return row[foundKey];
-        }
+        if (foundKey && row[foundKey] !== "" && row[foundKey] !== null && row[foundKey] !== undefined) return row[foundKey];
       }
-      
       return defaultValue;
     }
 
@@ -203,21 +200,13 @@
           if (deliveryDate && deliveryDate !== '-') {
             try {
               const d = new Date(deliveryDate);
-              if (!isNaN(d.getTime())) {
-                deliveryDate = d.toLocaleDateString('zh-TW');
-              }
+              if (!isNaN(d.getTime())) deliveryDate = d.toLocaleDateString('zh-TW');
             } catch (e) {}
           }
 
-          map.set(orderNo, {
-            orderNo: orderNo,
-            sku: factorySku,
-            date: deliveryDate,
-            shoeQty: shoeQty
-          });
+          map.set(orderNo, { orderNo: orderNo, sku: factorySku, date: deliveryDate, shoeQty: shoeQty });
         }
       });
-
       masterRecords = Array.from(map.values());
       applyFilters();
     }
@@ -228,12 +217,10 @@
       const qDate = document.getElementById('filterDate').value.trim().toLowerCase();
 
       const filtered = masterRecords.filter(item => {
-        const matchOrder = item.orderNo.toLowerCase().includes(qOrder);
-        const matchSku = item.sku.toLowerCase().includes(qSku);
-        const matchDate = item.date.toLowerCase().includes(qDate);
-        return matchOrder && matchSku && matchDate;
+        return item.orderNo.toLowerCase().includes(qOrder) &&
+               item.sku.toLowerCase().includes(qSku) &&
+               item.date.toLowerCase().includes(qDate);
       });
-
       renderOrderChecklist(filtered);
     }
 
@@ -248,24 +235,20 @@
       }
 
       const checkedSet = new Set();
-      document.querySelectorAll('#orderChecklist input[type="checkbox"]:checked').forEach(cb => {
-        checkedSet.add(cb.value);
-      });
+      document.querySelectorAll('#orderChecklist input[type="checkbox"]:checked').forEach(cb => checkedSet.add(cb.value));
 
       recordsArray.forEach(item => {
         const isChecked = checkedSet.has(item.orderNo) ? 'checked' : '';
         const label = document.createElement('label');
         label.innerHTML = `<input type="checkbox" value="${item.orderNo}" ${isChecked} onchange="renderA4SheetsBatch()"> 
-                           <b>指令表：</b> ${item.orderNo} &nbsp;|&nbsp; <b>SKU：</b> ${item.sku} &nbsp;|&nbsp; <b>交期：</b> ${item.date} &nbsp;|&nbsp; <b>鞋數量：</b> ${item.shoeQty}`;
+                           <b>指令表：</b> ${item.orderNo} &nbsp;|&nbsp; <b>SKU：</b> ${item.sku} &nbsp;|&nbsp; <b>交期：</b> ${item.date} &nbsp;|&nbsp; <b>數量：</b> ${item.shoeQty}`;
         checklistDiv.appendChild(label);
       });
-
       renderA4SheetsBatch();
     }
 
     function toggleSelectAll(select) {
-      const checkboxes = document.querySelectorAll('#orderChecklist input[type="checkbox"]');
-      checkboxes.forEach(cb => cb.checked = select);
+      document.querySelectorAll('#orderChecklist input[type="checkbox"]').forEach(cb => cb.checked = select);
       renderA4SheetsBatch();
     }
 
@@ -274,14 +257,7 @@
       const checkboxes = document.querySelectorAll('#orderChecklist input[type="checkbox"]:checked');
       
       if (checkboxes.length === 0) {
-        container.innerHTML = `
-          <div class="a4-sheet">
-            <div style="text-align: center; color: #64748b; padding: 50px 20px; width: 100%;">
-              <h2>尚未選擇任何指令表</h2>
-              <p style="margin-top: 6px; font-size: 0.85rem;">請在上方控制面板勾選您想要預覽或列印的訂單。</p>
-            </div>
-          </div>
-        `;
+        container.innerHTML = `<div class="a4-sheet"><div style="text-align: center; color: #64748b; padding: 50px 20px; width: 100%;"><h2>尚未選擇任何指令表</h2></div></div>`;
         return;
       }
 
@@ -289,89 +265,111 @@
 
       checkboxes.forEach(cb => {
         const selectedOrder = cb.value;
+        const matchedRows = sheetData.filter(row => String(getColValue(row, ['指令表', 'đơn sản xuất', 'po sx'], '')).trim() === selectedOrder);
 
-        const matchedRows = sheetData.filter(row => {
-          const orderNo = String(getColValue(row, ['指令表', 'đơn sản xuất', 'po sx'], '')).trim();
-          return orderNo === selectedOrder;
-        });
-
-        let factorySku = '-';
-        let deliveryDate = '-';
-        let shoeQty = '-';
-
+        let factorySku = '-', deliveryDate = '-', shoeQty = '-', brand = 'SAUCONY', custStyle = '-', gender = '-';
         if (matchedRows.length > 0) {
-          factorySku = getColValue(matchedRows[0], ['廠型-SKU', '廠型', 'sku', 'hình thể'], '-');
-          deliveryDate = getColValue(matchedRows[0], ['客戶交期', '出貨日期', 'ngày xuất', 'xuất hàng'], '-');
-          shoeQty = getColValue(matchedRows[0], ['鞋數量', '鞋k số lượng', 'số lượng giày', 'pairs'], '-');
+          factorySku = getColValue(matchedRows[0], ['廠型-SKU', '廠型', 'sku'], '-');
+          deliveryDate = getColValue(matchedRows[0], ['客戶交期', '出貨日期'], '-');
+          shoeQty = getColValue(matchedRows[0], ['鞋數量', '鞋k số lượng', 'pairs'], '-');
+          custStyle = getColValue(matchedRows[0], ['客戶樣式', 'style'], 'XODUS ULTRA 4');
+          gender = getColValue(matchedRows[0], ['gender', '性別'], '男');
           
           if (deliveryDate && deliveryDate !== '-') {
             try {
               const d = new Date(deliveryDate);
-              if (!isNaN(d.getTime())) {
-                deliveryDate = d.toLocaleDateString('zh-TW');
-              }
+              if (!isNaN(d.getTime())) deliveryDate = d.toLocaleDateString('zh-TW');
             } catch (e) {}
           }
         }
 
         let tableRowsHtml = '';
-        if (matchedRows.length === 0) {
-          tableRowsHtml = '<tr><td colspan="6" style="text-align: center; color: red; padding: 10px;">找不到該指令表的材料資料。</td></tr>';
-        } else {
-          matchedRows.forEach((row, index) => {
-            const name = getColValue(row, ['摘要', '品名', '材料名稱', 'tên vật tư'], '-');
-            const color = getColValue(row, ['顏色', 'màu sắc'], '-');
-            const qty = getColValue(row, ['數量', 'số lượng', 'sl'], '0');
-            const unit = getColValue(row, ['單位', 'đơn vị'], 'PCS');
+        matchedRows.forEach((row, index) => {
+          const name = getColValue(row, ['摘要', '品名', '材料名稱'], '-');
+          const color = getColValue(row, ['顏色'], '-');
+          const qty = getColValue(row, ['數量'], '0');
+          const unit = getColValue(row, ['單位'], 'PCS');
+          const code = getColValue(row, ['海關代號', 'code'], '03900-39262090');
 
-            tableRowsHtml += `
-              <tr>
-                <td class="center">${index + 1}</td>
-                <td><b>${name}</b></td>
-                <td class="center">${color}</td>
-                <td class="right nowrap" style="font-weight: bold; color: #1d4ed8;">${qty}</td>
-                <td class="center nowrap">${unit}</td>
-                <td class="center">☐</td>
-              </tr>
-            `;
-          });
-        }
+          tableRowsHtml += `
+            <tr>
+              <td style="text-align: center;">${index + 1}</td>
+              <td><b>${name}</b></td>
+              <td style="text-align: center;">${color}</td>
+              <td style="text-align: right; font-weight: bold;">${qty}</td>
+              <td style="text-align: center;">${unit}</td>
+              <td style="text-align: center; font-size: 0.6rem;">${code}</td>
+            </tr>
+          `;
+        });
 
         allPagesHtml += `
           <div class="a4-sheet">
-            <div class="sheet-header">
-              <div class="logo-box">
-                <img src="https://dungnguyenbtsl.github.io/FULIAO-LABEL/logo.jpeg" alt="富裕鞋業 Logo" onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\'logo-placeholder\'>Logo Error</div>';">
+            <div>
+              <div class="comp-header">
+                <div class="comp-title">RIGHT RICH INTL. CO. LTD 富裕訂購單</div>
+                <div class="meta-top">
+                  作業代號：RR301<br>
+                  列印日期：${new Date().toLocaleDateString('zh-TW')}
+                </div>
               </div>
-              <div class="header-content">
-                <h1>富裕鞋業有限公司</h1>
-                <h2>SAUCONY 生產材料總匯表</h2>
-                <p><b>材料倉庫備料清單</b></p>
+
+              <div class="info-grid">
+                <div class="info-item">訂購類別：<span>VN大底五金</span></div>
+                <div class="info-item">廠商：<span>VN富裕</span></div>
+                <div class="info-item">外商品牌：<span>${brand}</span></div>
+                <div class="info-item">訂購單號：<span>1106V0P26070001</span></div>
+
+                <div class="info-item">廠商業代：<span>-</span></div>
+                <div class="info-item">品名：<span>VN大底五金</span></div>
+                <div class="info-item">交貨地點：<span>VN富裕</span></div>
+                <div class="info-item">訂購日期：<span>2026/07/18</span></div>
+
+                <div class="info-item">客戶樣式：<span>${custStyle}</span></div>
+                <div class="info-item">指令單號：<span style="color:#2563eb;">${selectedOrder}</span></div>
+                <div class="info-item">GENDER：<span>${gender}</span></div>
+                <div class="info-item">交貨日期：<span style="color:#b45309;">${deliveryDate}</span></div>
+
+                <div class="info-item">樣腳樣式：<span>8889D</span></div>
+                <div class="info-item">SKU：<span>${factorySku}</span></div>
+                <div class="info-item">訂單數量：<span style="color:#059669;">${shoeQty} 雙</span></div>
+                <div class="info-item">顏色：<span>SURF/TAROCCO</span></div>
               </div>
+
+              <table class="table-section">
+                <thead>
+                  <tr>
+                    <th style="width: 5%;">序號</th>
+                    <th style="width: 48%;">材料名稱 / 品名</th>
+                    <th style="width: 22%;">顏色</th>
+                    <th style="width: 8%;">數量</th>
+                    <th style="width: 6%;">單位</th>
+                    <th style="width: 11%;">海關代號</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${tableRowsHtml}
+                </tbody>
+              </table>
             </div>
 
-            <div class="order-info">
-              <div title="${selectedOrder}"><b>指令表：</b> <span style="color:#2563eb;">${selectedOrder}</span></div>
-              <div title="${factorySku}"><b>廠型-SKU：</b> <span style="color:#0f172a; font-weight:bold;">${factorySku}</span></div>
-              <div title="${shoeQty}"><b>鞋數量：</b> <span style="color:#059669; font-weight:bold;">${shoeQty} 雙</span></div>
-              <div title="${deliveryDate}"><b>客戶交期：</b> <span style="color:#b45309; font-weight:bold;">${deliveryDate}</span></div>
-            </div>
+            <div>
+              <div class="notes-section">
+                <div class="notes-title">備註：</div>
+                <div>1、收單後48小時內請確認回傳，否則視同X認同意，交貨日一經雙方確認，逾期(含1天)產品不合格算累計日期。3-6天(含)以內訂單單價罰款2%、7-10天(含)以內訂單單價罰款4%、11天以上(含)每欠一加1%以上工作日計算。</div>
+                <div>2、訂單調整單結案後方可請款，每月25日結帳，于當月月底結帳帳單，逾期下月請款，請依規定請單【採購因應動作作業規範】。</div>
+              </div>
 
-            <table>
-              <thead>
-                <tr>
-                  <th style="width: 5%;">序號</th>
-                  <th style="width: 53%;">材料名稱 / 品名 (摘要)</th>
-                  <th style="width: 20%;">顏色</th>
-                  <th style="width: 7%;" class="nowrap">數量</th>
-                  <th style="width: 5%;" class="nowrap">單位</th>
-                  <th style="width: 10%;">點檢</th>
-                </tr>
-              </thead>
-              <tbody>
-                ${tableRowsHtml}
-              </tbody>
-            </table>
+              <div class="form-footer">
+                <div class="signatures">
+                  <span>白單存查</span>
+                  <span>藍單廠商</span>
+                  <span>紅單倉庫</span>
+                  <span>黃單報關</span>
+                </div>
+                <div><b>FROM: NO.04-GM-034</b></div>
+              </div>
+            </div>
           </div>
         `;
       });
