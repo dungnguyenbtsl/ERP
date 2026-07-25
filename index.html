@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>富裕鞋業有限公司 - SAUCONY 生產物料清單</title>
 
-  <!-- Nhúng font 思源宋體 (Source Han Serif TC) từ Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;600;700&display=swap" rel="stylesheet">
@@ -29,12 +28,7 @@
     .btn-green:active { background: #166534; }
     .btn-sm { padding: 4px 8px; font-size: 0.75rem; width: auto; display: inline-flex; }
 
-    .filter-grid { display: grid; grid-template-columns: 1fr; gap: 6px; margin-bottom: 6px; }
-    .filter-group { display: flex; flex-direction: column; }
-    .filter-group label { font-size: 0.75rem; font-weight: bold; color: #475569; margin-bottom: 2px; }
-    .filter-input { width: 100%; padding: 7px 10px; font-size: 0.85rem; border: 1px solid #cbd5e1; border-radius: 6px; outline: none; background: #fff; font-family: 'Noto Serif TC', Arial, sans-serif; }
-
-    .order-checklist { max-height: 160px; overflow-y: auto; border: 1px solid #cbd5e1; border-radius: 6px; padding: 6px; background: #fff; margin-bottom: 8px; -webkit-overflow-scrolling: touch; }
+    .order-checklist { max-height: 180px; overflow-y: auto; border: 1px solid #cbd5e1; border-radius: 6px; padding: 6px; background: #fff; margin-bottom: 8px; -webkit-overflow-scrolling: touch; }
     .order-checklist label { display: flex; align-items: center; gap: 8px; padding: 6px 8px; font-size: 0.85rem; cursor: pointer; border-radius: 4px; border-bottom: 1px solid #f1f5f9; }
     .order-checklist label:hover { background: #f1f5f9; }
     .order-checklist input[type="checkbox"] { width: 16px; height: 16px; accent-color: #2563eb; }
@@ -117,7 +111,6 @@
 
     @media (min-width: 640px) {
       body { padding: 20px; }
-      .filter-grid { grid-template-columns: repeat(3, 1fr); }
     }
 
     @media (max-width: 900px) {
@@ -195,39 +188,24 @@
 </head>
 <body>
 
+  <!-- Khung điều khiển (Đã loại bỏ các ô nhập trùng lặp) -->
   <div class="control-card">
     <div class="control-title">🖨️ SAUCONY 生產物料清單批量處理</div>
-    <input type="text" id="scriptUrl" placeholder="請輸入網址..." style="margin-bottom: 6px;">
     
+    <input type="text" id="scriptUrl" placeholder="請輸入 Google Apps Script API 網址..." style="margin-bottom: 6px;">
     <button class="btn btn-blue" onclick="loadData()">🔄 從庫存載入資料</button>
 
-    <div style="margin-top: 8px;">
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-        <label style="font-size: 0.85rem; font-weight: bold;">篩選指令表：</label>
+    <div style="margin-top: 10px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+        <label style="font-size: 0.85rem; font-weight: bold;">搜尋與選擇指令表：</label>
         <div>
           <button onclick="toggleSelectAll(true)" style="font-size: 0.8rem; background: none; border: none; color: #2563eb; cursor: pointer; text-decoration: underline; margin-right: 8px; font-family: 'Noto Serif TC', sans-serif;">全選</button>
           <button onclick="toggleSelectAll(false)" style="font-size: 0.8rem; background: none; border: none; color: #64748b; cursor: pointer; text-decoration: underline; font-family: 'Noto Serif TC', sans-serif;">取消全選</button>
         </div>
       </div>
       
-      <div class="filter-grid">
-        <div class="filter-group">
-          <label>指令表：</label>
-          <input type="text" id="filterOrder" class="filter-input" placeholder="輸入指令表..." oninput="applyFilters()">
-        </div>
-        <div class="filter-group">
-          <label>廠型-SKU：</label>
-          <input type="text" id="filterSku" class="filter-input" placeholder="輸入SKU..." oninput="applyFilters()">
-        </div>
-        <div class="filter-group">
-          <label>客戶交期：</label>
-          <input type="text" id="filterDate" class="filter-input" placeholder="輸入交期..." oninput="applyFilters()">
-        </div>
-      </div>
-
-      <div style="margin-bottom: 4px;">
-        <input type="text" id="quickChecklistSearch" class="filter-input" placeholder="🔍 在清單中快速搜尋..." oninput="applyFilters()" style="margin-bottom: 4px; padding: 5px 8px; font-size: 0.8rem;">
-      </div>
+      <!-- Ô tìm kiếm duy nhất, tìm được cả Lệnh sản xuất, SKU và Ngày giao -->
+      <input type="text" id="quickSearch" class="filter-input" placeholder="🔍 搜尋指令表 / SKU / 客戶交期..." oninput="applyFilters()" style="margin-bottom: 6px; padding: 7px 10px; font-size: 0.85rem;">
 
       <div id="orderChecklist" class="order-checklist">
         <span style="color: #64748b; font-size: 0.85rem;">請先載入資料...</span>
@@ -347,25 +325,16 @@
       applyFilters();
     }
 
+    // Hàm lọc đơn giản hoá, tối ưu hoá tìm kiếm
     function applyFilters() {
       try {
-        const qOrder = document.getElementById('filterOrder').value.trim().toLowerCase();
-        const qSku = document.getElementById('filterSku').value.trim().toLowerCase();
-        const qDate = document.getElementById('filterDate').value.trim().toLowerCase();
-        const qQuick = document.getElementById('quickChecklistSearch').value.trim().toLowerCase();
+        const q = document.getElementById('quickSearch').value.trim().toLowerCase();
 
         const filtered = masterRecords.filter(item => {
-          const matchMain = item.orderNo.toLowerCase().includes(qOrder) &&
-                            item.sku.toLowerCase().includes(qSku) &&
-                            item.date.toLowerCase().includes(qDate);
-          if (!matchMain) return false;
-
-          if (qQuick) {
-            return item.orderNo.toLowerCase().includes(qQuick) ||
-                   item.sku.toLowerCase().includes(qQuick) ||
-                   item.date.toLowerCase().includes(qQuick);
-          }
-          return true;
+          if (!q) return true;
+          return item.orderNo.toLowerCase().includes(q) ||
+                 item.sku.toLowerCase().includes(q) ||
+                 item.date.toLowerCase().includes(q);
         });
         renderOrderChecklist(filtered);
       } catch (e) {
@@ -379,7 +348,7 @@
       checklistDiv.innerHTML = '';
 
       if (recordsArray.length === 0) {
-        checklistDiv.innerHTML = '<span style="color: red; font-size: 0.85rem;">找不到符合篩選條件的指令表！</span>';
+        checklistDiv.innerHTML = '<span style="color: red; font-size: 0.85rem;">找不到符合條件的指令表！</span>';
         renderCardsBatch();
         return;
       }
