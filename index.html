@@ -34,9 +34,6 @@
     .order-checklist label:hover { background: #f1f5f9; }
     .order-checklist input[type="checkbox"] { width: 16px; height: 16px; accent-color: #2563eb; }
 
-    /* ==========================================
-       TỐI ƯU HIỂN THỊ XEM TRƯỚC (PREVIEW MODE)
-       ========================================== */
     @page {
       size: A4 landscape;
       margin: 0mm;
@@ -107,15 +104,11 @@
       margin-top: auto; 
     }
 
-    /* ==========================================
-       MEDIA QUERY CHO TABLET & PC (MÀN HÌNH RỘNG HƠN)
-       ========================================== */
     @media (min-width: 640px) {
       body { padding: 20px; }
       .filter-grid { grid-template-columns: repeat(3, 1fr); }
     }
 
-    /* Thu nhỏ tỷ lệ hiển thị trên màn hình điện thoại nhỏ để thấy trọn vẹn form A4 ngang mà không cần cuộn ngang */
     @media (max-width: 900px) {
       .cards-container {
         overflow-x: auto;
@@ -123,9 +116,6 @@
       }
     }
 
-    /* ==========================================
-       CẤU HÌNH IN TRỰC TIẾP (PRINT MODE)
-       ========================================== */
     @media print {
       @page {
         size: A4 landscape;
@@ -248,56 +238,77 @@
     let masterRecords = [];
 
     document.addEventListener('DOMContentLoaded', () => {
-      const savedUrl = localStorage.getItem('saucony_gas_url');
-      if (savedUrl) {
-        document.getElementById('scriptUrl').value = savedUrl;
-        loadData();
+      try {
+        const savedUrl = localStorage.getItem('saucony_gas_url');
+        if (savedUrl) {
+          document.getElementById('scriptUrl').value = savedUrl;
+          loadData();
+        }
+      } catch (e) {
+        console.error("Init error:", e);
       }
     });
 
     async function loadData() {
-      const url = document.getElementById('scriptUrl').value.trim();
-      if (!url) return alert("請輸入網址！");
+      const urlEl = document.getElementById('scriptUrl');
+      if (!urlEl) return;
+      const url = urlEl.value.trim();
+      if (!url) {
+        alert("請輸入網址！");
+        return;
+      }
 
-      localStorage.setItem('saucony_gas_url', url);
+      try {
+        localStorage.setItem('saucony_gas_url', url);
+      } catch (e) {}
+
       try {
         const res = await fetch(url);
+        if (!res.ok) throw new Error("Network response was not ok");
         sheetData = await res.json();
         processMasterRecords(sheetData);
         alert("✅ 資料載入成功！");
       } catch (err) {
-        const cached = localStorage.getItem('saucony_sheet_cache');
-        if (cached) {
-          try {
+        console.error(err);
+        try {
+          const cached = localStorage.getItem('saucony_sheet_cache');
+          if (cached) {
             sheetData = JSON.parse(cached);
             processMasterRecords(sheetData);
             alert("⚠️ 網路連線失敗，已自動載入本機快取資料！");
             return;
-          } catch(e) {}
-        }
+          }
+        } catch(e) {}
         alert("❌ 載入失敗，請檢查網址或網路連線是否正常！");
       }
     }
 
     function getColValue(row, possibleNames, defaultValue = '-') {
-      const keys = Object.keys(row);
-      for (let name of possibleNames) {
-        const cleanTarget = name.toLowerCase().replace(/\s+/g, '');
-        for (let key of keys) {
-          if (key.toLowerCase().replace(/\s+/g, '') === cleanTarget) {
-            if (row[key] !== "" && row[key] !== null && row[key] !== undefined) return row[key];
+      if (!row || typeof row !== 'object') return defaultValue;
+      try {
+        const keys = Object.keys(row);
+        for (let name of possibleNames) {
+          const cleanTarget = name.toLowerCase().replace(/\s+/g, '');
+          for (let key of keys) {
+            if (key.toLowerCase().replace(/\s+/g, '') === cleanTarget) {
+              if (row[key] !== "" && row[key] !== null && row[key] !== undefined) return row[key];
+            }
           }
         }
-      }
-      for (let name of possibleNames) {
-        const foundKey = keys.find(k => k.toLowerCase().replace(/\s+/g, '').includes(name.toLowerCase().replace(/\s+/g, '')));
-        if (foundKey && row[foundKey] !== "" && row[foundKey] !== null && row[foundKey] !== undefined) return row[foundKey];
-      }
+        for (let name of possibleNames) {
+          const foundKey = keys.find(k => k.toLowerCase().replace(/\s+/g, '').includes(name.toLowerCase().replace(/\s+/g, '')));
+          if (foundKey && row[foundKey] !== "" && row[foundKey] !== null && row[foundKey] !== undefined) return row[foundKey];
+        }
+      } catch (e) {}
       return defaultValue;
     }
 
     function processMasterRecords(data) {
-      localStorage.setItem('saucony_sheet_cache', JSON.stringify(data));
+      if (!Array.isArray(data)) return;
+      try {
+        localStorage.setItem('saucony_sheet_cache', JSON.stringify(data));
+      } catch (e) {}
+
       const map = new Map();
       data.forEach(row => {
         const orderNo = String(getColValue(row, ['指令表', 'đơn sản xuất', 'po sx'], '')).trim();
@@ -323,29 +334,34 @@
     }
 
     function applyFilters() {
-      const qOrder = document.getElementById('filterOrder').value.trim().toLowerCase();
-      const qSku = document.getElementById('filterSku').value.trim().toLowerCase();
-      const qDate = document.getElementById('filterDate').value.trim().toLowerCase();
-      const qQuick = document.getElementById('quickChecklistSearch').value.trim().toLowerCase();
+      try {
+        const qOrder = document.getElementById('filterOrder').value.trim().toLowerCase();
+        const qSku = document.getElementById('filterSku').value.trim().toLowerCase();
+        const qDate = document.getElementById('filterDate').value.trim().toLowerCase();
+        const qQuick = document.getElementById('quickChecklistSearch').value.trim().toLowerCase();
 
-      const filtered = masterRecords.filter(item => {
-        const matchMain = item.orderNo.toLowerCase().includes(qOrder) &&
-                          item.sku.toLowerCase().includes(qSku) &&
-                          item.date.toLowerCase().includes(qDate);
-        if (!matchMain) return false;
+        const filtered = masterRecords.filter(item => {
+          const matchMain = item.orderNo.toLowerCase().includes(qOrder) &&
+                            item.sku.toLowerCase().includes(qSku) &&
+                            item.date.toLowerCase().includes(qDate);
+          if (!matchMain) return false;
 
-        if (qQuick) {
-          return item.orderNo.toLowerCase().includes(qQuick) ||
-                 item.sku.toLowerCase().includes(qQuick) ||
-                 item.date.toLowerCase().includes(qQuick);
-        }
-        return true;
-      });
-      renderOrderChecklist(filtered);
+          if (qQuick) {
+            return item.orderNo.toLowerCase().includes(qQuick) ||
+                   item.sku.toLowerCase().includes(qQuick) ||
+                   item.date.toLowerCase().includes(qQuick);
+          }
+          return true;
+        });
+        renderOrderChecklist(filtered);
+      } catch (e) {
+        console.error("Filter error:", e);
+      }
     }
 
     function renderOrderChecklist(recordsArray) {
       const checklistDiv = document.getElementById('orderChecklist');
+      if (!checklistDiv) return;
       checklistDiv.innerHTML = '';
 
       if (recordsArray.length === 0) {
@@ -373,12 +389,14 @@
     }
 
     function saveSelectionAndRender() {
-      const checkedSet = [];
-      document.querySelectorAll('#orderChecklist input[type="checkbox"]:checked').forEach(cb => {
-        checkedSet.push(cb.value);
-      });
-      localStorage.setItem('saucony_checked_orders', JSON.stringify(checkedSet));
-      renderCardsBatch();
+      try {
+        const checkedSet = [];
+        document.querySelectorAll('#orderChecklist input[type="checkbox"]:checked').forEach(cb => {
+          checkedSet.push(cb.value);
+        });
+        localStorage.setItem('saucony_checked_orders', JSON.stringify(checkedSet));
+        renderCardsBatch();
+      } catch (e) {}
     }
 
     function toggleSelectAll(select) {
@@ -403,6 +421,7 @@
 
     function renderCardsBatch() {
       const container = document.getElementById('cardsContainer');
+      if (!container) return;
       const checkboxes = document.querySelectorAll('#orderChecklist input[type="checkbox"]:checked');
       
       if (checkboxes.length === 0) {
