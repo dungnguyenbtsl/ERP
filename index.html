@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>富裕鞋業 - 生產材料卡片清單 (Bottom Footer Anchor)</title>
+  <title>富裕鞋業 - SAUCONY 生產物料清單</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: Arial, sans-serif; }
     body { background-color: #f1f5f9; padding: 10px; color: #1e293b; }
@@ -47,14 +47,14 @@
       height: 192mm; 
       max-height: 192mm;
       margin: 0 auto; 
-      padding: 7mm 12mm 6mm 12mm; /* Giữ khoảng cách đáy chuẩn */
+      padding: 7mm 12mm 6mm 12mm; 
       box-shadow: 0 4px 15px rgba(0,0,0,0.1); 
       border-radius: 8px; 
       border: 1px solid #cbd5e1;
       position: relative;
       display: flex;
       flex-direction: column;
-      justify-content: space-between; /* Neo dãn đều: Header trên, Bảng giữa, Footer ghim chặt đáy */
+      justify-content: space-between; 
       overflow: hidden;
       
       page-break-after: always;
@@ -84,7 +84,6 @@
     td.right { text-align: right; }
     .nowrap { white-space: nowrap; }
 
-    /* Neo đáy card: Ghim chặt phần ghi chú và ngày tháng sát đáy khung */
     .card-footer { 
       display: flex; 
       justify-content: space-between; 
@@ -141,7 +140,7 @@
 <body>
 
   <div class="control-card">
-    <div class="control-title">🖨️ 生產訂單材料卡片清單 (Bottom Footer Anchor)</div>
+    <div class="control-title">🖨️ SAUCONY 生產物料清單批量列印</div>
     <input type="text" id="scriptUrl" placeholder="請貼上網址..." style="margin-bottom: 6px;">
     
     <button class="btn btn-blue" onclick="loadData()">🔄 從庫存載入資料</button>
@@ -175,7 +174,7 @@
       </div>
     </div>
 
-    <button class="btn btn-green" onclick="window.print()" style="margin-top: 8px;">🖨️ 批量列印橫向卡片 (固定底é)</button>
+    <button class="btn btn-green" onclick="window.print()" style="margin-top: 8px;">🖨️ 批量列印橫向卡片</button>
   </div>
 
   <div class="cards-container" id="cardsContainer">
@@ -367,7 +366,7 @@
                   </div>
                   <div class="header-text">
                     <h1>RIGHT RICH INTL. CO. LTD 富裕鞋業</h1>
-                    <h2>SAUCONY 生產材料卡片清單</h2>
+                    <h2>SAUCONY 生產物料清單</h2>
                   </div>
                 </div>
                 <div style="font-size: 0.75rem; color: #475569;"><b>倉管備料清單</b></div>
