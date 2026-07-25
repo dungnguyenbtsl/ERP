@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>富裕鞋業 - 生產材料總匯表 (倉管備料清單)</title>
+  <title>富裕鞋業 - 生產材料卡片清單 (Card View)</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: Arial, sans-serif; }
     body { background-color: #f1f5f9; padding: 10px; color: #1e293b; }
@@ -26,42 +26,45 @@
     .order-checklist label { display: flex; align-items: center; gap: 6px; padding: 3px 5px; font-size: 0.85rem; cursor: pointer; }
     .order-checklist label:hover { background: #f1f5f9; border-radius: 4px; }
 
-    .a4-preview-container { display: flex; flex-direction: column; gap: 20px; align-items: center; }
-    
-    @page {
-      size: A4 portrait;
-      margin: 10mm;
+    /* Khu vực chứa các Card View */
+    .cards-container { 
+      display: flex; 
+      flex-direction: column; 
+      gap: 15px; 
+      align-items: center; 
     }
 
-    .a4-sheet { 
+    /* Định dạng mỗi Card (tương đương 1 trang A4 hoặc nửa trang tùy ý) */
+    .material-card { 
       background: white; 
       width: 210mm; 
-      min-height: 297mm;
-      max-height: 297mm;
+      min-height: 140mm; /* Thiết kế dạng thẻ khối linh hoạt, không bị bó buộc chết cứng chiều cao gây lỗi tràn */
       margin: 0 auto; 
       padding: 10mm 12mm; 
       box-shadow: 0 4px 15px rgba(0,0,0,0.1); 
-      border-radius: 6px; 
+      border-radius: 8px; 
+      border: 1px solid #cbd5e1;
       position: relative;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
+      page-break-inside: avoid;
+      break-inside: avoid;
     }
-    
-    .sheet-top-content { width: 100%; }
 
-    .sheet-header { border-bottom: 2px solid #1e293b; padding-bottom: 5px; margin-bottom: 6px; text-align: center; position: relative; }
-    .logo-box { position: absolute; left: 0; top: 2px; width: 45px; height: 25px; display: flex; align-items: center; justify-content: center; }
+    .card-header { border-bottom: 2px solid #2563eb; padding-bottom: 6px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
+    .card-logo-title { display: flex; align-items: center; gap: 10px; }
+    .logo-box { width: 45px; height: 25px; display: flex; align-items: center; justify-content: center; }
     .logo-box img { max-width: 100%; max-height: 100%; object-fit: contain; }
     .logo-placeholder { font-size: 0.45rem; color: #64748b; border: 1px dashed #cbd5e1; padding: 2px; text-align: center; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; }
 
-    .header-content { padding: 0 50px; } 
-    .header-content h1 { font-size: 0.75rem; font-weight: bold; color: #475569; margin-bottom: 1px; }
-    .header-content h2 { font-size: 1.05rem; font-weight: bold; text-transform: uppercase; margin-bottom: 1px; color: #0f172a; }
-    .header-content p { font-size: 0.5rem; color: #64748b; }
+    .header-text h1 { font-size: 0.75rem; font-weight: bold; color: #475569; }
+    .header-text h2 { font-size: 1rem; font-weight: bold; color: #0f172a; text-transform: uppercase; }
 
-    .order-info { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 10px; margin-bottom: 8px; font-size: 0.82rem; background: #f8fafc; padding: 6px 10px; border: 1px solid #cbd5e1; border-radius: 6px; }
-    
+    .card-info-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-bottom: 10px; font-size: 0.8rem; background: #f8fafc; padding: 8px 10px; border: 1px solid #e2e8f0; border-radius: 6px; }
+    .card-info-item span { display: block; color: #64748b; font-size: 0.7rem; }
+    .card-info-item b { color: #0f172a; font-size: 0.85rem; }
+
     table { width: 100%; border-collapse: collapse; margin-bottom: 10px; }
     th, td { border: 1px solid #333; padding: 5px 7px; font-size: 0.8rem; text-align: left; vertical-align: middle; }
     th { background-color: #e2e8f0; font-weight: bold; text-align: center; color: #0f172a; }
@@ -70,7 +73,9 @@
     td.right { text-align: right; }
     .nowrap { white-space: nowrap; }
 
-    /* Cấu hình chuyên biệt cho máy in */
+    .card-footer { display: flex; justify-content: space-between; font-size: 0.75rem; color: #64748b; border-top: 1px dashed #cbd5e1; padding-top: 6px; margin-top: auto; }
+
+    /* Cấu hình khi bấm In */
     @media print {
       html, body {
         background: white !important;
@@ -80,20 +85,18 @@
       .control-card { 
         display: none !important; 
       }
-      .a4-preview-container {
-        gap: 0 !important;
+      .cards-container {
+        gap: 10mm !important;
       }
-      .a4-sheet { 
+      .material-card { 
         box-shadow: none !important; 
-        margin: 0 !important; 
+        margin: 0 auto !important; 
         width: 100% !important; 
-        height: 297mm !important;
-        max-height: 297mm !important;
+        border: 1px solid #94a3b8 !important;
         page-break-after: always !important;
         break-after: page !important;
         page-break-inside: avoid !important;
         break-inside: avoid !important;
-        padding: 5mm 8mm !important;
       }
     }
   </style>
@@ -101,7 +104,7 @@
 <body>
 
   <div class="control-card">
-    <div class="control-title">🖨️ 生產訂單材料匯總表 (倉管備料清單)</div>
+    <div class="control-title">🖨️ 生產訂單材料卡片清單 (Card View 模式)</div>
     <input type="text" id="scriptUrl" placeholder="請貼上網址..." style="margin-bottom: 6px;">
     
     <button class="btn btn-blue" onclick="loadData()">🔄 從庫存載入資料</button>
@@ -135,12 +138,12 @@
       </div>
     </div>
 
-    <button class="btn btn-green" onclick="window.print()" style="margin-top: 8px;">🖨️ 批量列印所選的備料匯總表</button>
+    <button class="btn btn-green" onclick="window.print()" style="margin-top: 8px;">🖨️ 批量列印卡片清單</button>
   </div>
 
-  <div class="a4-preview-container" id="a4Container">
-    <div class="a4-sheet">
-      <div style="text-align: center; color: #64748b; padding: 100px 0; width: 100%;">
+  <div class="cards-container" id="cardsContainer">
+    <div class="material-card">
+      <div style="text-align: center; color: #64748b; padding: 40px 0; width: 100%;">
         <h2>請先載入資料並在上方勾選要列印的指令表。</h2>
       </div>
     </div>
@@ -234,7 +237,7 @@
 
       if (recordsArray.length === 0) {
         checklistDiv.innerHTML = '<span style="color: red; font-size: 0.85rem;">找不到符合篩選條件的指令表！</span>';
-        renderA4SheetsBatch();
+        renderCardsBatch();
         return;
       }
 
@@ -244,35 +247,35 @@
       recordsArray.forEach(item => {
         const isChecked = checkedSet.has(item.orderNo) ? 'checked' : '';
         const label = document.createElement('label');
-        label.innerHTML = `<input type="checkbox" value="${item.orderNo}" ${isChecked} onchange="renderA4SheetsBatch()"> 
+        label.innerHTML = `<input type="checkbox" value="${item.orderNo}" ${isChecked} onchange="renderCardsBatch()"> 
                            <b>指令表：</b> ${item.orderNo} &nbsp;|&nbsp; <b>SKU：</b> ${item.sku} &nbsp;|&nbsp; <b>交期：</b> ${item.date}`;
         checklistDiv.appendChild(label);
       });
-      renderA4SheetsBatch();
+      renderCardsBatch();
     }
 
     function toggleSelectAll(select) {
       document.querySelectorAll('#orderChecklist input[type="checkbox"]').forEach(cb => cb.checked = select);
-      renderA4SheetsBatch();
+      renderCardsBatch();
     }
 
-    function renderA4SheetsBatch() {
-      const container = document.getElementById('a4Container');
+    function renderCardsBatch() {
+      const container = document.getElementById('cardsContainer');
       const checkboxes = document.querySelectorAll('#orderChecklist input[type="checkbox"]:checked');
       
       if (checkboxes.length === 0) {
         container.innerHTML = `
-          <div class="a4-sheet">
-            <div style="text-align: center; color: #64748b; padding: 100px 20px; width: 100%;">
+          <div class="material-card">
+            <div style="text-align: center; color: #64748b; padding: 40px 20px; width: 100%;">
               <h2>尚未選擇任何指令表</h2>
-              <p style="margin-top: 6px; font-size: 0.85rem;">請在上方控制面板勾選您想要預覽或列印的訂單。</p>
+              <p style="margin-top: 6px; font-size: 0.85rem;">請在上方控制面板勾選您想要預覽或列印的訂單卡片。</p>
             </div>
           </div>
         `;
         return;
       }
 
-      let allPagesHtml = '';
+      let allCardsHtml = '';
 
       checkboxes.forEach(cb => {
         const selectedOrder = cb.value;
@@ -317,25 +320,39 @@
           });
         }
 
-        allPagesHtml += `
-          <div class="a4-sheet">
-            <div class="sheet-top-content">
-              <div class="sheet-header">
-                <div class="logo-box">
-                  <img src="https://dungnguyenbtsl.github.io/FULIAO-LABEL/logo.jpeg" alt="富裕鞋業 Logo" onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\'logo-placeholder\'>Logo Error</div>';">
+        allCardsHtml += `
+          <div class="material-card">
+            <div>
+              <div class="card-header">
+                <div class="card-logo-title">
+                  <div class="logo-box">
+                    <img src="https://dungnguyenbtsl.github.io/FULIAO-LABEL/logo.jpeg" alt="Logo" onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\'logo-placeholder\'>Logo</div>';">
+                  </div>
+                  <div class="header-text">
+                    <h1>RIGHT RICH INTL. CO. LTD 富裕鞋業</h1>
+                    <h2>SAUCONY 生產材料卡片清單</h2>
+                  </div>
                 </div>
-                <div class="header-content">
-                  <h1>RIGHT RICH INTL. CO. LTD 富裕鞋業有限公司</h1>
-                  <h2>SAUCONY 生產材料總匯表</h2>
-                  <p><b>材料倉庫備料清單</b></p>
-                </div>
+                <div style="font-size: 0.75rem; color: #475569;"><b>倉管備料清單</b></div>
               </div>
 
-              <div class="order-info">
-                <div><b>指令表 (指令單號)：</b> <span style="color:#2563eb; font-weight:bold;">${selectedOrder}</span></div>
-                <div><b>廠型-SKU：</b> <span style="color:#0f172a; font-weight:bold;">${factorySku}</span></div>
-                <div><b>鞋數量：</b> <span style="color:#059669; font-weight:bold;">${shoeQty} 雙</span></div>
-                <div><b>客戶交期：</b> <span style="color:#b45309; font-weight:bold;">${deliveryDate}</span></div>
+              <div class="card-info-grid">
+                <div class="card-info-item">
+                  <span>指令表單號：</span>
+                  <b style="color:#2563eb;">${selectedOrder}</b>
+                </div>
+                <div class="card-info-item">
+                  <span>廠型-SKU：</span>
+                  <b>${factorySku}</b>
+                </div>
+                <div class="card-info-item">
+                  <span>鞋數量：</span>
+                  <b style="color:#059669;">${shoeQty} 雙</b>
+                </div>
+                <div class="card-info-item">
+                  <span>客戶交期：</span>
+                  <b style="color:#b45309;">${deliveryDate}</b>
+                </div>
               </div>
 
               <table>
@@ -354,11 +371,16 @@
                 </tbody>
               </table>
             </div>
+
+            <div class="card-footer">
+              <div>備註：請依清單品100%核对物料數量与顏色。</div>
+              <div>列印日期：${new Date().toLocaleDateString('zh-TW')}</div>
+            </div>
           </div>
         `;
       });
 
-      container.innerHTML = allPagesHtml;
+      container.innerHTML = allCardsHtml;
     }
   </script>
 </body>
