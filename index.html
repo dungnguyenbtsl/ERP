@@ -206,7 +206,6 @@
     </div>
 
     <script>
-        // URL Web App Google Apps Script của bạn đã được cấu hình sẵn
         const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz_zAN6xMmLIP4UYPfsK0ZhsK-hKyVK2QJLWm-2JezdM9fuf8dE-2U-Y8dULYvZOs7B/exec";
 
         async function loadDataFromGoogleSheet() {
@@ -214,12 +213,31 @@
             previewArea.innerHTML = '<p style="text-align:center; color:#0056b3; padding: 40px;">Đang đồng bộ dữ liệu từ Google Sheet...</p>';
 
             try {
-                const response = await fetch(APPS_SCRIPT_URL);
-                const data = await response.json();
+                const response = await fetch(APPS_SCRIPT_URL, {
+                    method: 'GET',
+                    mode: 'cors',
+                    redirect: 'follow'
+                });
+                
+                const text = await response.text();
+                let data;
+                try {
+                    data = JSON.parse(text);
+                } catch (e) {
+                    console.error("Raw response:", text);
+                    throw new Error("Phản hồi từ Google Apps Script không phải là JSON hợp lệ.");
+                }
+
                 renderPreviews(data);
             } catch (error) {
                 console.error(error);
-                previewArea.innerHTML = '<p style="text-align:center; color:red; padding: 40px;">Lỗi kết nối Google Sheets! Vui lòng kiểm tra quyền truy cập Web App (Access: Anyone).</p>';
+                previewArea.innerHTML = `
+                    <div style="padding: 20px; background: #fff2f2; border: 1px solid #ffcccc; border-radius: 6px; color: #cc0000; text-align: center;">
+                        <p><b>⚠️ Lỗi kết nối Google Sheets!</b></p>
+                        <p style="font-size: 13px; margin: 5px 0;">Hãy kiểm tra lại trong Google Apps Script:</p>
+                        <p style="font-size: 13px; margin: 5px 0;">1. Đã bấm <b>Deploy > New deployment</b> (hoặc Manage deployments) chưa?</p>
+                        <p style="font-size: 13px; margin: 5px 0;">2. Mục <b>Who has access</b> đã chọn là <b>Anyone</b> (Bất kỳ ai) chưa?</p>
+                    </div>`;
             }
         }
 
@@ -305,7 +323,6 @@
             });
         }
 
-        // Tự động tải dữ liệu khi mở trang
         window.onload = function() {
             loadDataFromGoogleSheet();
         };
