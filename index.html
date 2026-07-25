@@ -208,8 +208,7 @@
     </div>
 
     <script>
-        // Thay link xuất file CSV hoặc link public Google Sheet của bạn vào đây
-        const SHEET_CSV_URL = "YOUR_GOOGLE_SHEET_CSV_OR_PUBLISHED_LINK";
+        const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ8U1LYwacMO6PVEwA3l3CbW52i6UaNg6qri-mXzoUFgjuEg2mZLkOkUP6nUSzymYbqrcJOVW68On2Y/pub?gid=1952387178&single=true&output=csv";
 
         async function loadFromGoogleSheet() {
             const previewArea = document.getElementById('preview-area');
@@ -235,7 +234,7 @@
             previewArea.innerHTML = '';
 
             if (!data || data.length === 0) {
-                previewArea.innerHTML = '<p style="text-align:center; color:red;льники>Không có dữ liệu trong bảng!</p>';
+                previewArea.innerHTML = '<p style="text-align:center; color:red;">Không có dữ liệu trong bảng!</p>';
                 return;
             }
 
@@ -256,7 +255,7 @@
                         <div class="logo-box">AR</div>
                         <div class="company-header">
                             <div class="company-name">RIGHT RICH INTL. CO. LTD 富裕鞋業有限公司</div>
-                            <div class="main-title">SAUCONY 生產材料總匯表</div>
+                            <div class="main-title">SAUCONY 生産材料總匯表</div>
                         </div>
                         <div style="width: 30px;"></div>
                     </div>
@@ -313,9 +312,7 @@
         }
 
         window.onload = function() {
-            if (SHEET_CSV_URL !== "YOUR_GOOGLE_SHEET_CSV_OR_PUBLISHED_LINK") {
-                loadFromGoogleSheet();
-            }
+            loadFromGoogleSheet();
         };
     </script>
 </body>
